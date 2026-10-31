@@ -85,6 +85,11 @@ html, body { margin: 0; height: 100%; overflow: hidden; background: var(--color-
 .haut-accueil, .haut-decouvrir { grid-template-columns: 1fr; grid-template-areas: "nom"; justify-items: center; }
 .titre { margin: 0; font-size: clamp(26px, 5vw, 50px); line-height: 1.05; text-align: center; }
 .titre::after { content: ""; display: block; height: 4px; margin: 2px 6% 0; background: var(--craie-orange); border-radius: 3px; transform: rotate(-.5deg); }
+/* Dans Ludiworld : le coin en haut à gauche est au bouton retour de Ludiworld (120 × 44 px). */
+.dans-ludi .haut-partie .compteur { margin-left: 120px; }
+.dans-ludi .haut-accueil, .dans-ludi .haut-decouvrir { padding-left: 128px; }
+.reglages-appli { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-top: 14px; }
+.reglages-appli:empty { display: none; }
 @media (max-width: 620px) {
   .haut-partie { grid-template-columns: 1fr 1fr; grid-template-areas: "compteur chrono" "nom nom"; row-gap: 2px; }
 }

@@ -245,7 +245,81 @@ def test_ecrans(nav):
     page.close()
 
 
-SECTIONS = {'carte': test_carte, 'ecrans': test_ecrans}
+def test_appli(nav):
+    print('appli')
+    # Hors ligne : après une première visite, le jeu recharge et se joue sans réseau.
+    ctx = nav.new_context(viewport={'width': 1280, 'height': 800}, locale='fr-FR')
+    page = ctx.new_page()
+    page.goto(JEU)
+    page.wait_for_function('window.jeu && jeu.pret', timeout=15000)
+    page.wait_for_function('navigator.serviceWorker && navigator.serviceWorker.controller || (navigator.serviceWorker.ready.then(() => window.__swPret = true), window.__swPret)', timeout=15000)
+    page.reload()
+    page.wait_for_function('window.jeu && jeu.pret && navigator.serviceWorker.controller', timeout=15000)
+    ctx.set_offline(True)
+    page.reload()
+    page.wait_for_function('window.jeu && jeu.pret', timeout=15000)
+    lancer(page, 'europe')
+    finir_manche(page)
+    page.wait_for_selector('.fin', timeout=3000)
+    verifier(True, 'hors ligne : la page recharge et une manche se joue')
+    ctx.close()
+
+    # Ouvert seul : le plein écran est proposé dans les réglages.
+    page, erreurs = ouvrir_jeu(nav)
+    page.click('[data-action="reglages"]')
+    verifier(page.locator('[data-action="plein-ecran"]').count() == 1, 'seul : bouton plein écran dans les réglages')
+    page.close()
+
+    # Dans Ludiworld (faux lanceur qui répond au kit).
+    page = nav.new_page(viewport={'width': 1280, 'height': 800}, locale='fr-FR')
+    erreurs = []
+    page.on('pageerror', lambda e: erreurs.append(str(e)))
+    page.goto(f'{BASE}/tests/lanceur.html')
+    page.wait_for_function("document.getElementById('jeu').contentWindow.jeu?.pret", timeout=15000)
+    cadre = page.frames[1]
+    verifier(cadre.evaluate('Ludi.inLauncher()'), 'dans Ludiworld : le kit le sait')
+    verifier(cadre.evaluate('jeu.app.joueur') == 'Joshua', f"dans Ludiworld : le prénom vient de Ludiworld ({cadre.evaluate('jeu.app.joueur')})")
+    cadre.click('[data-action="reglages"]')
+    verifier(cadre.locator('[data-action="plein-ecran"], [data-action="installer"]').count() == 0, "dans Ludiworld : ni plein écran ni installation")
+    cadre.click('[data-action="fermer"]')
+    cadre.click('[data-zone="europe"]')
+    cadre.click('[data-action="jouer"]')
+    cadre.wait_for_function("jeu.carte && jeu.carte.zone.id === 'europe'")
+    occupe = cadre.evaluate("""() => [...document.querySelectorAll('.hud *')].filter(e => {
+        const r = e.getBoundingClientRect(); return r.width && r.height && r.left < 120 && r.top < 44 && e.children.length === 0 && e.textContent.trim(); })
+        .map(e => e.className || e.tagName)""")
+    verifier(not occupe, f'dans Ludiworld : le coin en haut à gauche reste libre {occupe}')
+    while not cadre.evaluate('jeu.manche.finie'):
+        x, y = cadre.evaluate('c => jeu.carte.ancreEcran(c)', cadre.evaluate('jeu.manche.question'))
+        page.mouse.click(x, y)
+        page.wait_for_timeout(60)
+    cadre.wait_for_selector('.fin', timeout=3000)
+    page.wait_for_timeout(300)
+    evenements = [m['event'] for m in page.evaluate('recus') if m.get('type') == 'ludi:event']
+    sortes = [e['kind'] for e in evenements]
+    verifier('checkpoint' in sortes, f'dans Ludiworld : un point d\'arrêt en fin de manche ({sorted(set(sortes))})')
+    competences = [e for e in evenements if e['kind'] == 'skill']
+    verifier(len(competences) == 12 and all(e['domain'] == 'geographie.pays' for e in competences),
+             f'dans Ludiworld : une notion par question ({len(competences)})')
+    verifier(any(e['item'] == 'Suède' for e in competences), 'dans Ludiworld : la notion porte le nom du pays')
+    verifier(cadre.evaluate("localStorage.getItem('monde-a-la-craie.v1.Joshua') !== null"), 'dans Ludiworld : progression rangée sous le prénom')
+    page.evaluate("envoyer({ type: 'ludi:wrapup', minutes: 0 })")
+    page.wait_for_timeout(100)
+    cadre.click('[data-action="changer"]')
+    cadre.click('[data-zone="europe"]')
+    cadre.click('[data-action="jouer"]')
+    finir = cadre.evaluate('jeu.manche.question')
+    while not cadre.evaluate('jeu.manche.finie'):
+        x, y = cadre.evaluate('c => jeu.carte.ancreEcran(c)', cadre.evaluate('jeu.manche.question'))
+        page.mouse.click(x, y)
+        page.wait_for_timeout(60)
+    cadre.wait_for_selector('.fin', timeout=3000)
+    verifier(cadre.locator('[data-action="encore"]').count() == 0, "temps écoulé : plus de « Encore une manche »")
+    verifier(not erreurs, f'dans Ludiworld : aucune erreur ({erreurs[:2]})')
+    page.close()
+
+
+SECTIONS = {'carte': test_carte, 'ecrans': test_ecrans, 'appli': test_appli}
 
 if __name__ == '__main__':
     voulues = sys.argv[1:] or list(SECTIONS)

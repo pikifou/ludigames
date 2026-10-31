@@ -3,6 +3,7 @@ import { chargerMonde } from './carte.js';
 import { charger, sauver } from './progres.js';
 import { langue } from './textes.js';
 import { sonActif } from './sons.js';
+import { t } from './textes.js';
 import { accueil } from './ecrans/accueil.js';
 import { partie } from './ecrans/partie.js';
 import { decouvrir } from './ecrans/decouvrir.js';
@@ -20,7 +21,19 @@ document.documentElement.lang = langue;
 const ECRANS = { accueil, partie, decouvrir };
 const monde = await chargerMonde('data/monde.json');
 const proprietes = new Map(monde.map(f => [f.properties.code, f.properties]));
-const joueur = null;
+// Ludiworld : le kit, et le prénom de l'enfant (il arrive juste après le démarrage, par un message de Ludiworld).
+const Ludi = window.Ludi;
+let joueur = null, finDuTemps = false;
+if (Ludi) {
+  Ludi.init({ game: 'monde-a-la-craie' });
+  if (Ludi.inLauncher()) {
+    document.documentElement.classList.add('dans-ludi');
+    for (let i = 0; i < 20 && !Ludi.player(); i++) await new Promise(r => setTimeout(r, 50));
+    joueur = Ludi.player() ? Ludi.player().name : null;
+    Ludi.onWrapUp(minutes => { if (minutes === 0) finDuTemps = true; });   // c'est l'heure : pas de nouvelle manche
+  }
+}
+const dansLudi = !!(Ludi && Ludi.inLauncher());
 const etat = charger(joueur);
 sonActif(etat.son);
 
@@ -29,7 +42,18 @@ const app = {
   monde, etat, joueur, langue, rand,
   ecran: document.getElementById('ecran'),
   hud: document.getElementById('hud'),
-  evenement() {},
+  // Ce que le jeu dit à Ludiworld (et au kit, ouvert seul).
+  evenement(nom, d) {
+    if (nom === 'reglages') return reglagesAppli(d);
+    if (!Ludi) return;
+    if (nom === 'question') Ludi.skill('geographie.pays', proprietes.get(d.code).fr, d.premierCoup);
+    if (nom === 'fin') {
+      Ludi.progress('zone-' + d.zone, Math.round(d.pourcentage * 100));
+      Ludi.score('chrono-' + d.zone, Math.round(d.secondes * 10) / 10, { better: 'lower' });
+      Ludi.checkpoint('fin-de-manche');
+    }
+  },
+  encoreUneManche() { return !finDuTemps; },
 
   nom(code) { const p = proprietes.get(code); return p ? p[langue] : ''; },
   // Avec le pays de rattachement pour un territoire : « Groenland (Danemark) ».
@@ -57,6 +81,21 @@ const app = {
     quitter = ECRANS[nom](app, zone) || (() => {});
   },
 };
+
+// Ouvert seul : plein écran et installation dans les réglages. Dans Ludiworld, c'est Ludiworld qui décide.
+let installation = null;
+addEventListener('beforeinstallprompt', e => { e.preventDefault(); installation = e; });
+function reglagesAppli(conteneur) {
+  if (dansLudi || !conteneur) return;
+  if (document.fullscreenEnabled) conteneur.insertAdjacentHTML('beforeend', `<button class="bouton-craie" data-action="plein-ecran">${t('pleinEcran')}</button>`);
+  if (installation) conteneur.insertAdjacentHTML('beforeend', `<button class="bouton-craie" data-action="installer">${t('installer')}</button>`);
+  conteneur.addEventListener('click', e => {
+    const a = e.target.closest('button')?.dataset.action;
+    if (a === 'plein-ecran') (document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen()).catch(() => {});
+    if (a === 'installer' && installation) { installation.prompt(); installation = null; e.target.remove(); }
+  });
+}
+if ('serviceWorker' in navigator && location.protocol !== 'file:') navigator.serviceWorker.register('sw.js').catch(() => {});
 
 window.jeu = { app, pret: false };
 // La police de craie d'abord : la place des noms se mesure avec elle.

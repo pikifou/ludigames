@@ -1,0 +1,43 @@
+{
+  "ludi": 1,
+  "id": "monde-a-la-craie",
+  "status": "draft",
+  "title": { "fr": "Le Monde à la craie", "en": "The World in Chalk" },
+  "pitch": {
+    "fr": "Un nom de pays s'écrit à la craie au tableau : trouve-le sur la carte et touche-le. Continent par continent, douze pays par manche, en commençant par les plus grands. Et pour regarder sans être interrogé, on touche les pays pour lire leur nom.",
+    "en": "A country's name is written in chalk on the board: find it on the map and tap it. Continent by continent, twelve countries a round, starting with the biggest. And to look around without being quizzed, tap the countries to read their names."
+  },
+  "url": "https://pikifou.github.io/ludigames/monde-a-la-craie/",
+  "icon": "https://pikifou.github.io/ludigames/monde-a-la-craie/icons/icon-512.png",
+  "color": "#2b3f37",
+  "author": { "name": "Julien", "url": "https://github.com/pikifou/ludigames" },
+  "languages": ["fr", "en"],
+  "age": { "min": 6, "max": 12 },
+  "reading": "some",
+  "learning": {
+    "level": "core",
+    "domains": ["geographie.pays"],
+    "what": {
+      "fr": "Situer les pays du monde sur une carte : les 193 pays de l'ONU, plus le Kosovo, la Palestine, Taïwan et le Vatican, rangés en six continents. On retient leur place, leur forme et leurs voisins, et en passant on lit leur nom.",
+      "en": "Placing the world's countries on a map: the 193 UN member states, plus Kosovo, Palestine, Taiwan and Vatican City, grouped into six continents. Children remember where each one is, its shape and its neighbours, and read its name along the way."
+    },
+    "how": {
+      "fr": "Une manche, c'est douze pays d'un continent : d'abord les grands, puis les petits quand les grands sont connus, avec quelques révisions. Une erreur montre le bon pays (entouré à la craie) et le nom touché par erreur, puis la question revient plus tard dans la manche. Pas de compte à rebours : le chrono sert seulement à battre son propre temps. Le mode Découvrir laisse explorer la carte sans question. La carte vient de vraies données géographiques (Natural Earth), avec les frontières d'un atlas scolaire français.",
+      "en": "A round is twelve countries from one continent: the big ones first, then the small ones once the big ones are known, with a few to review. A mistake shows the right country (circled in chalk) and the name of the one tapped by mistake, and the question comes back later in the round. No countdown: the timer is only there to beat your own time. Explore mode lets children look around the map with no questions. The map comes from real geographic data (Natural Earth), with the borders of a French school atlas."
+    }
+  },
+  "session": { "minutes": [3, 10], "natural_end": true },
+  "content": {
+    "fr": "Une carte, des noms de pays, rien d'autre. Les frontières disputées suivent un atlas scolaire français (la Crimée en Ukraine, le Kosovo comme pays). Une voix peut lire les noms, en option, avec les voix de l'appareil.",
+    "en": "A map and country names, nothing else. Disputed borders follow a French school atlas (Crimea in Ukraine, Kosovo as a country). A voice can read the names, as an option, using the device's own voices."
+  },
+  "devices": ["tablet", "phone", "computer"],
+  "offline": true,
+  "healthy": {
+    "no_ads": true, "no_purchases": true, "no_subscription": true, "no_loot_boxes": true,
+    "no_daily_pressure": true, "no_notifications": true, "no_strangers": true, "no_tracking": true,
+    "natural_stops": true
+  },
+  "third_parties": [],
+  "kit": true
+}

@@ -39,6 +39,7 @@ export function partie(app, zoneId) {
   }
   const carte = creerCarte(app.nouvelleCarte(), app.monde, zone, () => ({ haut: reserverNom(), bas: 62, gauche: 8, droite: 8 }),
     { ronds: p => p.quiz && (zoneId === 'monde' || p.zone === zoneId) });
+  const annonces = new Set();
   let manche, couleur = 0, ecoule = 0, depart = 0, enPause = false, attente = 0, finie = false;
   window.jeu.carte = carte;
 
@@ -57,7 +58,7 @@ export function partie(app, zoneId) {
     carte.effacer(); carte.vueEntiere();
     manche = new Manche(choisirManche(zonePays, etat.connus, app.rand));
     window.jeu.manche = manche;
-    couleur = 0; ecoule = 0; depart = performance.now(); finie = false;
+    couleur = 0; ecoule = 0; annonces.clear(); depart = performance.now(); finie = false;
     voile.hidden = true;
     majCompteur();
     ecrireNom(app.nom(manche.question));
@@ -68,7 +69,11 @@ export function partie(app, zoneId) {
     const question = manche.question;
     const r = manche.toucher(code);
     if (r.resultat === 'ignore') return;
-    app.evenement('reponse', { code: question, juste: r.resultat === 'juste', premierCoup: manche.resultats.get(question) === true });
+    // Une question est réglée quand le pays est trouvé, ou montré après deux ratés : on le dit une fois.
+    if (manche.resultats.has(question) && !annonces.has(question)) {
+      annonces.add(question);
+      app.evenement('question', { code: question, premierCoup: manche.resultats.get(question) });
+    }
     if (r.resultat === 'juste') {
       carte.etat(code, 'trouve', (couleur++ % 4) + 1);
       son('juste');
