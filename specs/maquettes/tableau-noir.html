@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tableau noir, jeu des pays</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=Fraunces:opsz,wght@9..144,800&family=Lexend:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --color-surface: #f4efe6; --color-ink: #1d1a16; --color-muted: #6b6257;
+    --color-ardoise: #2b3f37; --color-ardoise-2: #354d43; --color-craie: #f3f1e8;
+    --color-cadre: #a8763f; --color-cadre-ombre: #6e4520;
+    --craie-jaune: #ffe27a; --craie-bleue: #8fd3ff; --craie-rose: #ff9fc0; --craie-orange: #ffb36b;
+  }
+  body { margin: 0; background: var(--color-surface); color: var(--color-ink); font: 16px/1.5 Lexend, sans-serif; }
+  header, main, footer { max-width: 1100px; margin: 0 auto; padding-left: 24px; padding-right: 24px; }
+  header { padding-top: 28px; }
+  h1 { font: 800 30px/1.1 Fraunces, serif; margin: 0 0 6px; }
+  header p, .piste > p { margin: 0 0 12px; color: var(--color-muted); max-width: 78ch; }
+  main { display: grid; gap: 40px; padding-top: 16px; padding-bottom: 48px; }
+  h2 { font: 800 22px Fraunces, serif; margin: 0 0 4px; }
+
+  /* le tableau : cadre en bois tout autour, ardoise avec des traces d'effacement */
+  .tableau { position: relative; aspect-ratio: 16 / 10; width: 100%; max-width: 900px; border-radius: 6px 10px 6px 8px;
+    padding: 14px; box-sizing: border-box; background: var(--color-cadre);
+    background-image: repeating-linear-gradient(90deg, rgba(0,0,0,.06) 0 3px, transparent 3px 11px);
+    box-shadow: inset 0 0 0 3px var(--color-cadre-ombre), 0 12px 30px rgba(0,0,0,.25); }
+  .ardoise { position: relative; width: 100%; height: 100%; overflow: hidden; border-radius: 2px;
+    background: radial-gradient(ellipse 60% 40% at 25% 30%, rgba(255,255,255,.07), transparent 70%),
+                radial-gradient(ellipse 45% 35% at 75% 70%, rgba(255,255,255,.06), transparent 70%),
+                linear-gradient(160deg, var(--color-ardoise-2), var(--color-ardoise));
+    box-shadow: inset 0 0 40px rgba(0,0,0,.45); }
+  .ardoise::after { content: ""; position: absolute; inset: 0; pointer-events: none; opacity: .22; mix-blend-mode: screen;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='.75' numOctaves='3'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+  svg.carte { position: absolute; inset: 0; width: 100%; height: 100%; }
+  svg.carte path { fill: rgba(243,241,232,.10); stroke: var(--color-craie); stroke-width: 1.1; stroke-linejoin: round; filter: url(#craie); }
+  svg.carte path.trouve { fill: var(--craie-jaune); fill-opacity: .92; }
+  svg.carte path.trouve.c2 { fill: var(--craie-bleue); }
+  svg.carte path.trouve.c3 { fill: var(--craie-rose); }
+  svg.carte path.trouve.c4 { fill: var(--craie-orange); }
+  .ecrit { position: absolute; color: var(--color-craie); font-family: "Baloo 2", sans-serif; font-weight: 800; filter: url(#craie-texte);
+    text-shadow: 0 0 1px rgba(255,255,255,.6); }
+  .nom { top: 6%; left: 50%; transform: translateX(-50%) rotate(-1deg); font-size: clamp(30px, 6vw, 56px); line-height: 1; }
+  .nom::after { content: ""; display: block; height: 4px; margin: 4px 6% 0; background: var(--craie-jaune); border-radius: 3px; transform: rotate(.6deg); }
+  .compte { top: 4%; left: 3%; font-size: 22px; }
+  .compte span { font-size: 15px; opacity: .8; font-weight: 600; }
+  .zone { bottom: 4%; left: 3%; font-size: 18px; font-weight: 600; opacity: .9; }
+  .boutons { position: absolute; bottom: 4%; right: 3%; display: flex; gap: 10px; }
+  .boutons i { width: 40px; height: 40px; border: 2.5px solid var(--color-craie); border-radius: 46% 54% 50% 50%; filter: url(#craie); display: grid; place-items: center;
+    color: var(--color-craie); font: 800 16px "Baloo 2"; font-style: normal; background: rgba(0,0,0,.15); }
+
+  /* menu : les zones écrites à la craie, entourées comme au tableau */
+  svg.carte.menu path { fill: rgba(243,241,232,.06); stroke-width: .8; stroke-opacity: .7; }
+  .cercle { position: absolute; border: 3px solid var(--c, var(--color-craie)); border-radius: 48% 52% 45% 55% / 55% 45% 55% 45%;
+    filter: url(#craie); transform: rotate(var(--r, -4deg)); }
+  .zone-nom { position: absolute; padding: 6px 16px; border: 3px solid currentColor; border-radius: 48% 52% 45% 55% / 55% 45% 55% 45%; transform: translate(-50%, -50%) rotate(var(--r, -3deg)); font-size: clamp(16px, 2.6vw, 26px); white-space: nowrap; text-align: center; line-height: 1.05; }
+  .zone-nom small { display: block; font-size: .55em; font-weight: 600; opacity: .85; }
+  .titre-jeu { top: 5%; left: 50%; transform: translateX(-50%); font-size: clamp(28px, 5vw, 48px); }
+  .titre-jeu::after { content: ""; display: block; height: 4px; margin: 2px 4% 0; background: var(--craie-orange); border-radius: 3px; }
+  footer { color: var(--color-muted); font-size: 14px; padding-bottom: 40px; }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute">
+  <filter id="craie" x="-5%" y="-5%" width="110%" height="110%">
+    <feTurbulence type="fractalNoise" baseFrequency="1.4" numOctaves="2" result="b"/>
+    <feDisplacementMap in="SourceGraphic" in2="b" scale="2.2" result="d"/>
+    <feTurbulence type="fractalNoise" baseFrequency="2.2" numOctaves="1" result="g"/>
+    <feColorMatrix in="g" type="luminanceToAlpha" result="ga0"/>
+    <feComponentTransfer in="ga0" result="ga"><feFuncA type="linear" slope="5" intercept="-3.2"/></feComponentTransfer>
+    <feComposite in="d" in2="ga" operator="out" result="trous"/>
+    <feMerge><feMergeNode in="trous"/></feMerge>
+  </filter>
+  <filter id="craie-texte" x="-5%" y="-10%" width="110%" height="120%">
+    <feTurbulence type="fractalNoise" baseFrequency="1.8" numOctaves="2" result="g"/>
+    <feColorMatrix in="g" type="luminanceToAlpha" result="ga0"/>
+    <feComponentTransfer in="ga0" result="ga"><feFuncA type="linear" slope="5" intercept="-3.4"/></feComponentTransfer>
+    <feComposite in="SourceGraphic" in2="ga" operator="out"/>
+  </filter>
+</svg>
+
+<header>
+  <h1>Piste tableau noir (v2)</h1>
+  <p>Ta direction : la carte dessinée à la craie sur l'ardoise, lisible, avec les pays trouvés coloriés à la craie de couleur. À notre façon : cadre de tableau tout autour, noms et zones écrits à la craie et entourés, pas d'étiquettes papier.</p>
+</header>
+<main>
+  <section class="piste">
+    <h2>En partie : trouver la Slovénie</h2>
+    <p>Le nom à trouver est écrit en grand et souligné. Les pays trouvés sont coloriés (plusieurs craies, pas seulement du vert). En bas : la zone, et les boutons pause et voix.</p>
+    <div class="tableau"><div class="ardoise">
+      <svg class="carte" data-vue="europe"></svg>
+      <div class="ecrit compte">7 / 12 <span>trouvés</span></div>
+      <div class="ecrit nom">Slovénie</div>
+      <div class="ecrit zone">Europe</div>
+      <div class="boutons"><i>❚❚</i><i>♪</i></div>
+    </div></div>
+  </section>
+
+  <section class="piste">
+    <h2>Le choix de la zone</h2>
+    <p>La carte du monde à la craie, chaque zone entourée et écrite à la main, avec le nombre de pays. On touche une zone pour jouer.</p>
+    <div class="tableau"><div class="ardoise">
+      <svg class="carte menu" data-vue="monde"></svg>
+      <div class="ecrit titre-jeu">Les pays du monde</div>
+      <div class="ecrit zone-nom" style="left:53%;top:31%;--r:-3deg;color:var(--craie-jaune)">Europe<small>45 pays</small></div>
+      <div class="ecrit zone-nom" style="left:53%;top:62%;--r:3deg;color:var(--craie-orange)">Afrique<small>54 pays</small></div>
+      <div class="ecrit zone-nom" style="left:72%;top:38%;--r:-2deg;color:var(--craie-rose)">Asie<small>48 pays</small></div>
+      <div class="ecrit zone-nom" style="left:21%;top:35%;--r:2deg;color:var(--craie-bleue)">Amérique du Nord<small>23 pays</small></div>
+      <div class="ecrit zone-nom" style="left:32%;top:72%;--r:-4deg;color:var(--craie-bleue)">Amérique du Sud<small>12 pays</small></div>
+      <div class="ecrit zone-nom" style="left:86%;top:78%;--r:3deg">Océanie<small>14 pays</small></div>
+    </div></div>
+  </section>
+</main>
+<footer>Réponds dans le terminal : ce qui te va, ce qui manque.</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/d3-array@3.2.4/dist/d3-array.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/d3-geo@3.1.1/dist/d3-geo.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/topojson-client@3.1.0/dist/topojson-client.min.js"></script>
+<script>
+  const trouves = { '756': 'c1', '616': 'c2', '804': 'c3', '348': 'c4', '642': 'c1', '191': 'c2', '070': 'c3' };
+  const NS = 'http://www.w3.org/2000/svg';
+  const boite = (o, n, e, s) => ({ type: 'Feature', geometry: { type: 'Polygon', coordinates: [[[o, s], [o, n], [e, n], [e, s], [o, s]]] } });
+  fetch('https://cdn.jsdelivr.net/npm/world-atlas@2.0.2/countries-50m.json').then(r => r.json()).then(topo => {
+    const pays = topojson.feature(topo, topo.objects.countries).features.filter(f => f.id !== '010');
+    document.querySelectorAll('svg.carte').forEach(svg => {
+      const W = 900, H = 562, monde = svg.dataset.vue === 'monde';
+      svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+      svg.setAttribute('preserveAspectRatio', 'xMidYMid slice');
+      const proj = monde
+        ? d3.geoNaturalEarth1().fitExtent([[20, 40], [W - 20, H + 60]], { type: 'Sphere' })
+        : d3.geoConicConformal().rotate([-14, 0]).parallels([40, 62]).fitExtent([[10, 80], [W - 10, H - 10]], boite(-11, 66, 40, 35));
+      const path = d3.geoPath(proj), g = document.createElementNS(NS, 'g');
+      pays.forEach(f => {
+        const p = document.createElementNS(NS, 'path');
+        p.setAttribute('d', path(f) || '');
+        if (!monde && trouves[f.id]) p.setAttribute('class', 'trouve ' + trouves[f.id]);
+        g.appendChild(p);
+      });
+      svg.appendChild(g);
+    });
+  });
+</script>
+</body>
+</html>
