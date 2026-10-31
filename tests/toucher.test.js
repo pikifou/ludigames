@@ -1,7 +1,7 @@
 // Toucher le bon pays, même minuscule : node --test tests/toucher.test.js
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { RAYON_MIN, paysTouche } from '../monde-a-la-craie/js/toucher.js';
+import { RAYON_MIN, RAYON_PETIT, PETIT, paysTouche } from '../monde-a-la-craie/js/toucher.js';
 
 // Un carré [x0, y0, x1, y1] comme contour.
 const carre = (code, x0, y0, x1, y1) => ({
@@ -14,13 +14,23 @@ const monaco = carre('MC', 50, 50, 51, 51);
 const saintMarin = carre('SM', 90, 50, 91, 51);
 
 test('le rayon minimal vaut 44 px', () => assert.equal(RAYON_MIN, 44));
+test('un petit pays a un rond de 14 px', () => { assert.equal(RAYON_PETIT, 14); assert.equal(PETIT, 8); });
 
 test("dans le contour d'un pays : ce pays, même si un petit pays est tout près", () => {
-  assert.equal(paysTouche([170, 205], [italie, vatican]), 'IT');
+  assert.equal(paysTouche([190, 205], [italie, vatican]), 'IT');
 });
 
-test('à côté du Vatican, hors de tout contour : le Vatican', () => {
-  assert.equal(paysTouche([160.5 + 30, 200.5 - 70], [italie, vatican]), 'VA');
+test("sur le rond du Vatican, à l'intérieur de l'Italie : le Vatican", () => {
+  assert.equal(paysTouche([160.5 + RAYON_PETIT - 1, 200.5], [italie, vatican]), 'VA');
+});
+
+test("dans l'Italie, loin du rond du Vatican : l'Italie", () => {
+  assert.equal(paysTouche([160.5 + RAYON_PETIT + 5, 200.5], [italie, vatican]), 'IT');
+});
+
+test('près de Malte, en mer, hors de tout contour : Malte', () => {
+  const malte = carre('MT', 500, 500, 502, 502);
+  assert.equal(paysTouche([501 + 30, 501], [italie, malte]), 'MT');
 });
 
 test('entre Monaco et Saint-Marin : le centre le plus proche', () => {
