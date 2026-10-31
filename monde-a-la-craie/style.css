@@ -1,0 +1,42 @@
+/* Le Monde à la craie : le tableau noir */
+@font-face { font-family: 'Baloo 2'; font-weight: 500; font-display: swap; src: url('fonts/baloo2-500.woff2') format('woff2'); }
+@font-face { font-family: 'Baloo 2'; font-weight: 700; font-display: swap; src: url('fonts/baloo2-700.woff2') format('woff2'); }
+@font-face { font-family: 'Baloo 2'; font-weight: 800; font-display: swap; src: url('fonts/baloo2-800.woff2') format('woff2'); }
+@font-face { font-family: 'Lexend'; font-weight: 300 700; font-display: swap; src: url('fonts/lexend.woff2') format('woff2'); }
+
+:root {
+  --color-ardoise: #2b3f37; --color-ardoise-2: #354d43; --color-ardoise-ombre: #1d2b26;
+  --color-craie: #f3f1e8; --color-craie-douce: rgba(243, 241, 232, .55);
+  --color-cadre: #a8763f; --color-cadre-ombre: #6e4520;
+  --craie-jaune: #ffe27a; --craie-bleue: #8fd3ff; --craie-rose: #ff9fc0; --craie-orange: #ffb36b;
+  --craie-rouge: #ff8a7a;
+  --font-craie: 'Baloo 2', 'Comic Sans MS', cursive;
+  --font-texte: 'Lexend', 'Trebuchet MS', sans-serif;
+}
+
+/* ---------- la carte ---------- */
+svg.carte { display: block; touch-action: none; user-select: none; -webkit-user-select: none; cursor: pointer; }
+svg.carte .terres { filter: url(#craie); }
+svg.carte .pays { fill: rgba(243, 241, 232, .07); stroke: var(--color-craie); stroke-width: 1; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+svg.carte .pays.trouve { fill-opacity: .92; }
+svg.carte .c1 { fill: var(--craie-jaune); }
+svg.carte .c2 { fill: var(--craie-bleue); }
+svg.carte .c3 { fill: var(--craie-rose); }
+svg.carte .c4 { fill: var(--craie-orange); }
+svg.carte .pays.erreur { fill: rgba(255, 138, 122, .18); }
+svg.carte .pays.montre { fill: rgba(243, 241, 232, .35); animation: clignote .5s steps(2) 3; }
+svg.carte .rond { fill: rgba(243, 241, 232, .12); stroke: var(--color-craie); stroke-width: 1.4; vector-effect: non-scaling-stroke; }
+svg.carte .rond.territoire { stroke-dasharray: 2 2; }
+svg.carte .rond.trouve { fill-opacity: .92; }
+svg.carte .croix { stroke: var(--craie-rouge); stroke-width: 3.5; stroke-linecap: round; fill: none; vector-effect: non-scaling-stroke; }
+svg.carte .entoure { fill: none; stroke: var(--craie-jaune); stroke-width: 3; stroke-dasharray: 9 4; vector-effect: non-scaling-stroke; animation: clignote .5s steps(2) 3; }
+svg.carte .nom-pays { font-family: var(--font-craie); font-weight: 800; fill: var(--color-craie); text-anchor: middle; dominant-baseline: middle;
+  paint-order: stroke; stroke: var(--color-ardoise-ombre); stroke-linejoin: round; pointer-events: none; }
+@keyframes clignote { 50% { opacity: .25; } }
+
+/* ---------- l'ardoise ---------- */
+.ardoise {
+  background: radial-gradient(ellipse 60% 40% at 25% 30%, rgba(255,255,255,.07), transparent 70%),
+              radial-gradient(ellipse 45% 35% at 75% 70%, rgba(255,255,255,.06), transparent 70%),
+              linear-gradient(160deg, var(--color-ardoise-2), var(--color-ardoise));
+}

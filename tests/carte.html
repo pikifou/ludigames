@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Test de la carte</title>
+<link rel="stylesheet" href="../monde-a-la-craie/style.css">
+<style>html, body { margin: 0; height: 100%; } svg { display: block; width: 100vw; height: 100vh; }</style>
+</head>
+<body class="ardoise">
+<svg id="c" class="carte"></svg>
+<script src="../monde-a-la-craie/lib/d3-array.min.js"></script>
+<script src="../monde-a-la-craie/lib/d3-geo.min.js"></script>
+<script src="../monde-a-la-craie/lib/topojson-client.min.js"></script>
+<script type="module">
+  import { chargerMonde, creerCarte } from '../monde-a-la-craie/js/carte.js';
+  import { zoneParId } from '../monde-a-la-craie/js/zones.js';
+  const zone = new URLSearchParams(location.search).get('zone') || 'europe';
+  const monde = await chargerMonde('../monde-a-la-craie/data/monde.json');
+  const carte = creerCarte(document.getElementById('c'), monde, zoneParId(zone), { haut: 80 });
+  window.taps = [];
+  carte.surToucher(c => window.taps.push(c));
+  Object.assign(window, { carte, monde, pret: true });
+</script>
+</body>
+</html>
