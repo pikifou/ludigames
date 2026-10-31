@@ -42,8 +42,11 @@ const FILTRE = `<filter id="craie" x="-5%" y="-5%" width="110%" height="110%">
 </filter>`;
 
 // marges : place laissée autour de la carte (le nom à trouver en haut, les boutons en bas), en px.
-export function creerCarte(svg, monde, zone, marges = {}) {
-  const m = { haut: 12, bas: 12, gauche: 12, droite: 12, ...marges };
+// Un objet, ou une fonction qui le rend (relue à chaque recadrage : la hauteur du titre change avec l'écran).
+// options.ronds(proprietes) : les tout petits pays qui ont leur rond de craie (et qu'on peut toucher sans viser).
+export function creerCarte(svg, monde, zone, marges = {}, options = {}) {
+  const avecRond = options.ronds || (() => true);
+  const lireMarges = () => ({ haut: 12, bas: 12, gauche: 12, droite: 12, ...(typeof marges === 'function' ? marges() : marges) });
   svg.innerHTML = '';
   el('defs', {}, svg).innerHTML = FILTRE;
   const vue = el('g', { class: 'vue' }, svg);
@@ -66,6 +69,7 @@ export function creerCarte(svg, monde, zone, marges = {}) {
     recadrer() {
       rect = svg.getBoundingClientRect();
       W = rect.width; H = rect.height;
+      const m = lireMarges();
       svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
       const ext = [[m.gauche, m.haut], [Math.max(m.gauche + 10, W - m.droite), Math.max(m.haut + 10, H - m.bas)]];
       projection = zone.projection().fitExtent(ext, cadrePoints(zone.cadre));
@@ -74,18 +78,27 @@ export function creerCarte(svg, monde, zone, marges = {}) {
         if (p.path) p.path.setAttribute('d', path(p.f) || '');
         const point = p.f.properties.point;
         if (point) {
-          const [x, y] = projection(point); p.bornes = [[x, y], [x, y]]; p.centre = [x, y];
+          const [x, y] = path.centroid({ type: 'Point', coordinates: point }); p.bornes = [[x, y], [x, y]]; p.centre = [x, y];
         } else {
           p.bornes = path.bounds(p.f);
           p.centre = ANCRES[p.code] ? projection(ANCRES[p.code]) : path.centroid(p.partie);
         }
-        p.rayon = Math.max(p.bornes[1][0] - p.bornes[0][0], p.bornes[1][1] - p.bornes[0][1]) / 2;
+        // La taille d'un pays, c'est celle de sa plus grande terre : Kiribati, éparpillé sur tout le Pacifique, est « petit ».
+        const b = point ? p.bornes : path.bounds(p.partie);
+        p.rayon = Math.max(b[1][0] - b[0][0], b[1][1] - b[0][1]) / 2;
+        p.visible = isFinite(p.centre[0]) && isFinite(p.centre[1]);   // sur l'autre face du globe : ni rond, ni toucher
       }
       carte.zoneVisible = { x0: rect.left + ext[0][0], y0: rect.top + ext[0][1], x1: rect.left + ext[1][0], y1: rect.top + ext[1][1] };
       carte.vueEntiere();
     },
 
     vueEntiere() { k = 1; tx = 0; ty = 0; appliquer(); },
+
+    // Position à l'écran (coordonnées de la page) d'un point [longitude, latitude].
+    ecranDe(lonlat) {
+      const [x, y] = projection(lonlat);
+      return [rect.left + tx + x * k, rect.top + ty + y * k];
+    },
 
     // Position à l'écran (coordonnées de la page) de l'endroit où l'on écrit le nom d'un pays.
     ancreEcran(code) {
@@ -99,9 +112,9 @@ export function creerCarte(svg, monde, zone, marges = {}) {
       const cibles = pays.map(p => ({
         code: p.code,
         centre: [tx + p.centre[0] * k, ty + p.centre[1] * k],
-        rayon: p.rayon * k,
+        rayon: avecRond(p.f.properties) && p.visible ? p.rayon * k : Infinity,   // sans rond, un petit pays se touche seulement dans son contour
         contient: q => {
-          if (!p.f.geometry) return false;
+          if (!p.f.geometry || !p.visible) return false;
           const [mx, my] = versCarte(q), b = p.bornes;
           if (mx < b[0][0] || mx > b[1][0] || my < b[0][1] || my > b[1][1]) return false;
           const lonlat = projection.invert([mx, my]);
@@ -138,7 +151,7 @@ export function creerCarte(svg, monde, zone, marges = {}) {
   function dessinerRonds() {
     ronds.innerHTML = '';
     for (const p of pays) {
-      if (p.rayon * k >= PETIT) continue;
+      if (!p.visible || p.rayon * k >= PETIT || !avecRond(p.f.properties)) continue;
       el('circle', { cx: p.centre[0], cy: p.centre[1], r: ROND / k, class: 'rond' + (p.f.properties.quiz ? '' : ' territoire'), 'data-code': p.code }, ronds);
     }
   }

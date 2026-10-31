@@ -2,7 +2,7 @@
 
 export const RAYON_MIN = 44;    // px CSS : un doigt d'enfant
 export const PETIT = 8;         // un pays dont le rayon à l'écran est sous 8 px est « petit » : dessiné avec un rond de craie
-export const RAYON_PETIT = 14;  // toucher ce rond choisit le petit pays, même à l'intérieur d'un grand (Vatican, Saint-Marin)
+export const RAYON_PETIT = 9;   // toucher ce rond (dessiné à 7 px) choisit le petit pays, même dans un grand (Vatican, Saint-Marin)
 
 // point : [x, y] à l'écran. cibles : { code, contient(point), centre: [x, y], rayon }[] (rayon à l'écran).
 // 1. le rond d'un petit pays ; 2. le pays sous le doigt ; 3. le petit pays le plus proche, à moins de RAYON_MIN.

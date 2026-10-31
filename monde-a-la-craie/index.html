@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#2b3f37">
+<meta name="description" content="Trouve les pays du monde sur une carte dessinée à la craie, continent par continent.">
+<title>Le Monde à la craie</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="cadre">
+  <main class="ecran ardoise" id="ecran">
+    <svg class="carte" id="carte" aria-label="Carte"></svg>
+    <div class="hud" id="hud"></div>
+  </main>
+</div>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <filter id="craie-texte" x="-5%" y="-10%" width="110%" height="120%">
+    <feTurbulence type="fractalNoise" baseFrequency="1.8" numOctaves="2" result="g"/>
+    <feColorMatrix in="g" type="luminanceToAlpha" result="ga0"/>
+    <feComponentTransfer in="ga0" result="ga"><feFuncA type="linear" slope="5" intercept="-3.4"/></feComponentTransfer>
+    <feComposite in="SourceGraphic" in2="ga" operator="out"/>
+  </filter>
+</svg>
+<script src="lib/d3-array.min.js"></script>
+<script src="lib/d3-geo.min.js"></script>
+<script src="lib/topojson-client.min.js"></script>
+<script type="module" src="js/main.js"></script>
+</body>
+</html>

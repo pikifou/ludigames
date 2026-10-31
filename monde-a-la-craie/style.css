@@ -40,3 +40,107 @@ svg.carte .nom-pays { font-family: var(--font-craie); font-weight: 800; fill: va
               radial-gradient(ellipse 45% 35% at 75% 70%, rgba(255,255,255,.06), transparent 70%),
               linear-gradient(160deg, var(--color-ardoise-2), var(--color-ardoise));
 }
+
+/* ---------- la page : un tableau dans son cadre en bois ---------- */
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; overflow: hidden; background: var(--color-cadre-ombre); color: var(--color-craie);
+  font-family: var(--font-texte); -webkit-tap-highlight-color: transparent; }
+.cadre { position: fixed; inset: 0;
+  padding: max(clamp(6px, 1.3vmin, 14px), env(safe-area-inset-top)) max(clamp(6px, 1.3vmin, 14px), env(safe-area-inset-right))
+           max(clamp(6px, 1.3vmin, 14px), env(safe-area-inset-bottom)) max(clamp(6px, 1.3vmin, 14px), env(safe-area-inset-left));
+  background: var(--color-cadre);
+  background-image: repeating-linear-gradient(90deg, rgba(0,0,0,.07) 0 3px, transparent 3px 11px),
+                    linear-gradient(180deg, rgba(255,255,255,.12), transparent 40%, rgba(0,0,0,.15));
+  box-shadow: inset 0 0 0 3px var(--color-cadre-ombre); }
+.ecran { position: relative; width: 100%; height: 100%; overflow: hidden; border-radius: 3px 5px 2px 4px;
+  box-shadow: inset 0 0 50px rgba(0,0,0,.45), 0 0 0 2px var(--color-cadre-ombre); }
+.ecran::after { content: ""; position: absolute; inset: 0; pointer-events: none; opacity: .2; mix-blend-mode: screen;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='.75' numOctaves='3'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+.ecran > svg.carte { position: absolute; inset: 0; width: 100%; height: 100%; }
+.hud { position: absolute; inset: 0; pointer-events: none; }
+.hud > * { pointer-events: auto; }
+.hud > .etiquettes { pointer-events: none; }
+.hud > .etiquettes > * { pointer-events: auto; }
+
+/* ---------- l'écriture à la craie ---------- */
+.craie { font-family: var(--font-craie); font-weight: 800; color: var(--color-craie); filter: url(#craie-texte); }
+.nom.ecrit { animation: ecrire .45s steps(9) both; }
+@keyframes ecrire { from { clip-path: inset(-10% 100% -10% 0); } to { clip-path: inset(-10% -2% -10% 0); } }
+
+/* ---------- le haut : compteur, nom à trouver, chrono ---------- */
+.haut { position: absolute; top: 0; left: 0; right: 0; padding: clamp(8px, 1.6vmin, 16px) clamp(10px, 2vmin, 20px) 0;
+  display: grid; grid-template-columns: minmax(80px, 1fr) minmax(0, auto) minmax(80px, 1fr); grid-template-areas: "compteur nom chrono";
+  align-items: start; gap: 8px; pointer-events: none; }
+.haut > * { pointer-events: auto; }
+.compteur, .chrono { min-height: 1.3em; }   /* leur ligne a sa hauteur avant d'avoir du texte */
+.compteur { grid-area: compteur; font-size: clamp(18px, 2.6vw, 26px); }
+.chrono { grid-area: chrono; justify-self: end; font-size: clamp(16px, 2.2vw, 22px); font-weight: 700; opacity: .85; font-variant-numeric: tabular-nums; }
+.nom-ligne { grid-area: nom; display: flex; align-items: center; justify-content: center; gap: 8px; min-width: 0; }
+.nom { margin: 0; font-size: clamp(26px, 5.4vw, 54px); line-height: 1.08; text-align: center; overflow-wrap: anywhere;
+  min-height: 1.08em; text-wrap: balance; }
+.nom::after { content: ""; display: block; height: .09em; margin: .06em 8% 0; background: var(--craie-jaune); border-radius: 3px; transform: rotate(.6deg); }
+.nom:empty::after { display: none; }
+.nom.consigne { font-size: clamp(18px, 3vw, 28px); font-weight: 700; opacity: .8; }
+.nom.consigne::after { display: none; }
+.haut-accueil, .haut-decouvrir { grid-template-columns: 1fr; grid-template-areas: "nom"; justify-items: center; }
+.titre { margin: 0; font-size: clamp(26px, 5vw, 50px); line-height: 1.05; text-align: center; }
+.titre::after { content: ""; display: block; height: 4px; margin: 2px 6% 0; background: var(--craie-orange); border-radius: 3px; transform: rotate(-.5deg); }
+@media (max-width: 620px) {
+  .haut-partie { grid-template-columns: 1fr 1fr; grid-template-areas: "compteur chrono" "nom nom"; row-gap: 2px; }
+}
+
+/* ---------- boutons à la craie ---------- */
+button { font: inherit; color: inherit; }
+.bouton-craie { background: transparent; border: 2.5px solid var(--color-craie); color: var(--color-craie);
+  border-radius: 46% 54% 50% 50% / 55% 45% 55% 45%; padding: .45em 1.2em; font-family: var(--font-craie); font-weight: 800;
+  font-size: clamp(17px, 2.3vw, 22px); cursor: pointer; min-height: 48px; transition: transform .12s; }
+.bouton-craie.plein { background: var(--craie-jaune); border-color: var(--craie-jaune); color: var(--color-ardoise-ombre); }
+.bouton-craie:active { transform: scale(.96) rotate(-1deg); }
+.bouton-craie:focus-visible, .bouton-rond:focus-visible, .zone-nom:focus-visible { outline: 3px dashed var(--craie-jaune); outline-offset: 3px; }
+.bouton-rond { width: 48px; height: 48px; display: grid; place-items: center; padding: 0; cursor: pointer;
+  background: rgba(29, 43, 38, .55); border: 2.5px solid var(--color-craie); border-radius: 46% 54% 50% 50%; color: var(--color-craie); }
+.bouton-rond svg { width: 24px; height: 24px; }
+.bouton-rond.petit { width: 40px; height: 40px; flex: none; }
+.lien-craie { background: none; border: 0; color: var(--color-craie-douce); font-family: var(--font-craie); font-weight: 700; font-size: 17px;
+  text-decoration: underline wavy; text-underline-offset: 5px; cursor: pointer; padding: 8px; }
+.coin-bas { position: absolute; bottom: clamp(8px, 1.6vmin, 16px); display: flex; align-items: center; gap: 10px; }
+.coin-bas.droite { right: clamp(10px, 2vmin, 20px); }
+.coin-bas.gauche { left: clamp(10px, 2vmin, 20px); }
+.zone-courante { font-size: clamp(15px, 2vw, 19px); font-weight: 700; opacity: .85; }
+
+/* ---------- accueil : les continents écrits et entourés ---------- */
+.zone-nom { position: absolute; transform: translate(-50%, -50%) rotate(var(--r, -3deg)); background: rgba(29, 43, 38, .35);
+  border: 3px solid currentColor; border-radius: 48% 52% 45% 55% / 55% 45% 55% 45%; padding: .2em .8em .25em;
+  font-size: clamp(15px, 2.4vw, 26px); line-height: 1.05; white-space: nowrap; text-align: center; cursor: pointer; }
+.zone-nom small { display: block; font-size: .58em; font-weight: 700; opacity: .9; }
+.etiquettes.liste { position: absolute; left: 14px; right: 14px; bottom: 74px; display: grid; grid-template-columns: 1fr 1fr; gap: 14px 10px; }
+.etiquettes.liste .zone-nom { position: static; transform: rotate(var(--r, -3deg)); font-size: clamp(17px, 4.6vw, 22px); padding: .35em .5em; white-space: normal; min-height: 48px; }
+.zone-nom.c1 { color: var(--craie-jaune); } .zone-nom.c2 { color: var(--craie-bleue); }
+.zone-nom.c3 { color: var(--craie-rose); } .zone-nom.c4 { color: var(--craie-orange); }
+.monde-entier { position: absolute; bottom: clamp(8px, 1.6vmin, 16px); left: 50%; transform: translateX(-50%) rotate(-1deg);
+  display: inline-flex; align-items: center; gap: 8px; white-space: nowrap; }
+.monde-entier.ferme { border-style: dashed; opacity: .75; }
+.monde-entier svg { width: 20px; height: 20px; }
+
+/* ---------- panneaux écrits au tableau (choix, pause, fin, réglages) ---------- */
+.voile { position: absolute; inset: 0; display: grid; place-items: center; padding: 16px; background: rgba(20, 30, 26, .62); }
+.voile[hidden] { display: none; }
+.voile.clair { background: rgba(20, 30, 26, .22); align-items: end; }   /* fin de manche : on voit la carte coloriée */
+.note-tableau { width: min(520px, 100%); max-height: 100%; overflow: auto; text-align: center; padding: clamp(18px, 3vmin, 30px);
+  background: linear-gradient(160deg, var(--color-ardoise-2), var(--color-ardoise));
+  border: 2px dashed var(--color-craie-douce); border-radius: 8px 18px 10px 16px; box-shadow: 0 10px 30px rgba(0,0,0,.4);
+  animation: poser .25s ease-out both; }
+@keyframes poser { from { opacity: 0; transform: translateY(10px) rotate(-1deg); } }
+.note-tableau p { margin: .3em 0; font-size: clamp(16px, 2.2vw, 19px); }
+.note-tableau .grand { font-size: clamp(26px, 4.4vw, 40px); margin-bottom: .2em; }
+.note-tableau .record { color: var(--craie-jaune); font-size: clamp(19px, 2.8vw, 26px); }
+.boutons { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin: 18px 0 6px; }
+.interrupteur { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 10px 6px;
+  border-bottom: 1.5px dashed rgba(243,241,232,.25); font-family: var(--font-craie); font-weight: 700; font-size: 20px; text-align: left; cursor: pointer; }
+.interrupteur small { display: block; font-family: var(--font-texte); font-weight: 400; font-size: 13px; opacity: .75; }
+.interrupteur input { order: 2; width: 26px; height: 26px; accent-color: var(--craie-jaune); flex: none; }
+.interrupteur.grise { opacity: .6; cursor: default; }
+
+/* ---------- tests et mouvement réduit ---------- */
+.vite *, .vite *::after { animation-duration: 0s !important; animation-delay: 0s !important; transition: none !important; }
+@media (prefers-reduced-motion: reduce) { *, *::after { animation-duration: .01s !important; transition: none !important; } }

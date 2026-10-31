@@ -14,7 +14,7 @@ const monaco = carre('MC', 50, 50, 51, 51);
 const saintMarin = carre('SM', 90, 50, 91, 51);
 
 test('le rayon minimal vaut 44 px', () => assert.equal(RAYON_MIN, 44));
-test('un petit pays a un rond de 14 px', () => { assert.equal(RAYON_PETIT, 14); assert.equal(PETIT, 8); });
+test("le rond prioritaire d'un petit pays fait 9 px", () => { assert.equal(RAYON_PETIT, 9); assert.equal(PETIT, 8); });
 
 test("dans le contour d'un pays : ce pays, même si un petit pays est tout près", () => {
   assert.equal(paysTouche([190, 205], [italie, vatican]), 'IT');
