@@ -1,0 +1,5 @@
+tools/.cache/
+.superpowers/
+node_modules/
+tests/captures/
+__pycache__/
