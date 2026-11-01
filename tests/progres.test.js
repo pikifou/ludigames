@@ -57,3 +57,12 @@ test('enregistrerManche : record seulement si meilleur temps', () => {
   assert.deepEqual(enregistrerManche(e, 'europe', new Map(), 45.5), { record: true });
   assert.equal(e.meilleurs.europe, 45.5);
 });
+
+test("la langue choisie est gardée (sinon : celle de l'appareil)", () => {
+  const s = memoire();
+  assert.equal(charger(null, s).langue, null);
+  const e = charger(null, s); e.langue = 'en'; sauver(null, e, s);
+  assert.equal(charger(null, s).langue, 'en');
+  s.setItem(cle(null), JSON.stringify({ langue: 'klingon' }));
+  assert.equal(charger(null, s).langue, null);
+});

@@ -2,7 +2,7 @@
 import { creerCarte } from '../carte.js';
 import { MONDE, ZONES } from '../zones.js';
 import { pourcentage, mondeDebloque } from '../regles.js';
-import { t } from '../textes.js';
+import { t, choisirLangue } from '../textes.js';
 import { ICONES } from '../icones.js';
 import { sonActif } from '../sons.js';
 import { voixDisponible } from '../voix.js';
@@ -44,7 +44,7 @@ export function accueil(app) {
   ecrireEtiquettes();
   const carte = creerCarte(app.nouvelleCarte(), app.monde, MONDE,
     () => ({ haut: hud.querySelector('.haut').offsetHeight + 4, bas: enListe() ? etiquettes.offsetHeight + 84 : 64, gauche: 8, droite: 8 }),
-    { ronds: () => false });
+    { ronds: () => false, zoom: false });
   window.jeu.carte = carte;
   // Les pays connus sont coloriés : on voit sa progression d'un coup d'œil.
   for (const code of etat.connus) {
@@ -87,6 +87,8 @@ export function accueil(app) {
       <label class="interrupteur"><input type="checkbox" data-reglage="son" ${etat.son ? 'checked' : ''}><span>${t('son')}</span></label>
       <label class="interrupteur${voixOk ? '' : ' grise'}"><input type="checkbox" data-reglage="voix" ${etat.voix && voixOk ? 'checked' : ''} ${voixOk ? '' : 'disabled'}>
         <span>${t('voix')}${voixOk ? '' : `<small>${t('pasDeVoix')}</small>`}</span></label>
+      <label class="interrupteur"><span>${t('langue')}</span>
+        <select data-reglage="langue"><option value="fr" ${app.langue === 'fr' ? 'selected' : ''}>Français</option><option value="en" ${app.langue === 'en' ? 'selected' : ''}>English</option></select></label>
       <div class="reglages-appli"></div>
       <div class="boutons"><button class="bouton-craie" data-action="fermer">${t('retour')}</button></div>`);
     app.evenement('reglages', voile.querySelector('.reglages-appli'));
@@ -108,6 +110,7 @@ export function accueil(app) {
   hud.addEventListener('change', e => {
     const r = e.target.dataset.reglage;
     if (!r) return;
+    if (r === 'langue') { etat.langue = e.target.value; choisirLangue(etat.langue); app.sauver(); app.aller('accueil'); return; }
     etat[r] = e.target.checked;
     if (r === 'son') sonActif(etat.son);
     app.sauver();

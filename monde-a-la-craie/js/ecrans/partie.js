@@ -41,6 +41,7 @@ export function partie(app, zoneId) {
     { ronds: p => p.quiz && (zoneId === 'monde' || p.zone === zoneId) });
   const annonces = new Set();
   let manche, couleur = 0, ecoule = 0, depart = 0, enPause = false, attente = 0, finie = false;
+  let suite = null;   // ce qui reste à faire après l'animation d'une erreur (la pause la met en attente)
   window.jeu.carte = carte;
 
   // ---------- le chrono : il ne compte que pendant le jeu ----------
@@ -58,6 +59,7 @@ export function partie(app, zoneId) {
     carte.effacer(); carte.vueEntiere();
     manche = new Manche(choisirManche(zonePays, etat.connus, app.rand));
     window.jeu.manche = manche;
+    clearTimeout(attente); suite = null; enPause = false;
     couleur = 0; ecoule = 0; annonces.clear(); depart = performance.now(); finie = false;
     voile.hidden = true;
     majCompteur();
@@ -65,7 +67,7 @@ export function partie(app, zoneId) {
   }
 
   carte.surToucher(code => {
-    if (enPause || finie) return;
+    if (enPause || finie || suite) return;
     const question = manche.question;
     const r = manche.toucher(code);
     if (r.resultat === 'ignore') return;
@@ -85,16 +87,20 @@ export function partie(app, zoneId) {
     carte.etat(r.bon, 'montre');
     son('faux');
     majCompteur();
-    clearTimeout(attente);
-    attente = setTimeout(() => {
+    suite = () => {
+      suite = null;
       carte.etat(code, 'vide'); carte.ecrire(code, '');
       const montreDeBon = manche.resultats.has(r.bon);   // raté deux fois : il reste montré
       if (!montreDeBon) carte.etat(r.bon, 'vide');
+      manche.reprendre();
       if (manche.finie) terminer(); else ecrireNom(app.nom(manche.question));
-    }, DUREE_ERREUR);
+    };
+    clearTimeout(attente);
+    attente = setTimeout(suite, DUREE_ERREUR);
   });
 
   function terminer() {
+    if (finie) return;
     finie = true;
     const secondes = temps();
     ecoule = secondes; depart = 0;
@@ -121,13 +127,17 @@ export function partie(app, zoneId) {
   function pause() {
     if (finie) return;
     ecoule = temps(); enPause = true;
+    clearTimeout(attente);   // une erreur en cours attend la reprise
     voile.classList.remove('clair');
     voile.innerHTML = `<div class="note-tableau"><p class="grand craie">${t('pause')}</p>
       <div class="boutons"><button class="bouton-craie plein" data-action="reprendre">${t('reprendre')}</button>
       <button class="bouton-craie" data-action="quitter">${t('quitter')}</button></div></div>`;
     voile.hidden = false;
   }
-  function reprendre() { enPause = false; depart = performance.now(); voile.hidden = true; }
+  function reprendre() {
+    enPause = false; depart = performance.now(); voile.hidden = true;
+    if (suite) attente = setTimeout(suite, DUREE_ERREUR / 3);
+  }
 
   hud.addEventListener('click', e => {
     const b = e.target.closest('button');

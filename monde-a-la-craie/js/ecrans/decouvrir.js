@@ -15,8 +15,16 @@ export function decouvrir(app, zoneId) {
     <div class="coin-bas gauche"><button class="bouton-rond" data-action="retour" aria-label="${t('retour')}" title="${t('retour')}">${ICONES.retour}</button>
       <span class="zone-courante craie">${zone[app.langue]}</span></div>`;
   const nom = hud.querySelector('#nom');
-  const carte = creerCarte(app.nouvelleCarte(), app.monde, zone,
-    () => ({ haut: hud.querySelector('.haut').offsetHeight + 6, bas: 62, gauche: 8, droite: 8 }),
+  // La place du nom le plus long (avec son rattachement) est réservée : il ne recouvre jamais la carte.
+  const plusLong = app.monde.filter(f => zoneId === 'monde' || f.properties.zone === zoneId)
+    .map(f => app.nomComplet(f.properties.code)).sort((a, b) => b.length - a.length)[0];
+  function reserverNom() {
+    const texte = nom.textContent, consigne = nom.classList.contains('consigne');
+    nom.style.minHeight = ''; nom.classList.remove('consigne'); nom.textContent = plusLong;
+    nom.style.minHeight = nom.offsetHeight + 'px'; nom.textContent = texte; nom.classList.toggle('consigne', consigne);
+    return hud.querySelector('.haut').offsetHeight + 6;
+  }
+  const carte = creerCarte(app.nouvelleCarte(), app.monde, zone, () => ({ haut: reserverNom(), bas: 62, gauche: 8, droite: 8 }),
     { ronds: p => zoneId === 'monde' || p.zone === zoneId });
   window.jeu.carte = carte;
   const couleurs = new Map();

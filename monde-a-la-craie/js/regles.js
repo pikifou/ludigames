@@ -25,30 +25,31 @@ export function choisirManche(pays, connus, rand = Math.random) {
 }
 
 // Une manche : on pose les questions dans l'ordre ; un pays raté revient une fois en fin de manche.
+// Après une erreur, la manche attend reprendre() (fin de l'animation) : une seule horloge, celle de l'écran.
 export class Manche {
-  constructor(codes, maintenant = () => Date.now()) {
+  constructor(codes) {
     this.file = codes.slice();
-    this.maintenant = maintenant;
     this.rates = new Set();
     this.trouvesSet = new Set();
     this.resultats = new Map();   // code -> vrai si trouvé du premier coup
     this.trouves = 0;              // pays trouvés (du premier coup ou non)
     this.faites = 0;               // questions terminées (trouvées ou montrées)
-    this.bloque = -Infinity;
+    this.bloque = false;
   }
+  reprendre() { this.bloque = false; }
   get question() { return this.file.length ? this.file[0] : null; }
   get finie() { return this.file.length === 0; }
 
   toucher(code) {
     const q = this.question;
-    if (q === null || this.maintenant() < this.bloque || code == null || this.trouvesSet.has(code)) return { resultat: 'ignore' };
+    if (q === null || this.bloque || code == null || this.trouvesSet.has(code)) return { resultat: 'ignore' };
     this.file.shift();
     if (code === q) {
       this.trouvesSet.add(q); this.trouves++; this.faites++;
       this.resultats.set(q, !this.rates.has(q));
       return { resultat: 'juste' };
     }
-    this.bloque = this.maintenant() + DUREE_ERREUR;
+    this.bloque = true;
     if (this.rates.has(q)) { this.faites++; this.resultats.set(q, false); }   // raté deux fois : montré, on continue
     else { this.rates.add(q); this.file.push(q); }
     return { resultat: 'faux', bon: q };

@@ -1,7 +1,7 @@
 // Le Monde à la craie : chargement, progression, passage d'un écran à l'autre.
 import { chargerMonde } from './carte.js';
 import { charger, sauver } from './progres.js';
-import { langue } from './textes.js';
+import { langue, choisirLangue } from './textes.js';
 import { sonActif } from './sons.js';
 import { t } from './textes.js';
 import { accueil } from './ecrans/accueil.js';
@@ -16,7 +16,6 @@ function mulberry32(a) {
 }
 const rand = params.has('graine') ? mulberry32(+params.get('graine')) : Math.random;
 if (params.has('vite')) document.documentElement.classList.add('vite');
-document.documentElement.lang = langue;
 
 const ECRANS = { accueil, partie, decouvrir };
 const monde = await chargerMonde('data/monde.json');
@@ -36,10 +35,12 @@ if (Ludi) {
 const dansLudi = !!(Ludi && Ludi.inLauncher());
 const etat = charger(joueur);
 sonActif(etat.son);
+choisirLangue(etat.langue || langue);
 
 let quitter = () => {};
 const app = {
-  monde, etat, joueur, langue, rand,
+  monde, etat, joueur, rand,
+  get langue() { return langue; },
   ecran: document.getElementById('ecran'),
   hud: document.getElementById('hud'),
   // Ce que le jeu dit à Ludiworld (et au kit, ouvert seul).

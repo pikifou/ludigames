@@ -12,7 +12,7 @@ const TEXTES = {
     record: `Nouveau record${NB}!`, meilleur: `Meilleur temps${NB}: {t}`,
     encore: 'Encore une manche', changer: 'Changer de zone', plusDeManche: `C’est l’heure d’arrêter${NB}: à demain${NB}!`,
     pause: 'Pause', reprendre: 'Reprendre', quitter: 'Quitter',
-    reglages: 'Réglages', son: 'Son', voix: 'Voix', pasDeVoix: 'Pas de voix sur cet appareil',
+    reglages: 'Réglages', son: 'Son', voix: 'Voix', langue: 'Langue', pasDeVoix: 'Pas de voix sur cet appareil',
     ecouter: 'Écouter le nom', vueEntiere: 'Toute la carte',
     toucheUnPays: 'Touche un pays pour lire son nom',
     pleinEcran: 'Plein écran', installer: 'Installer le jeu',
@@ -28,7 +28,7 @@ const TEXTES = {
     record: 'New best!', meilleur: 'Best time: {t}',
     encore: 'One more round', changer: 'Change area', plusDeManche: 'Time to stop: see you tomorrow!',
     pause: 'Pause', reprendre: 'Resume', quitter: 'Quit',
-    reglages: 'Settings', son: 'Sound', voix: 'Voice', pasDeVoix: 'No voice on this device',
+    reglages: 'Settings', son: 'Sound', voix: 'Voice', langue: 'Language', pasDeVoix: 'No voice on this device',
     ecouter: 'Hear the name', vueEntiere: 'Whole map',
     toucheUnPays: 'Tap a country to read its name',
     pleinEcran: 'Full screen', installer: 'Install the game',
@@ -36,7 +36,9 @@ const TEXTES = {
   },
 };
 
-export const langue = (navigator.language || 'fr').toLowerCase().startsWith('fr') ? 'fr' : 'en';
+// Celle de l'appareil, sauf si l'enfant (ou le parent) en a choisi une dans les réglages.
+export let langue = (navigator.language || 'fr').toLowerCase().startsWith('fr') ? 'fr' : 'en';
+export function choisirLangue(l) { if (TEXTES[l]) { langue = l; document.documentElement.lang = l; } }
 
 export function t(cle, vars = {}) {
   let s = TEXTES[langue][cle] ?? TEXTES.fr[cle] ?? cle;

@@ -53,3 +53,7 @@ test('la fiche Ludiworld', () => {
 test('le kit Ludiworld est la version 0.2.0', () => {
   assert.match(lire('ludi.js'), /VERSION = '0\.2\.0'/);
 });
+
+test("le service worker télécharge des fichiers frais à l'installation (pas le cache HTTP)", () => {
+  assert.match(lire('sw.js'), /cache: 'reload'/);
+});

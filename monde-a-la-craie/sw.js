@@ -1,6 +1,6 @@
 // Service worker du Monde à la craie : tout le jeu est gardé à l'installation, il se joue hors ligne.
 // VERSION est l'empreinte des fichiers du jeu : node tools/version.js la met à jour.
-const VERSION = 'monde-a-la-craie-52e04b97b0';
+const VERSION = 'monde-a-la-craie-246c40338b';
 const FICHIERS = [
   './', 'index.html', 'style.css', 'manifest.webmanifest', 'ludi.js',
   'data/monde.json',
@@ -13,7 +13,8 @@ const FICHIERS = [
 ];
 
 self.addEventListener('install', e => {
-  e.waitUntil(caches.open(VERSION).then(c => c.addAll(FICHIERS)).then(() => self.skipWaiting()));
+  // cache: 'reload' : des fichiers frais, jamais un mélange avec ceux gardés par le cache HTTP du navigateur.
+  e.waitUntil(caches.open(VERSION).then(c => c.addAll(FICHIERS.map(f => new Request(f, { cache: 'reload' })))).then(() => self.skipWaiting()));
 });
 
 self.addEventListener('activate', e => {

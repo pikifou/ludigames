@@ -7,7 +7,7 @@ export function cle(joueur) {
 }
 
 function etatVide() {
-  return { connus: new Set(), meilleurs: {}, voix: false, son: true };
+  return { connus: new Set(), meilleurs: {}, voix: false, son: true, langue: null };   // langue null : celle de l'appareil
 }
 
 function stockageParDefaut() {
@@ -27,6 +27,7 @@ export function charger(joueur, stockage = stockageParDefaut()) {
     }
     if (typeof d.voix === 'boolean') e.voix = d.voix;
     if (typeof d.son === 'boolean') e.son = d.son;
+    if (d.langue === 'fr' || d.langue === 'en') e.langue = d.langue;
   } catch { /* stockage illisible : progression vide */ }
   return e;
 }
@@ -45,7 +46,7 @@ export function enregistrerManche(etat, zone, resultats, temps) {
 export function sauver(joueur, etat, stockage = stockageParDefaut()) {
   try {
     stockage && stockage.setItem(cle(joueur), JSON.stringify({
-      connus: [...etat.connus], meilleurs: etat.meilleurs, voix: etat.voix, son: etat.son,
+      connus: [...etat.connus], meilleurs: etat.meilleurs, voix: etat.voix, son: etat.son, langue: etat.langue,
     }));
   } catch { /* stockage plein ou bloqué : tant pis, le jeu continue */ }
 }

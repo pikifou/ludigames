@@ -1,7 +1,7 @@
 // La carte à la craie : dessin d'une zone en SVG, zoom (pincer, molette, glisser), toucher, marques sur les pays.
 // d3 (d3-geo) et topojson sont chargés avant les modules, en scripts classiques (lib/).
 import { ANCRES, cadrePoints } from './zones.js';
-import { paysTouche, PETIT } from './toucher.js';
+import { paysTouche, PETIT, RAYON_PETIT, RAYON_MIN } from './toucher.js';
 
 const d3 = globalThis.d3, topojson = globalThis.topojson;
 const NS = 'http://www.w3.org/2000/svg';
@@ -44,7 +44,9 @@ const FILTRE = `<filter id="craie" x="-5%" y="-5%" width="110%" height="110%">
 // marges : place laissée autour de la carte (le nom à trouver en haut, les boutons en bas), en px.
 // Un objet, ou une fonction qui le rend (relue à chaque recadrage : la hauteur du titre change avec l'écran).
 // options.ronds(proprietes) : les tout petits pays qui ont leur rond de craie (et qu'on peut toucher sans viser).
+// options.zoom === false : carte fixe (l'accueil, où les continents sont écrits par-dessus).
 export function creerCarte(svg, monde, zone, marges = {}, options = {}) {
+  const zoomable = options.zoom !== false;
   const avecRond = options.ronds || (() => true);
   const lireMarges = () => ({ haut: 12, bas: 12, gauche: 12, droite: 12, ...(typeof marges === 'function' ? marges() : marges) });
   svg.innerHTML = '';
@@ -184,6 +186,15 @@ export function creerCarte(svg, monde, zone, marges = {}, options = {}) {
     }
   }
 
+  function ambigu(x, y, code) {
+    const ecran = p => [tx + p.centre[0] * k, ty + p.centre[1] * k];
+    const d = p => { const [cx, cy] = ecran(p); return Math.hypot(x - cx, y - cy); };
+    const petit = p => p.visible && p.rayon * k < PETIT && avecRond(p.f.properties);
+    const vise = parCode.get(code);
+    if (vise && petit(vise) && d(vise) <= RAYON_PETIT) return false;   // le rond touché : c'est voulu
+    return pays.some(p => p.code !== code && petit(p) && d(p) <= RAYON_MIN);
+  }
+
   function zoomAutour(px, py, facteur) {
     const k2 = Math.min(ZOOM_MAX, Math.max(1, k * facteur));
     tx = px - (px - tx) * k2 / k; ty = py - (py - ty) * k2 / k; k = k2;
@@ -209,8 +220,8 @@ export function creerCarte(svg, monde, zone, marges = {}, options = {}) {
     doigts.set(e.pointerId, ici);
     if (doigts.size === 1) {
       if (Math.hypot(ici[0] - geste.depart[0], ici[1] - geste.depart[1]) > TAP_DISTANCE) geste.bouge = true;
-      if (geste.bouge) { tx += ici[0] - avant[0]; ty += ici[1] - avant[1]; appliquer(); }
-    } else if (doigts.size === 2) {
+      if (geste.bouge && zoomable) { tx += ici[0] - avant[0]; ty += ici[1] - avant[1]; appliquer(); }
+    } else if (doigts.size === 2 && zoomable) {
       const e2 = ecart(), m2 = milieu();
       tx += m2[0] - geste.milieu[0]; ty += m2[1] - geste.milieu[1];
       zoomAutour(m2[0], m2[1], e2 / (geste.ecart || e2));
@@ -222,12 +233,17 @@ export function creerCarte(svg, monde, zone, marges = {}, options = {}) {
     doigts.delete(e.pointerId);
     if (doigts.size || !geste) return;
     const g = geste; geste = null;
-    if (e.type === 'pointerup' && !g.bouge && !g.multi && performance.now() - g.t < TAP_DUREE) rappel(carte.paysEn(...local(e)));
+    if (e.type !== 'pointerup' || g.bouge || g.multi || performance.now() - g.t >= TAP_DUREE) return;
+    const [x, y] = local(e), code = carte.paysEn(x, y);
+    // Le doigt est tombé près d'un tout petit pays sans viser son rond : on zoome au lieu de répondre.
+    if (zoomable && k < ZOOM_MAX && ambigu(x, y, code)) { zoomAutour(x, y, 2.5); return; }
+    rappel(code);
   };
   svg.addEventListener('pointerup', fin);
   svg.addEventListener('pointercancel', fin);
   svg.addEventListener('wheel', e => {
     e.preventDefault();
+    if (!zoomable) return;
     const [x, y] = local(e);
     zoomAutour(x, y, e.deltaY < 0 ? 1.25 : 0.8);
   }, { passive: false });

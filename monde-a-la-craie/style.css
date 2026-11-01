@@ -73,10 +73,10 @@ html, body { margin: 0; height: 100%; overflow: hidden; background: var(--color-
   align-items: start; gap: 8px; pointer-events: none; }
 .haut > * { pointer-events: auto; }
 .compteur, .chrono { min-height: 1.3em; }   /* leur ligne a sa hauteur avant d'avoir du texte */
-.compteur { grid-area: compteur; font-size: clamp(18px, 2.6vw, 26px); }
+.compteur { grid-area: compteur; font-size: clamp(18px, 2.6vw, 26px); white-space: nowrap; }
 .chrono { grid-area: chrono; justify-self: end; font-size: clamp(16px, 2.2vw, 22px); font-weight: 700; opacity: .85; font-variant-numeric: tabular-nums; }
 .nom-ligne { grid-area: nom; display: flex; align-items: center; justify-content: center; gap: 8px; min-width: 0; }
-.nom { margin: 0; font-size: clamp(26px, 5.4vw, 54px); line-height: 1.08; text-align: center; overflow-wrap: anywhere;
+.nom { margin: 0; font-size: clamp(22px, min(5.4vw, 8vh), 54px); line-height: 1.08; text-align: center; overflow-wrap: anywhere;
   min-height: 1.08em; text-wrap: balance; }
 .nom::after { content: ""; display: block; height: .09em; margin: .06em 8% 0; background: var(--craie-jaune); border-radius: 3px; transform: rotate(.6deg); }
 .nom:empty::after { display: none; }
@@ -86,6 +86,8 @@ html, body { margin: 0; height: 100%; overflow: hidden; background: var(--color-
 .titre { margin: 0; font-size: clamp(26px, 5vw, 50px); line-height: 1.05; text-align: center; }
 .titre::after { content: ""; display: block; height: 4px; margin: 2px 6% 0; background: var(--craie-orange); border-radius: 3px; transform: rotate(-.5deg); }
 /* Dans Ludiworld : le coin en haut à gauche est au bouton retour de Ludiworld (120 × 44 px). */
+.dans-ludi .haut-partie { grid-template-columns: minmax(200px, 1fr) minmax(0, auto) minmax(80px, 1fr); }
+@media (max-width: 620px) { .dans-ludi .haut-partie { grid-template-columns: 1fr 1fr; } }
 .dans-ludi .haut-partie .compteur { margin-left: 120px; }
 .dans-ludi .haut-accueil, .dans-ludi .haut-decouvrir { padding-left: 128px; }
 .reglages-appli { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-top: 14px; }
@@ -145,6 +147,8 @@ button { font: inherit; color: inherit; }
 .interrupteur small { display: block; font-family: var(--font-texte); font-weight: 400; font-size: 13px; opacity: .75; }
 .interrupteur input { order: 2; width: 26px; height: 26px; accent-color: var(--craie-jaune); flex: none; }
 .interrupteur.grise { opacity: .6; cursor: default; }
+.interrupteur select { order: 2; font: 700 17px var(--font-craie); color: var(--color-craie); background: var(--color-ardoise-ombre);
+  border: 2px solid var(--color-craie-douce); border-radius: 8px 12px 9px 11px; padding: 4px 8px; min-height: 40px; }
 
 /* ---------- tests et mouvement réduit ---------- */
 .vite *, .vite *::after { animation-duration: 0s !important; animation-delay: 0s !important; transition: none !important; }

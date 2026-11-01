@@ -1,12 +1,11 @@
 // Règles des manches : node --test tests/regles.test.js
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { TAILLE_MANCHE, REVISIONS, DUREE_ERREUR, choisirManche, Manche, pourcentage, mondeDebloque } from '../monde-a-la-craie/js/regles.js';
+import { TAILLE_MANCHE, REVISIONS, choisirManche, Manche, pourcentage, mondeDebloque } from '../monde-a-la-craie/js/regles.js';
 
 const zone = Array.from({ length: 20 }, (_, i) => ({ code: 'P' + (i + 1), rang: i + 1 }));
 const rang = c => +c.slice(1);
 function hasard(graine = 1) { let s = graine; return () => ((s = (s * 16807) % 2147483647) / 2147483647); }
-function horloge() { const h = { t: 0 }; h.maintenant = () => h.t; return h; }
 
 test('choisirManche : 12 codes distincts', () => {
   const m = choisirManche(zone, new Set(), hasard());
@@ -41,7 +40,7 @@ test("choisirManche : l'ordre est mélangé", () => {
 const codes = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L'];
 
 test('Manche : juste colorie et avance', () => {
-  const m = new Manche(codes, horloge().maintenant);
+  const m = new Manche(codes);
   assert.equal(m.question, 'A');
   assert.deepEqual(m.toucher('A'), { resultat: 'juste' });
   assert.equal(m.trouves, 1);
@@ -49,31 +48,31 @@ test('Manche : juste colorie et avance', () => {
 });
 
 test('Manche : faux renvoie le bon code', () => {
-  const m = new Manche(codes, horloge().maintenant);
+  const m = new Manche(codes);
   assert.deepEqual(m.toucher('B'), { resultat: 'faux', bon: 'A' });
 });
 
-test('Manche : un toucher pendant 1,5 s après une erreur est ignoré', () => {
-  const h = horloge(), m = new Manche(codes, h.maintenant);
+test("Manche : après une erreur, tout toucher est ignoré jusqu'à reprendre() (fin de l'animation)", () => {
+  const m = new Manche(codes);
   m.toucher('Z');
-  h.t = DUREE_ERREUR - 1;
   assert.equal(m.toucher(m.question).resultat, 'ignore');
-  h.t = DUREE_ERREUR;
+  assert.equal(m.toucher('B').resultat, 'ignore');
+  m.reprendre();
   assert.equal(m.toucher(m.question).resultat, 'juste');
 });
 
 test('Manche : un raté revient une fois en fin de manche', () => {
-  const h = horloge(), m = new Manche(codes, h.maintenant);
-  m.toucher('Z'); h.t += DUREE_ERREUR;
+  const m = new Manche(codes);
+  m.toucher('Z'); m.reprendre();
   const vus = [];
   while (!m.finie) { vus.push(m.question); m.toucher(m.question); }
   assert.deepEqual(vus, [...codes.slice(1), 'A']);
 });
 
 test('Manche : raté deux fois, il est montré et la manche continue', () => {
-  const h = horloge(), m = new Manche(['A', 'B'], h.maintenant);
-  m.toucher('Z'); h.t += DUREE_ERREUR;
-  m.toucher('B'); h.t += DUREE_ERREUR;
+  const m = new Manche(['A', 'B']);
+  m.toucher('Z'); m.reprendre();
+  m.toucher('B'); m.reprendre();
   assert.equal(m.question, 'A');
   assert.deepEqual(m.toucher('Z'), { resultat: 'faux', bon: 'A' });
   assert.ok(m.finie);
@@ -82,7 +81,7 @@ test('Manche : raté deux fois, il est montré et la manche continue', () => {
 });
 
 test('Manche : toucher la mer ou un pays déjà trouvé est ignoré', () => {
-  const m = new Manche(codes, horloge().maintenant);
+  const m = new Manche(codes);
   m.toucher('A');
   assert.equal(m.toucher(null).resultat, 'ignore');
   assert.equal(m.toucher('A').resultat, 'ignore');
@@ -90,7 +89,7 @@ test('Manche : toucher la mer ou un pays déjà trouvé est ignoré', () => {
 });
 
 test('Manche : finie après 12 pays', () => {
-  const m = new Manche(codes, horloge().maintenant);
+  const m = new Manche(codes);
   for (const c of codes) m.toucher(c);
   assert.ok(m.finie);
   assert.equal(m.question, null);
@@ -98,8 +97,8 @@ test('Manche : finie après 12 pays', () => {
 });
 
 test('Manche : resultats, faux pour un pays raté puis trouvé', () => {
-  const h = horloge(), m = new Manche(codes, h.maintenant);
-  m.toucher('Z'); h.t += DUREE_ERREUR;
+  const m = new Manche(codes);
+  m.toucher('Z'); m.reprendre();
   while (!m.finie) m.toucher(m.question);
   assert.equal(m.resultats.get('A'), false);
   assert.equal(m.resultats.get('B'), true);

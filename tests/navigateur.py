@@ -124,6 +124,24 @@ def test_carte(nav):
     verifier(page.evaluate('taps') == ['VA'], f"toucher le rond du Vatican donne VA ({page.evaluate('taps')})")
     page.close()
 
+    # Toucher à côté d'un petit pays, dans un voisin : la carte zoome au lieu de répondre.
+    page, _ = page_carte(nav, 'europe', 1280, 800)
+    point = page.evaluate("""() => {
+      const r = document.querySelector('svg').getBoundingClientRect(), [x, y] = carte.ancreEcran('LU');
+      for (let a = 0; a < 8; a++) { const px = x + 15 * Math.cos(a * Math.PI / 4), py = y + 15 * Math.sin(a * Math.PI / 4);
+        const c = carte.paysEn(px - r.left, py - r.top); if (c && c !== 'LU') return [px, py, c]; }
+    }""")
+    page.evaluate('taps.length = 0')
+    page.mouse.click(point[0], point[1])
+    page.wait_for_timeout(100)
+    verifier(page.evaluate('taps') == [] and page.evaluate('carte.zoom') > 1,
+             f"toucher {point[2]} tout près du Luxembourg : la carte zoome au lieu de répondre ({page.evaluate('taps')}, zoom {page.evaluate('carte.zoom')})")
+    lu = page.evaluate("carte.ancreEcran('LU')")
+    page.mouse.click(lu[0], lu[1])
+    page.wait_for_timeout(100)
+    verifier(page.evaluate('taps') == ['LU'], f"après le zoom, toucher le Luxembourg donne LU ({page.evaluate('taps')})")
+    page.close()
+
 
 JEU = f'{BASE}/monde-a-la-craie/?graine=1&vite=1'
 
@@ -141,9 +159,15 @@ def ouvrir_jeu(nav, w=1280, h=800, init=None):
 
 
 def toucher(page, code):
-    x, y = page.evaluate('c => jeu.carte.ancreEcran(c)', code)
-    page.mouse.click(x, y)
-    page.wait_for_timeout(60)
+    # Comme un enfant : toute la carte d'abord ; si elle zoome (toucher près d'un tout petit pays), on retouche.
+    page.evaluate('jeu.carte.vueEntiere()')
+    for _ in range(4):
+        avant = page.evaluate('jeu.carte.zoom')
+        x, y = page.evaluate('c => jeu.carte.ancreEcran(c)', code)
+        page.mouse.click(x, y)
+        page.wait_for_timeout(60)
+        if page.evaluate('jeu.carte.zoom') == avant:
+            return
 
 
 def lancer(page, zone, action='jouer'):
@@ -245,6 +269,19 @@ def test_ecrans(nav):
     page.close()
 
 
+def jouer_dans_cadre(page, cadre):
+    """Finit la manche du jeu ouvert dans le faux Ludiworld (l'iframe couvre toute la page)."""
+    derniere = None
+    while not cadre.evaluate('jeu.manche.finie'):
+        q = cadre.evaluate('jeu.manche.question')
+        if q != derniere:
+            cadre.evaluate('jeu.carte.vueEntiere()')   # nouvelle question : toute la carte
+            derniere = q
+        x, y = cadre.evaluate('c => jeu.carte.ancreEcran(c)', q)
+        page.mouse.click(x, y)   # après un zoom (petit pays tout près), on retouche le même pays
+        page.wait_for_timeout(60)
+
+
 def test_appli(nav):
     print('appli')
     # Hors ligne : après une première visite, le jeu recharge et se joue sans réseau.
@@ -289,10 +326,7 @@ def test_appli(nav):
         const r = e.getBoundingClientRect(); return r.width && r.height && r.left < 120 && r.top < 44 && e.children.length === 0 && e.textContent.trim(); })
         .map(e => e.className || e.tagName)""")
     verifier(not occupe, f'dans Ludiworld : le coin en haut à gauche reste libre {occupe}')
-    while not cadre.evaluate('jeu.manche.finie'):
-        x, y = cadre.evaluate('c => jeu.carte.ancreEcran(c)', cadre.evaluate('jeu.manche.question'))
-        page.mouse.click(x, y)
-        page.wait_for_timeout(60)
+    jouer_dans_cadre(page, cadre)
     cadre.wait_for_selector('.fin', timeout=3000)
     page.wait_for_timeout(300)
     evenements = [m['event'] for m in page.evaluate('recus') if m.get('type') == 'ludi:event']
@@ -309,17 +343,89 @@ def test_appli(nav):
     cadre.click('[data-zone="europe"]')
     cadre.click('[data-action="jouer"]')
     finir = cadre.evaluate('jeu.manche.question')
-    while not cadre.evaluate('jeu.manche.finie'):
-        x, y = cadre.evaluate('c => jeu.carte.ancreEcran(c)', cadre.evaluate('jeu.manche.question'))
-        page.mouse.click(x, y)
-        page.wait_for_timeout(60)
+    jouer_dans_cadre(page, cadre)
     cadre.wait_for_selector('.fin', timeout=3000)
     verifier(cadre.locator('[data-action="encore"]').count() == 0, "temps écoulé : plus de « Encore une manche »")
     verifier(not erreurs, f'dans Ludiworld : aucune erreur ({erreurs[:2]})')
     page.close()
 
+    # Dans Ludiworld, téléphone en paysage, nom long : le compteur reste sur une ligne, hors du coin réservé.
+    page = nav.new_page(viewport={'width': 800, 'height': 360}, locale='fr-FR')
+    page.goto(f'{BASE}/tests/lanceur.html')
+    page.wait_for_function("document.getElementById('jeu').contentWindow.jeu?.pret", timeout=15000)
+    cadre = page.frames[1]
+    cadre.click('[data-zone="afrique"]')
+    cadre.click('[data-action="jouer"]')
+    cadre.wait_for_function("jeu.carte && jeu.carte.zone.id === 'afrique'")
+    cadre.evaluate("jeu.ecrireNom('République démocratique du Congo')")
+    page.wait_for_timeout(300)
+    c = cadre.locator('#compteur').bounding_box()
+    verifier(c['width'] > 40 and c['height'] < 45, f'dans Ludiworld en paysage : le compteur tient sur une ligne ({c})')
+    verifier(c['x'] >= 120 or c['y'] >= 44, f'dans Ludiworld en paysage : le compteur laisse le coin libre ({c})')
+    page.close()
 
-SECTIONS = {'carte': test_carte, 'ecrans': test_ecrans, 'appli': test_appli}
+
+AUTRE_PAYS = """(z) => { const q = jeu.manche.question;
+  return jeu.app.monde.find(f => f.properties.quiz && f.properties.zone === z && f.properties.code !== q
+    && !jeu.manche.trouvesSet.has(f.properties.code) && f.properties.rang < 20).properties.code; }"""
+
+
+def test_corrections(nav):
+    print('corrections de la relecture')
+    # Pause pendant la dernière erreur : la manche suivante doit se jouer normalement.
+    page, erreurs = ouvrir_jeu(nav)
+    lancer(page, 'europe')
+    while page.evaluate('jeu.manche.faites') < 11:
+        toucher(page, page.evaluate('jeu.manche.question'))
+    toucher(page, page.evaluate(AUTRE_PAYS, 'europe'))
+    page.wait_for_timeout(1700)
+    toucher(page, page.evaluate(AUTRE_PAYS, 'europe'))
+    page.click('[data-action="pause"]')
+    page.wait_for_timeout(1700)
+    verifier(page.locator('.fin').count() == 0, "pause pendant l'erreur : la fin attend la reprise")
+    page.click('[data-action="reprendre"]')
+    page.wait_for_selector('.fin', timeout=3000)
+    page.click('[data-action="encore"]')
+    page.wait_for_timeout(300)
+    toucher(page, page.evaluate('jeu.manche.question'))
+    verifier(page.inner_text('#compteur').strip() == '1 / 12', f"après une pause pendant l'erreur, la manche suivante se joue ({page.inner_text('#compteur')!r})")
+    page.close()
+
+    # Découvrir sur téléphone en paysage : un nom long ne recouvre pas la carte.
+    page, erreurs = ouvrir_jeu(nav, 800, 360)
+    lancer(page, 'afrique', 'decouvrir')
+    toucher(page, 'CD')
+    page.wait_for_timeout(300)
+    boite = page.locator('#nom').bounding_box()
+    v = page.evaluate('jeu.carte.zoneVisible')
+    verifier(boite['y'] + boite['height'] <= v['y0'] + 1, f'Découvrir : un nom long ne recouvre pas la carte ({boite} / {v})')
+    page.close()
+
+    # Téléphone en paysage : la carte garde une taille utile.
+    page, erreurs = ouvrir_jeu(nav, 800, 360)
+    lancer(page, 'afrique')
+    v = page.evaluate('jeu.carte.zoneVisible')
+    verifier(v['y1'] - v['y0'] >= 220, f"téléphone en paysage : la carte fait au moins 220 px de haut ({v['y1'] - v['y0']})")
+    page.close()
+
+    # Accueil : la carte du monde ne zoome pas (les continents écrits restent à leur place).
+    page, erreurs = ouvrir_jeu(nav)
+    page.mouse.move(640, 400)
+    page.mouse.wheel(0, -400)
+    page.wait_for_timeout(200)
+    verifier(page.evaluate('jeu.carte.zoom') == 1, "accueil : la carte du monde ne zoome pas")
+    # Langue : on peut la choisir dans les réglages.
+    page.click('[data-action="reglages"]')
+    page.select_option('[data-reglage="langue"]', 'en')
+    page.wait_for_timeout(300)
+    verifier(page.inner_text('.titre').strip() == 'The World in Chalk', f"réglages : la langue passe en anglais ({page.inner_text('.titre')!r})")
+    page.reload()
+    page.wait_for_function('window.jeu && jeu.pret')
+    verifier(page.inner_text('.titre').strip() == 'The World in Chalk', 'la langue choisie est gardée')
+    page.close()
+
+
+SECTIONS = {'carte': test_carte, 'ecrans': test_ecrans, 'appli': test_appli, 'corrections': test_corrections}
 
 if __name__ == '__main__':
     voulues = sys.argv[1:] or list(SECTIONS)
