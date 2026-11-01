@@ -1,6 +1,6 @@
 // Service worker du Monde à la craie : tout le jeu est gardé à l'installation, il se joue hors ligne.
 // VERSION est l'empreinte des fichiers du jeu : node tools/version.js la met à jour.
-const VERSION = 'monde-a-la-craie-a9c63eed8f';
+const VERSION = 'monde-a-la-craie-7bc64c2109';
 const FICHIERS = [
   './', 'index.html', 'style.css', 'manifest.webmanifest', 'ludi.js',
   'data/monde.json', 'data/savoirs.json',

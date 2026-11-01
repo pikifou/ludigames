@@ -103,13 +103,25 @@ def test_carte(nav):
     page.wait_for_function("carte.toileMer && carte.toileMer.isConnected")
     pixel = """(lonlat) => { const t = carte.toileMer, r = document.querySelector('svg').getBoundingClientRect(), [x, y] = carte.ecranDe(lonlat);
       const s = t.width / r.width, n = 5, d = t.getContext('2d').getImageData(Math.round((x - r.left) * s) - 2, Math.round((y - r.top) * s) - 2, n, n).data;
-      let a = 0, b = 0, rr = 0; for (let i = 0; i < d.length; i += 4) { a += d[i + 3]; b += d[i + 2] * d[i + 3]; rr += d[i] * d[i + 3]; }
-      return { alpha: a / (n * n), bleu: b > rr }; }"""
+      let a = 0, b = 0, rr = 0, lum = 0; const fond = [43, 63, 55];   // l'ardoise sous la mer
+      for (let i = 0; i < d.length; i += 4) { const al = d[i + 3] / 255; a += d[i + 3]; b += d[i + 2] * d[i + 3]; rr += d[i] * d[i + 3];
+        lum += [0, 1, 2].reduce((s, c) => s + al * d[i + c] + (1 - al) * fond[c], 0) / 3; }
+      return { alpha: a / (n * n), bleu: b > rr, clarte: lum / (n * n) }; }"""
     mer = [page.evaluate(pixel, pt)['alpha'] > 0 for pt in ([3, 56], [-20, 45], [18, 35], [2.5, 47], [10, 51], [-4, 40])]
     verifier(mer == [True, True, True, False, False, False], f'la mer est bleutée, pas les terres (mer du Nord, Atlantique, Méditerranée / France, Allemagne, Espagne : {mer})')
-    cote, large = page.evaluate(pixel, [-9.75, 39.5]), page.evaluate(pixel, [-20, 45])
-    verifier(cote['bleu'] and large['bleu'], f'la mer est en craie bleue ({cote}, {large})')
-    verifier(cote['alpha'] > large['alpha'] * 1.5, f'la mer est plus claire le long des côtes ({cote["alpha"]:.0f} contre {large["alpha"]:.0f} au large)')
+    # Depuis la terre (un point de terre et un point du large), on cherche la côte, puis on mesure la clarté à quelques pixels.
+    littoral = """([terre, mer]) => { const t = carte.toileMer, c = t.getContext('2d'), r = document.querySelector('svg').getBoundingClientRect(), s = t.width / r.width;
+      const fond = [43, 63, 55], [ax, ay] = carte.ecranDe(terre), [bx, by] = carte.ecranDe(mer), n = Math.hypot(bx - ax, by - ay), ux = (bx - ax) / n, uy = (by - ay) / n;
+      const clarte = q => { const d = c.getImageData(Math.round((ax + ux * q - r.left) * s), Math.round((ay + uy * q - r.top) * s), 1, 1).data, a = d[3] / 255;
+        return { a: d[3], l: [0, 1, 2].reduce((v, i) => v + a * d[i] + (1 - a) * fond[i], 0) / 3 }; };
+      let q = 0; while (q < n && clarte(q).a === 0) q++;
+      const moy = (de, a) => { let v = 0; for (let i = de; i <= a; i++) v += clarte(q + i).l; return v / (a - de + 1); };
+      return { bord: moy(1, 3), cote: moy(8, 14), large: moy(80, 90) }; }"""
+    bord_cote = page.evaluate(littoral, [[-8, 39.5], [-20, 39.5]])
+    bord, cote, large = {'clarte': bord_cote['bord']}, {'clarte': bord_cote['cote']}, page.evaluate(pixel, [-20, 45])
+    verifier(large['bleu'], f'la mer est en craie bleue ({large})')
+    verifier(cote['clarte'] < large['clarte'] - 4, f'près des côtes, la mer est plus foncée : elle s’enfonce ({cote["clarte"]:.0f} contre {large["clarte"]:.0f} au large)')
+    verifier(bord['clarte'] > cote['clarte'] + 4, f'contre la côte, un liseré clair ({bord["clarte"]:.0f} contre {cote["clarte"]:.0f} un peu plus loin)')
     grain = page.evaluate("""() => { const t = carte.toileMer, r = document.querySelector('svg').getBoundingClientRect(), [x, y] = carte.ecranDe([-22, 47]);
       const s = t.width / r.width, d = t.getContext('2d').getImageData(Math.round((x - r.left) * s), Math.round((y - r.top) * s), 40, 40).data;
       const v = []; for (let i = 3; i < d.length; i += 4) v.push(d[i]); const m = v.reduce((a, b) => a + b) / v.length;
@@ -122,8 +134,9 @@ def test_carte(nav):
     page.wait_for_timeout(600)
     verifier(page.evaluate('carte.zoom') > 5 and page.evaluate('carte.toileMer.style.transform') in ('translate(0px, 0px) scale(1)', 'none', ''),
              f"après un zoom, la mer est repeinte à la nouvelle échelle ({page.evaluate('carte.toileMer.style.transform')})")
-    cote, large = page.evaluate(pixel, [-4.62, 48.6]), page.evaluate(pixel, [-6.5, 48.0])
-    verifier(cote['alpha'] > large['alpha'] * 1.5, f'zoomé : la côte bretonne est plus claire ({cote["alpha"]:.0f} contre {large["alpha"]:.0f})')
+    z = page.evaluate(littoral, [[-3.5, 48.2], [-7, 48.2]])
+    verifier(z['cote'] < z['large'] - 4 and z['bord'] > z['cote'] + 4,
+             f"zoomé : liseré clair puis mer plus foncée le long de la Bretagne ({z['bord']:.0f} / {z['cote']:.0f} / {z['large']:.0f})")
     page.evaluate('carte.vueEntiere()')
     fr = page.evaluate("carte.ancreEcran('FR')")
     page.mouse.click(fr[0], fr[1])

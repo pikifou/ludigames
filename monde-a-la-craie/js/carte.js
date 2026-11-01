@@ -182,7 +182,7 @@ export function creerCarte(svg, monde, zone, marges = {}, options = {}) {
   };
 
   // La mer à la craie bleue, peinte pour la vue du moment (zoom k, décalage tx, ty) : un fond léger,
-  // plus clair le long des côtes (les terres dessinées en petit et floutées, posées sous la mer),
+  // un liseré clair contre la côte puis une ombre qui montre que l'eau s'enfonce (les terres dessinées en petit et floutées),
   // et un grain de petits traits de craie couchés, de taille constante à l'écran et accrochés à la carte.
   function peindreMer() {
     if (!formesMer) return;
@@ -203,13 +203,13 @@ export function creerCarte(svg, monde, zone, marges = {}, options = {}) {
     c.clip(sphere);
     c.setTransform(e, 0, 0, e, 0, 0);
     c.imageSmoothingEnabled = true; c.imageSmoothingQuality = 'high';
-    // [réduction, flou en px à l'écran, force] : un halo serré et clair contre la côte, un autre large et doux vers le large.
-    for (const [reduit, rayon, force] of [[3, 7, .55], [6, 22, .45]]) {
+    // [réduction, flou en px à l'écran, couleur, force] : une ombre large qui s'éteint vers le large, puis un liseré clair et serré.
+    for (const [reduit, rayon, couleur, force] of [[4, 18, '12, 22, 19', .7], [2, 3, bleu, .75]]) {
       const petite = document.createElement('canvas'), r = 1 / reduit;
       petite.width = Math.max(1, Math.ceil(W * r)); petite.height = Math.max(1, Math.ceil(H * r));
       const p = petite.getContext('2d');
       if ('filter' in p) p.filter = `blur(${rayon * u * r}px)`;   // sinon (vieux Safari), l'agrandissement seul adoucit le bord
-      carteVersEcran(p, r); p.fillStyle = `rgb(${bleu})`; p.fill(terre);
+      carteVersEcran(p, r); p.fillStyle = `rgb(${couleur})`; p.fill(terre);
       c.globalAlpha = force;
       c.drawImage(petite, 0, 0, petite.width / r, petite.height / r);
     }
