@@ -120,19 +120,35 @@ button { font: inherit; color: inherit; }
 .coin-bas.gauche { left: clamp(10px, 2vmin, 20px); }
 .zone-courante { font-size: clamp(15px, 2vw, 19px); font-weight: 700; opacity: .85; }
 
-/* ---------- accueil : les continents écrits et entourés ---------- */
-.zone-nom { position: absolute; transform: translate(-50%, -50%) rotate(var(--r, -3deg)); background: rgba(29, 43, 38, .35);
-  border: 3px solid currentColor; border-radius: 48% 52% 45% 55% / 55% 45% 55% 45%; padding: .2em .8em .25em;
-  font-size: clamp(15px, 2.4vw, 26px); line-height: 1.05; white-space: nowrap; text-align: center; cursor: pointer; }
-.zone-nom small { display: block; font-size: .58em; font-weight: 700; opacity: .9; }
-.etiquettes.liste { position: absolute; left: 14px; right: 14px; bottom: 74px; display: grid; grid-template-columns: 1fr 1fr; gap: 14px 10px; }
-.etiquettes.liste .zone-nom { position: static; transform: rotate(var(--r, -3deg)); font-size: clamp(17px, 4.6vw, 22px); padding: .35em .5em; white-space: normal; min-height: 48px; }
-.zone-nom.c1 { color: var(--craie-jaune); } .zone-nom.c2 { color: var(--craie-bleue); }
-.zone-nom.c3 { color: var(--craie-rose); } .zone-nom.c4 { color: var(--craie-orange); }
-.monde-entier { position: absolute; bottom: clamp(8px, 1.6vmin, 16px); left: 50%; transform: translateX(-50%) rotate(-1deg);
-  display: inline-flex; align-items: center; gap: 8px; white-space: nowrap; }
-.monde-entier.ferme { border-style: dashed; opacity: .75; }
-.monde-entier:active { transform: translateX(-50%) scale(.96) rotate(-1deg); }
+/* ---------- accueil : les continents en étiquettes de papier collées au tableau ---------- */
+/* Un papier de couleur aux bords déchirés (::before), un bout de scotch (::after), une ombre portée : du collage, pas de la craie. */
+.zone-nom, .monde-entier { --papier: var(--craie-jaune); isolation: isolate; background: none; border: 0; border-radius: 0;
+  color: var(--color-ardoise-ombre); font-family: var(--font-craie); font-weight: 800; cursor: pointer;
+  filter: drop-shadow(0 3px 0 rgba(15, 24, 20, .45)) drop-shadow(0 6px 8px rgba(0, 0, 0, .25)); }
+.zone-nom::before, .monde-entier::before { content: ""; position: absolute; inset: 0; z-index: -1;
+  background: linear-gradient(100deg, rgba(255, 255, 255, .28), transparent 35%, rgba(0, 0, 0, .06) 80%),
+              repeating-linear-gradient(92deg, rgba(0, 0, 0, .025) 0 2px, transparent 2px 7px), var(--papier);
+  clip-path: polygon(0 7%, 9% 1%, 21% 5%, 36% 0, 51% 4%, 66% 0, 80% 5%, 92% 1%, 100% 4%, 99% 34%, 100% 66%, 98% 100%,
+                     84% 95%, 70% 100%, 55% 96%, 40% 100%, 26% 95%, 12% 100%, 0 96%, 2% 62%, 0 30%); }
+.zone-nom:nth-child(even)::before, .monde-entier::before {
+  clip-path: polygon(0 2%, 14% 6%, 29% 0, 44% 5%, 58% 1%, 73% 6%, 87% 0, 100% 5%, 98% 40%, 100% 72%, 99% 97%,
+                     86% 100%, 72% 95%, 57% 100%, 42% 95%, 28% 100%, 13% 96%, 1% 100%, 0 68%, 2% 36%); }
+.zone-nom::after, .monde-entier::after { content: ""; position: absolute; top: -.32em; left: 50%; width: 2.4em; height: .78em;
+  transform: translateX(-50%) rotate(-5deg); background: rgba(255, 252, 240, .55); box-shadow: 0 1px 1px rgba(0, 0, 0, .12); }
+.zone-nom:nth-child(even)::after { left: 18%; transform: translateX(-50%) rotate(-24deg); }
+.zone-nom { position: absolute; transform: translate(-50%, -50%) rotate(var(--r, -3deg)); padding: .32em .9em .36em;
+  font-size: clamp(15px, 2.3vw, 25px); line-height: 1.05; white-space: nowrap; text-align: center; transition: transform .12s; }
+.zone-nom small { display: block; font-size: .56em; font-weight: 700; opacity: .75; margin-top: .1em; }
+.zone-nom:active { transform: translate(-50%, -50%) rotate(var(--r, -3deg)) scale(.95); }
+.etiquettes.liste { position: absolute; left: 14px; right: 14px; bottom: 74px; display: grid; grid-template-columns: 1fr 1fr; gap: 18px 12px; }
+.etiquettes.liste .zone-nom { position: relative; transform: rotate(var(--r, -3deg)); font-size: clamp(17px, 4.6vw, 22px); padding: .4em .5em; white-space: normal; min-height: 48px; }
+.etiquettes.liste .zone-nom:active { transform: rotate(var(--r, -3deg)) scale(.95); }
+.zone-nom.c1 { --papier: var(--craie-jaune); } .zone-nom.c2 { --papier: var(--craie-bleue); }
+.zone-nom.c3 { --papier: var(--craie-rose); } .zone-nom.c4 { --papier: var(--craie-orange); }
+.monde-entier { --papier: var(--color-craie); position: absolute; bottom: clamp(10px, 1.8vmin, 18px); left: 50%; transform: translateX(-50%) rotate(-1.5deg);
+  display: inline-flex; align-items: center; gap: 8px; white-space: nowrap; padding: .45em 1.3em; min-height: 48px; font-size: clamp(17px, 2.3vw, 22px); }
+.monde-entier.ferme { --papier: #b9bfae; color: rgba(29, 43, 38, .8); }
+.monde-entier:active { transform: translateX(-50%) scale(.96) rotate(-1.5deg); }
 .monde-entier svg { width: 20px; height: 20px; }
 
 /* ---------- panneaux écrits au tableau (choix, pause, fin, réglages) ---------- */
