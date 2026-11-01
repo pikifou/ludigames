@@ -98,14 +98,33 @@ def test_carte(nav):
         page.close()
 
     page, _ = page_carte(nav, 'europe', 1280, 800)
-    # La mer : une craie bleutée sous les pays, partout où il n'y a pas de terre (les lacs des pays restent des terres).
-    dans_mer = """(lonlat) => { const m = document.querySelector('path.mer'); if (!m) return null;
-      const [x, y] = carte.ecranDe(lonlat), r = document.querySelector('svg').getBoundingClientRect();
-      return m.isPointInFill(new DOMPoint(x - r.left, y - r.top)); }"""
-    mer = [page.evaluate(dans_mer, pt) for pt in ([3, 56], [-20, 45], [18, 35], [2.5, 47], [10, 51], [-4, 40])]
+    # La mer : une craie bleutée sous les pays, partout où il n'y a pas de terre (les lacs des pays restent des terres),
+    # plus claire le long des côtes (pour bien voir les littoraux), avec un grain de craie.
+    page.wait_for_function("carte.toileMer && carte.toileMer.isConnected")
+    pixel = """(lonlat) => { const t = carte.toileMer, r = document.querySelector('svg').getBoundingClientRect(), [x, y] = carte.ecranDe(lonlat);
+      const s = t.width / r.width, n = 5, d = t.getContext('2d').getImageData(Math.round((x - r.left) * s) - 2, Math.round((y - r.top) * s) - 2, n, n).data;
+      let a = 0, b = 0, rr = 0; for (let i = 0; i < d.length; i += 4) { a += d[i + 3]; b += d[i + 2] * d[i + 3]; rr += d[i] * d[i + 3]; }
+      return { alpha: a / (n * n), bleu: b > rr }; }"""
+    mer = [page.evaluate(pixel, pt)['alpha'] > 0 for pt in ([3, 56], [-20, 45], [18, 35], [2.5, 47], [10, 51], [-4, 40])]
     verifier(mer == [True, True, True, False, False, False], f'la mer est bleutée, pas les terres (mer du Nord, Atlantique, Méditerranée / France, Allemagne, Espagne : {mer})')
-    teinte = page.evaluate("getComputedStyle(document.querySelector('path.mer')).fill")
-    verifier('143, 211, 255' in teinte, f'la mer est en craie bleue ({teinte})')
+    cote, large = page.evaluate(pixel, [-9.75, 39.5]), page.evaluate(pixel, [-20, 45])
+    verifier(cote['bleu'] and large['bleu'], f'la mer est en craie bleue ({cote}, {large})')
+    verifier(cote['alpha'] > large['alpha'] * 1.5, f'la mer est plus claire le long des côtes ({cote["alpha"]:.0f} contre {large["alpha"]:.0f} au large)')
+    grain = page.evaluate("""() => { const t = carte.toileMer, r = document.querySelector('svg').getBoundingClientRect(), [x, y] = carte.ecranDe([-22, 47]);
+      const s = t.width / r.width, d = t.getContext('2d').getImageData(Math.round((x - r.left) * s), Math.round((y - r.top) * s), 40, 40).data;
+      const v = []; for (let i = 3; i < d.length; i += 4) v.push(d[i]); const m = v.reduce((a, b) => a + b) / v.length;
+      return Math.sqrt(v.reduce((a, b) => a + (b - m) ** 2, 0) / v.length); }""")
+    verifier(grain > 3, f'la mer a un grain de craie (écart {grain:.1f})')
+    # Après un zoom, la mer est repeinte à la nouvelle échelle : le grain garde sa taille, la côte reste nette.
+    bx, by = page.evaluate('carte.ecranDe([-4.5, 48.3])')
+    for _ in range(9):
+        page.mouse.move(bx, by); page.mouse.wheel(0, -100); page.wait_for_timeout(20)
+    page.wait_for_timeout(600)
+    verifier(page.evaluate('carte.zoom') > 5 and page.evaluate('carte.toileMer.style.transform') in ('translate(0px, 0px) scale(1)', 'none', ''),
+             f"après un zoom, la mer est repeinte à la nouvelle échelle ({page.evaluate('carte.toileMer.style.transform')})")
+    cote, large = page.evaluate(pixel, [-4.62, 48.6]), page.evaluate(pixel, [-6.5, 48.0])
+    verifier(cote['alpha'] > large['alpha'] * 1.5, f'zoomé : la côte bretonne est plus claire ({cote["alpha"]:.0f} contre {large["alpha"]:.0f})')
+    page.evaluate('carte.vueEntiere()')
     fr = page.evaluate("carte.ancreEcran('FR')")
     page.mouse.click(fr[0], fr[1])
     verifier(page.evaluate('taps') == ['FR'], f"un toucher sur la France donne FR ({page.evaluate('taps')})")

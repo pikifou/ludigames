@@ -49,6 +49,8 @@ function bornesProches(f, partie, path) {
   return [[x0, y0], [x1, y1]];
 }
 
+const TUILES = new Map();   // les tuiles du grain de la mer, par finesse d'écran
+
 const FILTRE = `<filter id="craie" x="-5%" y="-5%" width="110%" height="110%">
   <feTurbulence type="fractalNoise" baseFrequency="1.4" numOctaves="2" result="b"/>
   <feDisplacementMap in="SourceGraphic" in2="b" scale="1.6" result="d"/>
@@ -69,11 +71,19 @@ export function creerCarte(svg, monde, zone, marges = {}, options = {}) {
   const estompe = options.estompe || (() => false);
   const lireMarges = () => ({ haut: 12, bas: 12, gauche: 12, droite: 12, ...(typeof marges === 'function' ? marges() : marges) });
   svg.innerHTML = '';
-  el('defs', {}, svg).innerHTML = FILTRE;
+  const defs = el('defs', {}, svg);
+  defs.innerHTML = FILTRE;
   const vue = el('g', { class: 'vue' }, svg);
   const terres = el('g', { class: 'terres' }, vue);
-  // La mer : tout le globe moins les terres (pair-impair), sous les pays et dans le même grain de craie.
-  const mer = el('path', { class: 'mer', 'fill-rule': 'evenodd' }, terres);
+  // La mer : une toile peinte une fois par recadrage (dégradé le long des côtes, grain de craie, terres découpées),
+  // posée sous la carte et déplacée par une transformation CSS : glisser et zoomer ne la redessinent pas.
+  for (const v of svg.parentNode.querySelectorAll(':scope > canvas.mer')) v.remove();
+  const toile = document.createElement('canvas');
+  let formesMer = null, peint = null, attenteMer = 0;   // peint : la vue { k, tx, ty } que la toile montre
+  toile.className = 'mer';
+  toile.setAttribute('aria-hidden', 'true');
+  svg.parentNode.insertBefore(toile, svg);
+  if (getComputedStyle(svg).position === 'static') svg.style.position = 'relative';   // la carte reste au-dessus de la mer
   const ronds = el('g', { class: 'ronds' }, vue);
   const marquesG = el('g', { class: 'marques' }, vue);
 
@@ -112,7 +122,14 @@ export function creerCarte(svg, monde, zone, marges = {}, options = {}) {
         p.rayon = Math.max(b[1][0] - b[0][0], b[1][1] - b[0][1]) / 2;
         p.visible = isFinite(p.centre[0]) && isFinite(p.centre[1]);   // sur l'autre face du globe : ni rond, ni toucher
       }
-      mer.setAttribute('d', (path({ type: 'Sphere' }) || '') + pays.map(p => p.path ? p.path.getAttribute('d') : '').join(''));
+      // Le globe, rogné au cadre de la carte : sinon certaines projections (l'Europe) lui donnent des coordonnées immenses.
+      // (Les pays, eux, ne se rognent pas : d3 en retournerait certains, qui couvriraient alors toute la carte.)
+      projection.clipExtent([[-60, -60], [W + 60, H + 60]]);
+      const globe = path({ type: 'Sphere' }) || '';
+      projection.clipExtent(null);
+      const cotes = pays.map(p => p.path ? p.path.getAttribute('d') : '').join('');
+      formesMer = { sphere: new Path2D(globe), terre: new Path2D(cotes) };
+      peint = null;   // la mer se repeint au prochain appliquer()
       carte.zoneVisible = { x0: rect.left + ext[0][0], y0: rect.top + ext[0][1], x1: rect.left + ext[1][0], y1: rect.top + ext[1][1] };
       carte.vueEntiere();
     },
@@ -161,13 +178,109 @@ export function creerCarte(svg, monde, zone, marges = {}, options = {}) {
       dessinerMarques();
     },
     effacer() { marques.clear(); dessinerMarques(); },
-    detruire() { window.removeEventListener('resize', surRedim); },
+    detruire() { window.removeEventListener('resize', surRedim); clearTimeout(attenteMer); toile.remove(); },
   };
+
+  // La mer à la craie bleue, peinte pour la vue du moment (zoom k, décalage tx, ty) : un fond léger,
+  // plus clair le long des côtes (les terres dessinées en petit et floutées, posées sous la mer),
+  // et un grain de petits traits de craie couchés, de taille constante à l'écran et accrochés à la carte.
+  function peindreMer() {
+    if (!formesMer) return;
+    const { sphere, terre } = formesMer;
+    const e = Math.min(window.devicePixelRatio || 1, 2), L = Math.max(1, Math.round(W * e)), Hh = Math.max(1, Math.round(H * e));
+    if (toile.width !== L || toile.height !== Hh) { toile.width = L; toile.height = Hh; }
+    const ici = svg.getBoundingClientRect(), cadre = (toile.offsetParent || document.body).getBoundingClientRect();
+    Object.assign(toile.style, { left: ici.left - cadre.left + 'px', top: ici.top - cadre.top + 'px', width: W + 'px', height: H + 'px' });
+    const c = toile.getContext('2d'), bleu = '143, 211, 255', u = Math.max(0.6, Math.min(W, H) / 800);
+    const carteVersEcran = (ctx, f) => ctx.setTransform(f * k, 0, 0, f * k, f * tx, f * ty);
+    c.setTransform(1, 0, 0, 1, 0, 0);
+    c.globalCompositeOperation = 'source-over'; c.globalAlpha = 1;
+    c.clearRect(0, 0, L, Hh);
+    carteVersEcran(c, e);
+    c.fillStyle = `rgba(${bleu}, .12)`;
+    c.fill(sphere);
+    c.save();
+    c.clip(sphere);
+    c.setTransform(e, 0, 0, e, 0, 0);
+    c.imageSmoothingEnabled = true; c.imageSmoothingQuality = 'high';
+    // [réduction, flou en px à l'écran, force] : un halo serré et clair contre la côte, un autre large et doux vers le large.
+    for (const [reduit, rayon, force] of [[3, 7, .55], [6, 22, .45]]) {
+      const petite = document.createElement('canvas'), r = 1 / reduit;
+      petite.width = Math.max(1, Math.ceil(W * r)); petite.height = Math.max(1, Math.ceil(H * r));
+      const p = petite.getContext('2d');
+      if ('filter' in p) p.filter = `blur(${rayon * u * r}px)`;   // sinon (vieux Safari), l'agrandissement seul adoucit le bord
+      carteVersEcran(p, r); p.fillStyle = `rgb(${bleu})`; p.fill(terre);
+      c.globalAlpha = force;
+      c.drawImage(petite, 0, 0, petite.width / r, petite.height / r);
+    }
+    c.globalAlpha = 1;
+    // Le grain : une tuile de petits traits répétée sur toute la mer, accrochée à la carte (elle suit les glisser),
+    // de taille constante à l'écran. Des traits clairs, puis des creux où la craie n'a pas pris.
+    const t = tuilesGrain(e, u);
+    for (const [mode, tuile] of [['source-over', t.clair], ['destination-out', t.creux]]) {
+      const motif = c.createPattern(tuile, 'repeat');
+      motif.setTransform(new DOMMatrix().translate(tx, ty).scale(1 / e));
+      c.globalCompositeOperation = mode; c.fillStyle = motif;
+      c.fillRect(0, 0, W, H);
+    }
+    c.restore();
+    // Les terres découpées : la mer s'arrête à la côte (les lacs, trous dans les pays, restent de l'eau).
+    carteVersEcran(c, e);
+    c.globalCompositeOperation = 'destination-out';
+    c.fillStyle = '#000';
+    c.fill(terre);
+    c.globalCompositeOperation = 'source-over';
+    c.setTransform(1, 0, 0, 1, 0, 0);
+    peint = { k, tx, ty };
+    toile.style.transform = '';
+    carte.toileMer = toile;
+  }
+
+  // Les deux tuiles du grain (dessinées une fois) : traits clairs, et creux à effacer.
+  function tuilesGrain(e, u) {
+    const cle = e + '/' + u;
+    if (TUILES.has(cle)) return TUILES.get(cle);
+    const S = Math.round(160 * u), bleu = '143, 211, 255';
+    let graine = 7;
+    const hasard = () => (graine = (graine * 16807) % 2147483647) / 2147483647;
+    const dessiner = teintes => {
+      const t = document.createElement('canvas');
+      t.width = t.height = Math.round(S * e);
+      const c = t.getContext('2d');
+      c.scale(e, e); c.lineCap = 'round'; c.lineWidth = 1.3 * u;
+      for (const teinte of teintes) {
+        c.strokeStyle = teinte; c.beginPath();
+        for (let i = 0; i < S * S / 400; i++) {
+          const x = hasard() * S, y = hasard() * S, l = (2 + hasard() * 5) * u, a = -0.45 + hasard() * 0.25;
+          for (const [dx, dy] of [[0, 0], [-S, 0], [0, -S], [-S, -S]]) {   // les traits qui dépassent reviennent de l'autre côté
+            c.moveTo(x + dx, y + dy); c.lineTo(x + dx + Math.cos(a) * l, y + dy + Math.sin(a) * l);
+          }
+        }
+        c.stroke();
+      }
+      return t;
+    };
+    const t = { clair: dessiner([`rgba(${bleu}, .10)`, `rgba(${bleu}, .17)`]), creux: dessiner(['rgba(0, 0, 0, .35)', 'rgba(0, 0, 0, .55)']) };
+    TUILES.set(cle, t);
+    return t;
+  }
+
+  // Pendant un geste, la toile suit la carte (une transformation CSS, sans rien redessiner) ;
+  // un instant après, on la repeint à la nouvelle échelle.
+  function suivreMer() {
+    clearTimeout(attenteMer);
+    if (!peint) return peindreMer();
+    if (peint.k === k && peint.tx === tx && peint.ty === ty) return;
+    const f = k / peint.k;
+    toile.style.transform = `translate(${tx - peint.tx * f}px, ${ty - peint.ty * f}px) scale(${f})`;
+    attenteMer = setTimeout(peindreMer, 220);
+  }
 
   function appliquer() {
     const maxX = 0, minX = W - W * k, maxY = 0, minY = H - H * k;
     tx = Math.min(maxX, Math.max(minX, tx)); ty = Math.min(maxY, Math.max(minY, ty));
     vue.setAttribute('transform', `translate(${tx} ${ty}) scale(${k})`);
+    suivreMer();
     dessinerRonds();
     dessinerMarques();
   }
