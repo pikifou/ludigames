@@ -32,6 +32,23 @@ function plusGrandePartie(f) {
   return best;
 }
 
+// Ce qu'on entoure pour montrer un pays : sa plus grande terre et les îles toutes proches,
+// pas les îles lointaines (les Açores pour le Portugal, les Galápagos, Hawaï, les îles des Caraïbes pour les Pays-Bas).
+function bornesProches(f, partie, path) {
+  const b = path.bounds(partie);
+  if (!b.flat().every(isFinite)) return path.bounds(f);
+  if (!f.geometry || f.geometry.type !== 'MultiPolygon') return b;
+  const marge = Math.max(b[1][0] - b[0][0], b[1][1] - b[0][1]) / 2;
+  let [[x0, y0], [x1, y1]] = b;
+  for (const coords of f.geometry.coordinates) {
+    const c = path.bounds({ type: 'Polygon', coordinates: coords });
+    if (!c.flat().every(isFinite)) continue;
+    if (c[1][0] < b[0][0] - marge || c[0][0] > b[1][0] + marge || c[1][1] < b[0][1] - marge || c[0][1] > b[1][1] + marge) continue;
+    x0 = Math.min(x0, c[0][0]); y0 = Math.min(y0, c[0][1]); x1 = Math.max(x1, c[1][0]); y1 = Math.max(y1, c[1][1]);
+  }
+  return [[x0, y0], [x1, y1]];
+}
+
 const FILTRE = `<filter id="craie" x="-5%" y="-5%" width="110%" height="110%">
   <feTurbulence type="fractalNoise" baseFrequency="1.4" numOctaves="2" result="b"/>
   <feDisplacementMap in="SourceGraphic" in2="b" scale="1.6" result="d"/>
@@ -55,6 +72,8 @@ export function creerCarte(svg, monde, zone, marges = {}, options = {}) {
   el('defs', {}, svg).innerHTML = FILTRE;
   const vue = el('g', { class: 'vue' }, svg);
   const terres = el('g', { class: 'terres' }, vue);
+  // La mer : tout le globe moins les terres (pair-impair), sous les pays et dans le même grain de craie.
+  const mer = el('path', { class: 'mer', 'fill-rule': 'evenodd' }, terres);
   const ronds = el('g', { class: 'ronds' }, vue);
   const marquesG = el('g', { class: 'marques' }, vue);
 
@@ -87,11 +106,13 @@ export function creerCarte(svg, monde, zone, marges = {}, options = {}) {
           p.bornes = path.bounds(p.f);
           p.centre = ANCRES[p.code] ? projection(ANCRES[p.code]) : path.centroid(p.partie);
         }
+        p.entoure = point ? p.bornes : bornesProches(p.f, p.partie, path);
         // La taille d'un pays, c'est celle de sa plus grande terre : Kiribati, éparpillé sur tout le Pacifique, est « petit ».
         const b = point ? p.bornes : path.bounds(p.partie);
         p.rayon = Math.max(b[1][0] - b[0][0], b[1][1] - b[0][1]) / 2;
         p.visible = isFinite(p.centre[0]) && isFinite(p.centre[1]);   // sur l'autre face du globe : ni rond, ni toucher
       }
+      mer.setAttribute('d', (path({ type: 'Sphere' }) || '') + pays.map(p => p.path ? p.path.getAttribute('d') : '').join(''));
       carte.zoneVisible = { x0: rect.left + ext[0][0], y0: rect.top + ext[0][1], x1: rect.left + ext[1][0], y1: rect.top + ext[1][1] };
       carte.vueEntiere();
     },
@@ -179,7 +200,7 @@ export function creerCarte(svg, monde, zone, marges = {}, options = {}) {
         el('path', { class: 'croix', d: `M${x - s} ${y - s}L${x + s} ${y + s}M${x + s} ${y - s}L${x - s} ${y + s}` }, marquesG);
       }
       if (d.etat === 'montre') {
-        const b = p.bornes, rx = Math.max((b[1][0] - b[0][0]) / 2 + 10 * u, 22 * u), ry = Math.max((b[1][1] - b[0][1]) / 2 + 10 * u, 22 * u);
+        const b = p.entoure, rx = Math.max((b[1][0] - b[0][0]) / 2 + 10 * u, 22 * u), ry = Math.max((b[1][1] - b[0][1]) / 2 + 10 * u, 22 * u);
         el('ellipse', { class: 'entoure', cx: (b[0][0] + b[1][0]) / 2, cy: (b[0][1] + b[1][1]) / 2, rx, ry }, marquesG);
       }
       if (d.texte) {

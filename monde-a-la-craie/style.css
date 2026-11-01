@@ -17,6 +17,8 @@
 /* ---------- la carte ---------- */
 svg.carte { display: block; touch-action: none; user-select: none; -webkit-user-select: none; cursor: pointer; }
 svg.carte .terres { filter: url(#craie); }
+/* La mer : une craie bleue passée à plat, légère ; le filtre de craie des terres lui donne son grain. */
+svg.carte .mer { fill: var(--craie-bleue); fill-opacity: .14; stroke: none; }
 svg.carte .pays { fill: rgba(243, 241, 232, .07); stroke: var(--color-craie); stroke-width: 1; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
 svg.carte .pays.trouve { fill-opacity: .92; }
 svg.carte .c1 { fill: var(--craie-jaune); }

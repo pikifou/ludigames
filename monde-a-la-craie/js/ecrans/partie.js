@@ -1,5 +1,5 @@
 // Une manche : le nom s'écrit à la craie, on touche le pays. 12 pays (moins en Facile sur un petit continent), un chrono qui ne sert qu'à battre son temps.
-// Après une erreur sur un pays dont on a des savoirs : une note « Le savais-tu ? », le chrono s'arrête, on touche pour continuer.
+// Après chaque réponse, juste ou fausse, sur un pays dont on a des savoirs : une note « Le savais-tu ? », le chrono s'arrête, on touche pour continuer.
 import { creerCarte } from '../carte.js';
 import { zoneParId } from '../zones.js';
 import { DUREE_ERREUR, choisirManche, Manche, pourcentage } from '../regles.js';
@@ -89,7 +89,15 @@ export function partie(app, zoneId) {
       carte.etat(code, 'trouve', (couleur++ % 4) + 1);
       son('juste');
       majCompteur();
-      return manche.finie ? terminer() : ecrireNom(app.nom(manche.question));
+      const savoirJuste = app.savoir(code);
+      if (!savoirJuste) return manche.finie ? terminer() : ecrireNom(app.nom(manche.question));
+      // La note se lit, puis on passe au pays suivant (ou à la fin).
+      suite = () => {
+        suite = null;
+        lecture = false; note.hidden = true; depart = performance.now();
+        if (manche.finie) terminer(); else ecrireNom(app.nom(manche.question));
+      };
+      return montrerSavoir(code, savoirJuste);
     }
     // Raté : une croix et son nom sur le pays touché, le bon pays entouré, puis on continue.
     carte.etat(code, 'erreur'); carte.ecrire(code, app.nom(code));
@@ -101,8 +109,7 @@ export function partie(app, zoneId) {
       suite = null;
       if (lecture) { lecture = false; note.hidden = true; depart = performance.now(); }
       carte.etat(code, 'vide'); carte.ecrire(code, '');
-      const montreDeBon = manche.resultats.has(r.bon);   // raté deux fois : il reste montré
-      if (!montreDeBon) carte.etat(r.bon, 'vide');
+      carte.etat(r.bon, 'vide');   // même raté deux fois : on ne le laisse pas entouré, on croirait qu'il faut encore le chercher
       manche.reprendre();
       if (manche.finie) terminer(); else ecrireNom(app.nom(manche.question));
     };

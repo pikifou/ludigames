@@ -83,7 +83,29 @@ def test_carte(nav):
                 page.screenshot(path=str(CAPTURES / f'carte-{zone}.png'))
             page.close()
 
+    # Le bon pays entouré : sa terre et ses îles proches, pas les îles lointaines (Açores, Galápagos, Hawaï…).
+    for zone, code, loin, terre in [('europe', 'PT', [-28, 38.5], (-9.5, -6.2, 39.5)), ('europe', 'ES', [-15.5, 28.1], (-9.3, 3.3, 40)),
+                                    ('europe', 'NL', None, (3.4, 7.2, 52.3)), ('amerique-sud', 'EC', [-90.5, -0.7], (-81, -75.2, -1.5)),
+                                    ('amerique-nord', 'US', [-157, 21], (-124.5, -67, 40))]:
+        page, _ = page_carte(nav, zone, 1280, 800)
+        page.evaluate(f"carte.etat('{code}', 'montre')")
+        e = page.evaluate("(() => { const e = document.querySelector('.entoure'); return ['cx', 'cy', 'rx', 'ry'].map(a => +e.getAttribute(a)); })()")
+        x0, x1 = page.evaluate(f"[carte.ecranDe([{terre[0]}, {terre[2]}])[0], carte.ecranDe([{terre[1]}, {terre[2]}])[0]]")
+        verifier(2 * e[2] <= 2 * abs(x1 - x0) + 40, f'{code} : l’ellipse reste à la taille du pays ({2 * e[2]:.0f} px pour {abs(x1 - x0):.0f} px de terre)')
+        if loin:
+            lx, ly = page.evaluate(f'carte.ecranDe({loin})')
+            verifier(((lx - e[0]) / e[2]) ** 2 + ((ly - e[1]) / e[3]) ** 2 > 1, f'{code} : les îles lointaines ne sont pas entourées')
+        page.close()
+
     page, _ = page_carte(nav, 'europe', 1280, 800)
+    # La mer : une craie bleutée sous les pays, partout où il n'y a pas de terre (les lacs des pays restent des terres).
+    dans_mer = """(lonlat) => { const m = document.querySelector('path.mer'); if (!m) return null;
+      const [x, y] = carte.ecranDe(lonlat), r = document.querySelector('svg').getBoundingClientRect();
+      return m.isPointInFill(new DOMPoint(x - r.left, y - r.top)); }"""
+    mer = [page.evaluate(dans_mer, pt) for pt in ([3, 56], [-20, 45], [18, 35], [2.5, 47], [10, 51], [-4, 40])]
+    verifier(mer == [True, True, True, False, False, False], f'la mer est bleutée, pas les terres (mer du Nord, Atlantique, Méditerranée / France, Allemagne, Espagne : {mer})')
+    teinte = page.evaluate("getComputedStyle(document.querySelector('path.mer')).fill")
+    verifier('143, 211, 255' in teinte, f'la mer est en craie bleue ({teinte})')
     fr = page.evaluate("carte.ancreEcran('FR')")
     page.mouse.click(fr[0], fr[1])
     verifier(page.evaluate('taps') == ['FR'], f"un toucher sur la France donne FR ({page.evaluate('taps')})")
@@ -184,12 +206,19 @@ def continuer(page):
         page.click('.savoir')
 
 
+def repondre(page, code):
+    """Toucher un pays, puis passer la note « Le savais-tu ? » si elle s'ouvre (après une bonne réponse aussi)."""
+    toucher(page, code)
+    if page.locator('.savoir:not([hidden])').count():
+        continuer(page)
+
+
 def finir_manche(page):
     vus = []
     while not page.evaluate('jeu.manche.finie'):
         q = page.evaluate('jeu.manche.question')
         vus.append(q)
-        toucher(page, q)
+        repondre(page, q)
     return vus
 
 
@@ -271,7 +300,7 @@ def test_ecrans(nav):
     page, erreurs = ouvrir_jeu(nav, init=compter)
     lancer(page, 'europe')
     for _ in range(3):
-        toucher(page, page.evaluate('jeu.manche.question'))
+        repondre(page, page.evaluate('jeu.manche.question'))
     verifier(page.evaluate('window.__dits') == 0, 'voix coupée par défaut : rien n\'est lu')
     page.close()
 
@@ -294,8 +323,11 @@ def jouer_dans_cadre(page, cadre):
             cadre.evaluate('jeu.carte.vueEntiere()')   # nouvelle question : toute la carte
             derniere = q
         x, y = cadre.evaluate('c => jeu.carte.ancreEcran(c)', q)
-        page.mouse.click(x, y)   # après un zoom (petit pays tout près), on retouche le même pays
+        page.mouse.click(x, y)   # après un zoom (petit pays tout près), on retouche le même pays ; une note ouverte se passe
         page.wait_for_timeout(60)
+    page.wait_for_timeout(900)   # la note « Le savais-tu ? » du dernier pays
+    if cadre.locator('.savoir:not([hidden])').count():
+        cadre.click('.savoir')
 
 
 def test_appli(nav):
@@ -354,7 +386,7 @@ def test_appli(nav):
     verifier(any(e['item'] == 'Suède' for e in competences), 'dans Ludiworld : la notion porte le nom du pays')
     verifier(cadre.evaluate("localStorage.getItem('monde-a-la-craie.v1.Joshua') !== null"), 'dans Ludiworld : progression rangée sous le prénom')
     page.evaluate("envoyer({ type: 'ludi:wrapup', minutes: 0 })")
-    page.wait_for_timeout(100)
+    page.wait_for_timeout(1100)   # les boutons de fin ne répondent qu'après une seconde
     cadre.click('[data-action="changer"]')
     cadre.click('[data-zone="europe"]')
     cadre.click('[data-action="jouer"]')
@@ -403,11 +435,49 @@ def test_corrections(nav):
     verifier(not erreurs, f'fin de manche : aucune erreur ({erreurs[:2]})')
     page.close()
 
+    # Bonne réponse : la note « Le savais-tu ? » s'ouvre aussi, le chrono attend qu'on l'ait lue.
+    page, erreurs = ouvrir_jeu(nav)
+    lancer(page, 'europe')
+    q = page.evaluate('jeu.manche.question')
+    toucher(page, q)
+    nom_q = page.evaluate('c => jeu.app.nom(c)', q)
+    verifier(page.locator('.savoir:not([hidden])').count() == 1 and nom_q in page.inner_text('.savoir'),
+             f'bonne réponse : la note « Le savais-tu ? » parle du pays trouvé ({nom_q})')
+    c1 = page.inner_text('#chrono'); page.wait_for_timeout(1000); c2 = page.inner_text('#chrono')
+    verifier(c1 == c2, f'bonne réponse : le chrono attend pendant la note ({c1} → {c2})')
+    verifier('trouve' in (page.get_attribute(f'path[data-code="{q}"]', 'class') or ''), 'bonne réponse : le pays reste colorié')
+    page.click('.savoir')
+    page.wait_for_timeout(300)
+    suivant = page.evaluate('c => jeu.app.nom(c)', page.evaluate('jeu.manche.question'))
+    verifier(page.locator('.savoir:not([hidden])').count() == 0 and page.inner_text('#nom').strip() == suivant,
+             f'bonne réponse : toucher la note passe au pays suivant ({suivant})')
+    verifier(not erreurs, f'bonne réponse : aucune erreur ({erreurs[:2]})')
+    page.close()
+
+    # Un pays raté deux fois : montré, puis plus entouré quand on passe la note (sinon on croit qu'il faut encore le chercher).
+    page, erreurs = ouvrir_jeu(nav)
+    lancer(page, 'europe')
+    cible = page.evaluate('jeu.manche.question')
+    for _ in range(30):
+        q = page.evaluate('jeu.manche.question')
+        if q is None:
+            break
+        if q != cible:
+            repondre(page, q)
+            continue
+        toucher(page, page.evaluate(AUTRE_PAYS, 'europe'))
+        verifier(page.locator('.entoure').count() == 1, 'raté : le bon pays est entouré')
+        continuer(page)
+        page.wait_for_timeout(200)
+        verifier(page.locator('.entoure').count() == 0, f'raté : quand on passe la note, le pays n’est plus entouré ({cible})')
+    verifier(page.evaluate('jeu.manche.finie'), 'raté deux fois : la manche va au bout')
+    page.close()
+
     # Pause pendant la dernière erreur : la manche suivante doit se jouer normalement.
     page, erreurs = ouvrir_jeu(nav)
     lancer(page, 'europe')
     while page.evaluate('jeu.manche.faites') < 11:
-        toucher(page, page.evaluate('jeu.manche.question'))
+        repondre(page, page.evaluate('jeu.manche.question'))
     toucher(page, page.evaluate(AUTRE_PAYS, 'europe'))
     continuer(page)
     toucher(page, page.evaluate(AUTRE_PAYS, 'europe'))
@@ -592,6 +662,7 @@ def test_niveaux(nav):
     verifier(not erreurs, f'aucune erreur ({erreurs[:2]})')
 
     # Difficile : rien d'estompé, et le choix est gardé.
+    page.wait_for_timeout(1100)   # les boutons de fin ne répondent qu'après une seconde
     page.click('[data-action="changer"]')
     page.click('[data-zone="europe"]')
     page.click('[data-niveau="difficile"]')
