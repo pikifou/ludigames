@@ -1,12 +1,13 @@
 // Les petits savoirs sur les pays (data/savoirs.json) : une capitale et trois choses à retenir par pays.
 export const CAPITALE = { fr: 'Capitale : ', en: 'Capital: ' };
 
-// Tout ce qu'on sait d'un pays, dans une langue : { capitale, faits: [{ e, texte }] }, ou null.
+// Tout ce qu'on sait d'un pays, dans une langue : { capitale, faits: [{ e, texte, img? }] }, ou null.
 // capitale null : capitale disputée (Israël, Palestine), on n'en montre pas.
+// img : { src, auteur, licence, source }, une image trouvée sur Wikimedia Commons (pour quelques pays seulement).
 export function fiche(savoirs, code, langue) {
   const s = code && savoirs[code];
   if (!s) return null;
-  return { capitale: s.capitale ? s.capitale[langue] : null, faits: s.faits.map(f => ({ e: f.e, texte: f[langue] })) };
+  return { capitale: s.capitale ? s.capitale[langue] : null, faits: s.faits.map(f => f.img ? { e: f.e, texte: f[langue], img: f.img } : { e: f.e, texte: f[langue] }) };
 }
 
 // Après une erreur, un seul savoir : les trois l'un après l'autre, puis la capitale, puis on recommence.

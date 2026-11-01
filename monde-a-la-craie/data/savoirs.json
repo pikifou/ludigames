@@ -997,17 +997,35 @@
       {
         "e": "🏰",
         "fr": "Le château de Neuschwanstein a inspiré le château de La Belle au bois dormant de Disney.",
-        "en": "Neuschwanstein Castle inspired Disney’s Sleeping Beauty castle."
+        "en": "Neuschwanstein Castle inspired Disney’s Sleeping Beauty castle.",
+        "img": {
+          "src": "img/savoirs/de-1.webp",
+          "auteur": "Wilfredor",
+          "licence": "CC0",
+          "source": "https://commons.wikimedia.org/wiki/File:Neuschwanstein_Castle_2024.jpg"
+        }
       },
       {
         "e": "📖",
         "fr": "Les frères Grimm y ont rassemblé des contes comme Blanche-Neige et Hansel et Gretel.",
-        "en": "The Brothers Grimm collected fairy tales there, like Snow White and Hansel and Gretel."
+        "en": "The Brothers Grimm collected fairy tales there, like Snow White and Hansel and Gretel.",
+        "img": {
+          "src": "img/savoirs/de-2.webp",
+          "auteur": "Arthur Rackham",
+          "licence": "Domaine public",
+          "source": "https://commons.wikimedia.org/wiki/File:Hansel-and-gretel-rackham.jpg"
+        }
       },
       {
         "e": "🥨",
         "fr": "On y mange des bretzels, des pains en forme de nœud.",
-        "en": "People eat pretzels there, bread shaped like a knot."
+        "en": "People eat pretzels there, bread shaped like a knot.",
+        "img": {
+          "src": "img/savoirs/de-3.webp",
+          "auteur": "Anton Maienfeldt",
+          "licence": "CC0",
+          "source": "https://commons.wikimedia.org/wiki/File:Gr%C3%BCndonnerstags-Brezel.jpg"
+        }
       }
     ]
   },
@@ -1227,17 +1245,35 @@
       {
         "e": "💃",
         "fr": "Le flamenco est une danse où l’on claque des mains et des talons.",
-        "en": "Flamenco is a dance with clapping hands and stamping heels."
+        "en": "Flamenco is a dance with clapping hands and stamping heels.",
+        "img": {
+          "src": "img/savoirs/es-1.webp",
+          "auteur": "Armartinell",
+          "licence": "CC BY 4.0",
+          "source": "https://commons.wikimedia.org/wiki/File:Flamenco_en_M%C3%A9xico,_bailaora.jpg"
+        }
       },
       {
         "e": "🍅",
         "fr": "Dans la ville de Buñol, une fête où tout le monde se lance des tomates : la Tomatina.",
-        "en": "In the town of Buñol, there is a festival where everyone throws tomatoes: La Tomatina."
+        "en": "In the town of Buñol, there is a festival where everyone throws tomatoes: La Tomatina.",
+        "img": {
+          "src": "img/savoirs/es-2.webp",
+          "auteur": "Graham McLellan from London, UK",
+          "licence": "CC BY 2.0",
+          "source": "https://commons.wikimedia.org/wiki/File:Tomatina_2006.jpg"
+        }
       },
       {
         "e": "⛪",
         "fr": "À Barcelone, la Sagrada Família est une immense église commencée il y a plus de 140 ans.",
-        "en": "In Barcelona, the Sagrada Família is a huge church started more than 140 years ago."
+        "en": "In Barcelona, the Sagrada Família is a huge church started more than 140 years ago.",
+        "img": {
+          "src": "img/savoirs/es-3.webp",
+          "auteur": "Jopparn",
+          "licence": "CC BY-SA 3.0",
+          "source": "https://commons.wikimedia.org/wiki/File:Sagrada_Fam%C3%ADlia_2010.JPG"
+        }
       }
     ]
   },
@@ -1342,17 +1378,35 @@
       {
         "e": "🗼",
         "fr": "La tour Eiffel, à Paris, mesure plus de 300 mètres de haut.",
-        "en": "The Eiffel Tower, in Paris, is more than 300 metres tall."
+        "en": "The Eiffel Tower, in Paris, is more than 300 metres tall.",
+        "img": {
+          "src": "img/savoirs/fr-1.webp",
+          "auteur": "Benh LIEU SONG",
+          "licence": "Domaine public",
+          "source": "https://commons.wikimedia.org/wiki/File:Tour_Eiffel_Wikimedia_Commons.jpg"
+        }
       },
       {
         "e": "🏔️",
         "fr": "Le mont Blanc, dans les Alpes, est la plus haute montagne d’Europe de l’Ouest.",
-        "en": "Mont Blanc, in the Alps, is the highest mountain in Western Europe."
+        "en": "Mont Blanc, in the Alps, is the highest mountain in Western Europe.",
+        "img": {
+          "src": "img/savoirs/fr-2.webp",
+          "auteur": "Tinelot Wittermans",
+          "licence": "CC BY-SA 3.0",
+          "source": "https://commons.wikimedia.org/wiki/File:Mont_Blanc_and_Dome_du_Gouter.jpg"
+        }
       },
       {
         "e": "🌴",
         "fr": "La France a aussi des terres très loin, comme la Guyane ou l’île de La Réunion.",
-        "en": "France also has lands far away, like French Guiana or the island of Réunion."
+        "en": "France also has lands far away, like French Guiana or the island of Réunion.",
+        "img": {
+          "src": "img/savoirs/fr-3.webp",
+          "auteur": "Philippe Bourjon",
+          "licence": "CC BY-SA 3.0",
+          "source": "https://commons.wikimedia.org/wiki/File:Vue_du_lagon_de_L%27Ermitage_au_matin.jpg"
+        }
       }
     ]
   },
@@ -1388,17 +1442,35 @@
       {
         "e": "🕰️",
         "fr": "Big Ben est le nom de la grosse cloche de la tour de l’horloge, à Londres.",
-        "en": "Big Ben is the name of the big bell in the clock tower in London."
+        "en": "Big Ben is the name of the big bell in the clock tower in London.",
+        "img": {
+          "src": "img/savoirs/gb-1.webp",
+          "auteur": "Julian Herzog",
+          "licence": "CC BY 4.0",
+          "source": "https://commons.wikimedia.org/wiki/File:Big_Ben_Elizabeth_Tower_London_2023_01.jpg"
+        }
       },
       {
         "e": "🧩",
         "fr": "Le pays réunit quatre nations : l’Angleterre, l’Écosse, le pays de Galles et l’Irlande du Nord.",
-        "en": "The country brings together four nations: England, Scotland, Wales and Northern Ireland."
+        "en": "The country brings together four nations: England, Scotland, Wales and Northern Ireland.",
+        "img": {
+          "src": "img/savoirs/gb-2.webp",
+          "auteur": "Cnbrb",
+          "licence": "Domaine public",
+          "source": "https://commons.wikimedia.org/wiki/File:Countries_of_the_United_Kingdom_MR.png"
+        }
       },
       {
         "e": "⚽",
         "fr": "Les règles du football moderne ont été écrites en Angleterre.",
-        "en": "The rules of modern football were written in England."
+        "en": "The rules of modern football were written in England.",
+        "img": {
+          "src": "img/savoirs/gb-3.webp",
+          "auteur": "William Ralston (1848-1911)",
+          "licence": "Domaine public",
+          "source": "https://commons.wikimedia.org/wiki/File:England_v_Scotland_(1872).jpg"
+        }
       }
     ]
   },
@@ -1891,17 +1963,35 @@
       {
         "e": "👢",
         "fr": "Sur la carte, le pays a la forme d’une botte !",
-        "en": "On the map, the country is shaped like a boot!"
+        "en": "On the map, the country is shaped like a boot!",
+        "img": {
+          "src": "img/savoirs/it-1.webp",
+          "auteur": "Jacques Descloitres, MODIS Rapid Response Team, NASA/GSFC",
+          "licence": "Domaine public",
+          "source": "https://commons.wikimedia.org/wiki/File:Satellite_image_of_Italy_in_March_2003.jpg"
+        }
       },
       {
         "e": "🍕",
         "fr": "La pizza et beaucoup de sortes de pâtes viennent d’Italie.",
-        "en": "Pizza and many kinds of pasta come from Italy."
+        "en": "Pizza and many kinds of pasta come from Italy.",
+        "img": {
+          "src": "img/savoirs/it-2.webp",
+          "auteur": "Fabryx98",
+          "licence": "CC BY-SA 4.0",
+          "source": "https://commons.wikimedia.org/wiki/File:Pizza-napoletana.jpg"
+        }
       },
       {
         "e": "🗼",
         "fr": "À Pise, une tour penche depuis des centaines d’années.",
-        "en": "In Pisa, a tower has been leaning for hundreds of years."
+        "en": "In Pisa, a tower has been leaning for hundreds of years.",
+        "img": {
+          "src": "img/savoirs/it-3.webp",
+          "auteur": "Saffron Blaze",
+          "licence": "CC BY-SA 3.0",
+          "source": "https://commons.wikimedia.org/wiki/File:The_Leaning_Tower_of_Pisa_SB.jpeg"
+        }
       }
     ]
   },

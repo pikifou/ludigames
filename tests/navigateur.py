@@ -630,6 +630,48 @@ def test_savoirs(nav):
         verifier(not erreurs, f'{nom} : aucune erreur ({erreurs[:2]})')
         page.close()
 
+    # La bande « Le savais-tu ? » : elle vient du côté, avec le drapeau, les couleurs du pays et une image (France, Espagne,
+    # Italie, Allemagne, Royaume-Uni pour l'instant) ; elle ne cache ni le pays montré, ni le pays touché par erreur.
+    AVEC_IMAGES = {'FR', 'ES', 'IT', 'DE', 'GB'}
+    for (nom, w, h) in [('tablette', 1280, 800), ('portrait', 390, 844), ('paysage-telephone', 800, 360)]:
+        page, erreurs = ouvrir_jeu(nav, w, h)
+        lancer(page, 'europe')
+        vus = 0
+        for _ in range(40):
+            q = page.evaluate('jeu.manche.question')
+            if q is None or vus == 2:
+                break
+            if q not in AVEC_IMAGES:
+                repondre(page, q)
+                continue
+            # La première fois, la bonne réponse ; la seconde, une erreur (la bande parle alors du bon pays).
+            touche = q if vus == 0 else page.evaluate(AUTRE_PAYS, 'europe')
+            toucher(page, touche)
+            page.wait_for_timeout(500)
+            bande = page.locator('.savoir')
+            verifier(bande.is_visible(), f'{nom} : la bande s’ouvre ({q})')
+            drapeau = page.get_attribute('.savoir .drapeau', 'src') or ''
+            verifier(drapeau.endswith(f'drapeaux/{q.lower()}.svg'), f'{nom} : le drapeau du pays ({drapeau})')
+            verifier(q.lower() + '.svg' in (page.evaluate("getComputedStyle(document.querySelector('.savoir')).getPropertyValue('--drapeau')") or ''),
+                     f'{nom} : la bande prend les couleurs du drapeau')
+            photo = page.locator('.savoir .photo img')
+            verifier(photo.count() == 1 and page.evaluate("document.querySelector('.savoir .photo img').naturalWidth") > 0,
+                     f'{nom} : une image illustre le savoir')
+            verifier(re.search(r'(domaine public|CC0|CC BY)', page.inner_text('.savoir .credit'), re.I) is not None, f'{nom} : le crédit de l’image ({page.inner_text(".savoir .credit")!r})')
+            b = bande.bounding_box()
+            if w > h:
+                verifier(b['x'] <= 20 or b['x'] + b['width'] >= w - 20, f'{nom} : la bande est sur le côté ({b})')
+                verifier(b['width'] <= w * 0.45, f'{nom} : la bande reste étroite ({b["width"]:.0f} px)')
+            for c in {q, touche}:
+                x, y = page.evaluate('c => jeu.carte.ancreEcran(c)', c)
+                verifier(not (b['x'] <= x <= b['x'] + b['width'] and b['y'] <= y <= b['y'] + b['height']), f'{nom} : la bande ne cache pas {c}')
+            page.screenshot(path=str(CAPTURES / f'savoirs-bande-{nom}-{vus + 1}.png'))
+            vus += 1
+            continuer(page)
+        verifier(vus == 2, f'{nom} : deux bandes vues ({vus})')
+        verifier(not erreurs, f'{nom} : aucune erreur ({erreurs[:2]})')
+        page.close()
+
     # Sans le fichier des savoirs : après une erreur, on continue tout seul, comme avant.
     page = nav.new_page(viewport={'width': 1280, 'height': 800}, locale='fr-FR')
     page.route('**/savoirs.json', lambda r: r.abort())

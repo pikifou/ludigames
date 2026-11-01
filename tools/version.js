@@ -20,7 +20,7 @@ export function versionDuJeu() {
   for (const f of fichiers()) {
     h.update(f);
     // Fins de ligne neutres : la même version sous Windows (CRLF) et sur GitHub (LF).
-    h.update(/\.(png|woff2)$/.test(f) ? readFileSync(new URL(f, jeu)) : readFileSync(new URL(f, jeu), 'utf8').replace(/\r\n/g, '\n'));
+    h.update(/\.(png|woff2|webp)$/.test(f) ? readFileSync(new URL(f, jeu)) : readFileSync(new URL(f, jeu), 'utf8').replace(/\r\n/g, '\n'));
   }
   return 'monde-a-la-craie-' + h.digest('hex').slice(0, 10);
 }

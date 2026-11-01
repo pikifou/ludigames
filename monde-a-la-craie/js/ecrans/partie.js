@@ -97,7 +97,7 @@ export function partie(app, zoneId) {
         lecture = false; note.hidden = true; depart = performance.now();
         if (manche.finie) terminer(); else ecrireNom(app.nom(manche.question));
       };
-      return montrerSavoir(code, savoirJuste);
+      return montrerSavoir(code, savoirJuste);   // la bande parle du pays trouvé
     }
     // Raté : une croix et son nom sur le pays touché, le bon pays entouré, puis on continue.
     carte.etat(code, 'erreur'); carte.ecrire(code, app.nom(code));
@@ -114,22 +114,40 @@ export function partie(app, zoneId) {
       if (manche.finie) terminer(); else ecrireNom(app.nom(manche.question));
     };
     clearTimeout(attente);
-    if (savoir) montrerSavoir(r.bon, savoir); else attente = setTimeout(suite, DUREE_ERREUR);
+    if (savoir) montrerSavoir(r.bon, savoir, code); else attente = setTimeout(suite, DUREE_ERREUR);
   });
 
-  // La note se pose du côté de l'écran où n'est pas le bon pays, pour qu'il reste visible.
-  function montrerSavoir(code, savoir) {
+  // La bande « Le savais-tu ? » : le drapeau et ses couleurs, une image quand on en a une (quelques pays pour l'instant).
+  // Elle vient du côté (écran en largeur) ou du bas (en hauteur), là où elle ne cache ni le pays montré ni celui touché.
+  function montrerSavoir(code, savoir, touche) {
     ecoule = temps(); depart = 0;
     lecture = true; garde = performance.now() + GARDE;
-    note.innerHTML = `<span class="savoir-titre"><small>${t('savaisTu')}</small> <span class="craie">${app.nom(code)}</span></span>
+    const drapeau = `img/drapeaux/${code.toLowerCase()}.svg`, img = savoir.img;
+    note.innerHTML = `<span class="savoir-tete"><img class="drapeau" src="${drapeau}" alt="">
+        <span class="savoir-titre"><small>${t('savaisTu')}</small><span class="craie">${app.nom(code)}</span></span></span>
+      ${img ? `<span class="photo"><img src="${img.src}" alt=""><span class="credit">${t('credit', { a: img.auteur, l: img.licence === 'Domaine public' ? t('domainePublic') : img.licence })}</span></span>` : ''}
       <span class="fait"><span class="emoji" aria-hidden="true">${savoir.e}</span><span>${savoir.texte}</span></span>
       <small class="astuce">${t('toucheContinuer')}</small>`;
-    const [, y] = carte.ancreEcran(code), cadre = hud.getBoundingClientRect();
-    const enHaut = y > cadre.top + cadre.height / 2;
-    note.classList.toggle('en-haut', enHaut); note.classList.toggle('en-bas', !enHaut);
+    note.style.setProperty('--drapeau', `url("${drapeau}")`);
     note.style.setProperty('--haut', hud.querySelector('.haut').offsetHeight + 6 + 'px');
     note.hidden = false;
+    placerBande(img, [code, touche]);
     if (avecVoix) dire(`${app.nom(code)}. ${savoir.texte}`, app.langue);
+  }
+  // On essaie chaque côté et on garde celui qui ne cache rien (sinon, celui qui laisse voir le bon pays).
+  // Mesures sans transformation (offset*) : la bande est encore en train d'entrer.
+  function placerBande(avecImage, codes) {
+    const cadre = hud.getBoundingClientRect(), large = cadre.width > cadre.height * 1.1;
+    const points = codes.filter(Boolean).map(c => carte.ancreEcran(c)).map(([x, y]) => [x - cadre.left, y - cadre.top]);
+    const cache = ([x, y]) => x >= note.offsetLeft && x <= note.offsetLeft + note.offsetWidth && y >= note.offsetTop && y <= note.offsetTop + note.offsetHeight;
+    let meilleur = null;
+    for (const cote of large ? ['gauche', 'droite'] : ['bas', 'haut']) {
+      note.className = `savoir ${cote}${avecImage ? ' avec-photo' : ''}`;
+      const score = points.reduce((s, p, i) => s + (cache(p) ? (i === 0 ? 2 : 1) : 0), 0);
+      if (!meilleur || score < meilleur.score) meilleur = { cote, score };
+      if (score === 0) break;
+    }
+    note.className = `savoir ${meilleur.cote}${avecImage ? ' avec-photo' : ''}`;
   }
   function continuer() {
     if (suite && lecture && !enPause && performance.now() >= garde) suite();

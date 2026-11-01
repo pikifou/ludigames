@@ -213,19 +213,43 @@ button { font: inherit; color: inherit; }
   .fiche-pays ul { gap: .4em; }
   .fiche-tete { margin-bottom: .4em; padding-bottom: .3em; }
 }
-.savoir { position: absolute; left: 50%; width: min(480px, calc(100% - 24px)); display: grid; gap: 8px; padding: 14px 18px 10px;
-  color: var(--color-craie); font-size: clamp(16px, 2vw, 19px); text-align: left; cursor: pointer;
-  background: linear-gradient(160deg, var(--color-ardoise-2), var(--color-ardoise));
-  border: 2px dashed var(--craie-jaune); border-radius: 10px 18px 8px 16px; box-shadow: 0 10px 30px rgba(0,0,0,.45);
-  transform: translateX(-50%) rotate(-.6deg); animation: poser .25s ease-out both; }
-.savoir[hidden] { display: none; }
-.savoir.en-haut { top: var(--haut, 80px); }
-.savoir.en-bas { bottom: 70px; }
-.savoir-titre { display: flex; align-items: baseline; gap: .5em; flex-wrap: wrap; }
-.savoir-titre small { font-family: var(--font-craie); font-weight: 700; font-size: .85em; color: var(--craie-jaune); }
-.savoir-titre .craie { font-size: 1.25em; }
+/* La bande « Le savais-tu ? » : un papier collé qui entre par le côté, avec le drapeau, un ruban à ses couleurs et une image. */
+.savoir { position: absolute; top: var(--haut, 80px); z-index: 2; width: clamp(240px, 28vw, 320px); max-height: calc(100% - var(--haut, 80px) - 70px);
+  overflow: hidden; display: flex; flex-direction: column; gap: 9px; padding: 20px 16px 10px; border: 0; cursor: pointer; text-align: left;
+  color: var(--color-ardoise-ombre); font-size: clamp(14px, 1.55vw, 17px);
+  background: linear-gradient(100deg, rgba(255, 255, 255, .35), transparent 40%), repeating-linear-gradient(92deg, rgba(0, 0, 0, .02) 0 2px, transparent 2px 7px), #f3eddc;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, .45), 0 2px 0 rgba(0, 0, 0, .25); }
+.savoir::before { content: ""; position: absolute; left: 0; top: 0; width: 100%; height: 11px; background: var(--drapeau) center / 100% 100% no-repeat; }
+.savoir[hidden] { display: none !important; }   /* plus fort que la grille de la bande en hauteur */
+.savoir.gauche { left: 0; border-radius: 0 8px 8px 0; animation: bande-gauche .35s cubic-bezier(.2, .9, .3, 1.05) both; }
+.savoir.droite { right: 0; border-radius: 8px 0 0 8px; animation: bande-droite .35s cubic-bezier(.2, .9, .3, 1.05) both; }
+@keyframes bande-gauche { from { transform: translateX(-105%); } }
+@keyframes bande-droite { from { transform: translateX(105%); } }
+.savoir-tete { display: flex; align-items: center; gap: 11px; }
+.savoir .drapeau { flex: none; width: 54px; height: 40px; object-fit: cover; border: 2px solid #fff; box-shadow: 0 2px 4px rgba(0, 0, 0, .35); transform: rotate(-3deg); }
+.savoir-titre { display: grid; line-height: 1.1; }
+.savoir-titre small { font-family: var(--font-craie); font-weight: 700; font-size: .85em; color: #9a5b14; }
+.savoir-titre .craie { font-size: 1.35em; color: var(--color-ardoise-ombre); filter: none; }
+.savoir .photo { display: grid; justify-items: center; gap: 3px; padding: 6px 6px 3px; background: #fff; box-shadow: 0 2px 6px rgba(0, 0, 0, .25); transform: rotate(1.2deg); }
+.savoir .photo img { display: block; width: 100%; height: clamp(90px, 22vh, 190px); object-fit: contain; }   /* l'image entière : la tour Eiffel garde son sommet */
+.savoir .credit { font-family: var(--font-texte); font-size: 10px; line-height: 1.2; color: #6d6a62; text-align: center; }
 .savoir .fait { display: grid; }
-.savoir .astuce { justify-self: end; font-size: .78em; opacity: .7; font-family: var(--font-texte); }
+.savoir .astuce { align-self: flex-end; font-family: var(--font-texte); font-size: .78em; opacity: .65; }
+/* Écran en hauteur : la bande en bas (ou en haut), l'image à gauche du texte. */
+.savoir.bas, .savoir.haut { left: 0; right: 0; width: auto; max-height: 46%; display: grid; grid-template-columns: 1fr; align-content: start;
+  border-radius: 0; animation: bande-gauche .35s cubic-bezier(.2, .9, .3, 1.05) both; }
+.savoir.bas { top: auto; bottom: 64px; }
+.savoir.avec-photo.bas, .savoir.avec-photo.haut { grid-template-columns: 42% 1fr; grid-template-areas: "tete tete" "photo fait" "photo astuce"; }
+.savoir.avec-photo .savoir-tete { grid-area: tete; } .savoir.avec-photo .photo { grid-area: photo; } .savoir.avec-photo .fait { grid-area: fait; }
+.savoir.avec-photo .astuce { grid-area: astuce; align-self: end; justify-self: end; }
+.savoir.bas .photo img, .savoir.haut .photo img { height: clamp(80px, 16vh, 150px); }
+/* Écran bas (téléphone en largeur) : une image plus petite, pas d'astuce. */
+@media (orientation: landscape) and (max-height: 440px) {
+  .savoir { gap: 6px; padding: 15px 12px 8px; font-size: 13px; }
+  .savoir .photo img { height: 72px; }
+  .savoir .drapeau { width: 42px; height: 31px; }
+  .savoir .astuce { display: none; }
+}
 
 /* ---------- tests et mouvement réduit ---------- */
 .vite *, .vite *::after { animation-duration: 0s !important; animation-delay: 0s !important; transition: none !important; }

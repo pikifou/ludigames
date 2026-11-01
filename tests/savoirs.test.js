@@ -1,7 +1,7 @@
 // Les petits savoirs sur les pays : node --test tests/savoirs.test.js
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
+import { readFileSync, statSync } from 'node:fs';
 import { monde } from './geo.js';
 import { fiche, prochainSavoir } from '../monde-a-la-craie/js/savoirs.js';
 
@@ -59,4 +59,35 @@ test('prochainSavoir : sans capitale, les trois savoirs tournent seuls', () => {
   const s = { PS: { capitale: null, faits: [{ e: '1', fr: 'un', en: 'one' }, { e: '2', fr: 'deux', en: 'two' }, { e: '3', fr: 'trois', en: 'three' }] } };
   const vus = new Map();
   assert.deepEqual(Array.from({ length: 4 }, () => prochainSavoir(s, 'PS', 'fr', vus).texte), ['un', 'deux', 'trois', 'un']);
+});
+
+// Les images des savoirs (bande « Le savais-tu ? ») : trouvées sur Wikimedia Commons, jamais générées, sous licence libre.
+const jeu = new URL('../monde-a-la-craie/', import.meta.url);
+const existe = chemin => { try { return statSync(new URL(chemin, jeu)).size > 0; } catch { return false; } };
+const LIBRES = /^(Domaine public|CC0|CC BY(-SA)? \d\.\d)$/;
+
+test('chaque pays interrogé a son drapeau', () => {
+  for (const c of interroges.keys()) assert.ok(existe(`img/drapeaux/${c.toLowerCase()}.svg`), c + ' sans drapeau');
+});
+
+test('les premiers pays faciles d\'Europe ont une image pour chaque savoir', () => {
+  for (const c of ['FR', 'ES', 'IT', 'DE', 'GB']) for (const f of savoirs[c].faits) assert.ok(f.img, `${c} : ${f.fr}`);
+});
+
+test('chaque image de savoir existe, avec son auteur, une licence libre et sa source', () => {
+  for (const [c, s] of Object.entries(savoirs)) for (const f of s.faits) {
+    if (!f.img) continue;
+    assert.ok(existe(f.img.src), `${c} : ${f.img.src}`);
+    assert.ok(f.img.auteur, `${c} : auteur`);
+    assert.match(f.img.licence, LIBRES, `${c} : licence ${f.img.licence}`);
+    assert.match(f.img.source, /^https:\/\/commons\.wikimedia\.org\/wiki\/File:/, `${c} : source`);
+  }
+});
+
+test('la fiche et le savoir suivant transmettent l\'image', () => {
+  const img = { src: 'img/savoirs/fr-1.webp', auteur: 'A', licence: 'CC0', source: 'https://commons.wikimedia.org/wiki/File:x.jpg' };
+  const s = { FR: { capitale: { fr: 'Paris', en: 'Paris' }, faits: [{ e: '🗼', fr: 'Tour', en: 'Tower', img }, { e: 'a', fr: 'A', en: 'A' }, { e: 'b', fr: 'B', en: 'B' }] } };
+  assert.deepEqual(fiche(s, 'FR', 'fr').faits[0], { e: '🗼', texte: 'Tour', img });
+  assert.equal(fiche(s, 'FR', 'fr').faits[1].img, undefined);
+  assert.deepEqual(prochainSavoir(s, 'FR', 'fr', new Map()).img, img);
 });
