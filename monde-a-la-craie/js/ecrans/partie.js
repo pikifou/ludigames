@@ -33,6 +33,7 @@ export function partie(app, zoneId) {
   const nom = hud.querySelector('#nom'), compteur = hud.querySelector('#compteur'), chrono = hud.querySelector('#chrono');
   const voile = hud.querySelector('.voile'), note = hud.querySelector('.savoir');
   const GARDE = 800;   // ms avant qu'un toucher fasse passer la note : on ne la saute pas sans l'avoir vue
+  const GARDE_FIN = 1000;   // ms avant que les boutons de fin répondent : l'enfant qui touche encore la carte ne relance pas la manche
 
   const zonePays = app.paysDeZone(zoneId, niveau);
   // La place du nom le plus long de la zone est réservée : un nom sur deux lignes ne recouvre jamais la carte.
@@ -46,7 +47,7 @@ export function partie(app, zoneId) {
   const carte = creerCarte(app.nouvelleCarte(), app.monde, zone, () => ({ haut: reserverNom(), bas: 62, gauche: 8, droite: 8 }),
     { ronds: enJeu, estompe: p => niveau !== 'difficile' && !enJeu(p) });
   const annonces = new Set();
-  let manche, couleur = 0, ecoule = 0, depart = 0, enPause = false, attente = 0, finie = false;
+  let manche, couleur = 0, ecoule = 0, depart = 0, enPause = false, attente = 0, finie = false, finVue = 0;
   let suite = null;   // ce qui reste à faire après l'animation d'une erreur (la pause la met en attente)
   let lecture = false, garde = 0;   // la note « Le savais-tu ? » est ouverte : la manche attend un toucher
   window.jeu.carte = carte;
@@ -149,6 +150,7 @@ export function partie(app, zoneId) {
         <button class="bouton-craie" data-action="changer">${t('changer')}</button>
       </div></div>`;
     voile.hidden = false;
+    finVue = performance.now();
     nom.textContent = '';
   }
 
@@ -173,6 +175,7 @@ export function partie(app, zoneId) {
     const b = e.target.closest('button');
     if (!b) return;
     const a = b.dataset.action;
+    if ((a === 'encore' || a === 'changer') && performance.now() - finVue < GARDE_FIN) return;
     if (a === 'vue') carte.vueEntiere();
     else if (a === 'pause') pause();
     else if (a === 'reprendre') reprendre();

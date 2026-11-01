@@ -159,6 +159,9 @@ button { font: inherit; color: inherit; }
 .niveau:focus-visible { outline: 3px dashed var(--craie-jaune); outline-offset: 3px; }
 .note-tableau .niveau-ferme { font-size: clamp(14px, 1.9vw, 16px); opacity: .9; }
 .note-tableau .record { color: var(--craie-jaune); font-size: clamp(19px, 2.8vw, 26px); }
+/* Fin de manche : les boutons arrivent en une seconde (ils ne répondent pas avant, voir GARDE_FIN dans partie.js). */
+.note-tableau.fin .boutons { animation: boutons-fin 1s ease-out both; }
+@keyframes boutons-fin { 0%, 55% { opacity: 0; transform: translateY(6px); } 100% { opacity: 1; transform: none; } }
 .boutons { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin: 18px 0 6px; }
 .interrupteur { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 10px 6px;
   border-bottom: 1.5px dashed rgba(243,241,232,.25); font-family: var(--font-craie); font-weight: 700; font-size: 20px; text-align: left; cursor: pointer; }

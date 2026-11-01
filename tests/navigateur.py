@@ -193,6 +193,13 @@ def finir_manche(page):
     return vus
 
 
+def encore(page):
+    """« Encore une manche » : les boutons de fin ne répondent qu'après un court instant."""
+    page.wait_for_timeout(1100)
+    page.click('[data-action="encore"]')
+    page.wait_for_timeout(300)
+
+
 def test_ecrans(nav):
     print('écrans')
     CAPTURES.mkdir(exist_ok=True)
@@ -381,6 +388,21 @@ AUTRE_PAYS = """(z) => { const q = jeu.manche.question;
 
 def test_corrections(nav):
     print('corrections de la relecture')
+    # Le dernier pays trouvé, l'enfant touche encore : la fin apparaît sous son doigt, la manche ne doit pas repartir.
+    page, erreurs = ouvrir_jeu(nav)
+    lancer(page, 'asie')
+    finir_manche(page)
+    page.wait_for_selector('.fin', timeout=3000)
+    page.click('[data-action="encore"]')
+    page.wait_for_timeout(200)
+    verifier(page.locator('.fin').count() == 1 and page.evaluate('jeu.manche.finie'),
+             'un toucher juste quand la fin apparaît ne relance pas la manche')
+    encore(page)
+    verifier(page.inner_text('#compteur').strip() == '0 / 12' and page.locator('.voile:not([hidden])').count() == 0,
+             f"un peu après, « Encore une manche » relance la manche ({page.inner_text('#compteur')!r})")
+    verifier(not erreurs, f'fin de manche : aucune erreur ({erreurs[:2]})')
+    page.close()
+
     # Pause pendant la dernière erreur : la manche suivante doit se jouer normalement.
     page, erreurs = ouvrir_jeu(nav)
     lancer(page, 'europe')
@@ -395,8 +417,7 @@ def test_corrections(nav):
     page.click('[data-action="reprendre"]')
     continuer(page)
     page.wait_for_selector('.fin', timeout=3000)
-    page.click('[data-action="encore"]')
-    page.wait_for_timeout(300)
+    encore(page)
     toucher(page, page.evaluate('jeu.manche.question'))
     verifier(page.inner_text('#compteur').strip() == '1 / 12', f"après une pause pendant l'erreur, la manche suivante se joue ({page.inner_text('#compteur')!r})")
     page.close()
