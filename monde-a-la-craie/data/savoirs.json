@@ -1,0 +1,1060 @@
+{
+  "AD": {
+    "capitale": {
+      "fr": "Andorre-la-Vieille",
+      "en": "Andorra la Vella"
+    },
+    "faits": [
+      {
+        "e": "🏔️",
+        "fr": "Un tout petit pays caché dans les montagnes des Pyrénées, entre la France et l’Espagne.",
+        "en": "A tiny country tucked away in the Pyrenees mountains, between France and Spain."
+      },
+      {
+        "e": "👑",
+        "fr": "Il a deux princes, et l’un d’eux est le président de la France !",
+        "en": "It has two princes, and one of them is the President of France!"
+      },
+      {
+        "e": "⛷️",
+        "fr": "On y vient de toute l’Europe pour skier.",
+        "en": "People come from all over Europe to ski there."
+      }
+    ]
+  },
+  "AL": {
+    "capitale": {
+      "fr": "Tirana",
+      "en": "Tirana"
+    },
+    "faits": [
+      {
+        "e": "🦅",
+        "fr": "Son drapeau montre un aigle noir à deux têtes sur un fond rouge.",
+        "en": "Its flag shows a black two-headed eagle on a red background."
+      },
+      {
+        "e": "🏖️",
+        "fr": "Ses plages bordent deux mers : la mer Adriatique et la mer Ionienne.",
+        "en": "Its beaches line two seas: the Adriatic Sea and the Ionian Sea."
+      },
+      {
+        "e": "🎨",
+        "fr": "À Tirana, la capitale, beaucoup d’immeubles sont peints de toutes les couleurs.",
+        "en": "In Tirana, the capital, many buildings are painted in every colour."
+      }
+    ]
+  },
+  "AT": {
+    "capitale": {
+      "fr": "Vienne",
+      "en": "Vienna"
+    },
+    "faits": [
+      {
+        "e": "🎼",
+        "fr": "Mozart, un des musiciens les plus célèbres de tous les temps, est né à Salzbourg.",
+        "en": "Mozart, one of the most famous musicians of all time, was born in Salzburg."
+      },
+      {
+        "e": "🏔️",
+        "fr": "Les montagnes des Alpes couvrent une grande partie du pays.",
+        "en": "The Alps mountains cover a large part of the country."
+      },
+      {
+        "e": "🦒",
+        "fr": "Le plus vieux zoo du monde encore ouvert est à Vienne : il a plus de 270 ans.",
+        "en": "The oldest zoo still open in the world is in Vienna: it is over 270 years old."
+      }
+    ]
+  },
+  "BA": {
+    "capitale": {
+      "fr": "Sarajevo",
+      "en": "Sarajevo"
+    },
+    "faits": [
+      {
+        "e": "🌉",
+        "fr": "À Mostar, des plongeurs sautent d’un vieux pont de pierre dans la rivière.",
+        "en": "In Mostar, divers jump from an old stone bridge into the river."
+      },
+      {
+        "e": "💚",
+        "fr": "Cette rivière, la Neretva, a une eau d’un vert émeraude.",
+        "en": "That river, the Neretva, has emerald green water."
+      },
+      {
+        "e": "🏖️",
+        "fr": "Le pays ne touche la mer que sur une vingtaine de kilomètres.",
+        "en": "The country touches the sea for only about 20 kilometres."
+      }
+    ]
+  },
+  "BE": {
+    "capitale": {
+      "fr": "Bruxelles",
+      "en": "Brussels"
+    },
+    "faits": [
+      {
+        "e": "🍫",
+        "fr": "Elle est célèbre pour son chocolat, ses gaufres et ses frites.",
+        "en": "It is famous for its chocolate, waffles and fries."
+      },
+      {
+        "e": "💬",
+        "fr": "Tintin et les Schtroumpfs ont été inventés par des dessinateurs belges.",
+        "en": "Tintin and the Smurfs were created by Belgian cartoonists."
+      },
+      {
+        "e": "🗣️",
+        "fr": "On y parle trois langues : le néerlandais, le français et l’allemand.",
+        "en": "Three languages are spoken there: Dutch, French and German."
+      }
+    ]
+  },
+  "BG": {
+    "capitale": {
+      "fr": "Sofia",
+      "en": "Sofia"
+    },
+    "faits": [
+      {
+        "e": "🌹",
+        "fr": "On y cultive des champs entiers de roses pour fabriquer du parfum.",
+        "en": "Whole fields of roses are grown there to make perfume."
+      },
+      {
+        "e": "🙂",
+        "fr": "Là-bas, hocher la tête de haut en bas veut souvent dire « non » !",
+        "en": "There, nodding your head up and down often means “no”!"
+      },
+      {
+        "e": "🥛",
+        "fr": "Le yaourt y est si ancien qu’une bactérie du yaourt porte le nom du pays.",
+        "en": "Yogurt is so old there that a yogurt bacterium is named after the country."
+      }
+    ]
+  },
+  "BY": {
+    "capitale": {
+      "fr": "Minsk",
+      "en": "Minsk"
+    },
+    "faits": [
+      {
+        "e": "🦬",
+        "fr": "Dans ses forêts vivent des bisons d’Europe, les plus gros animaux du continent.",
+        "en": "European bison, the biggest animals in Europe, live in its forests."
+      },
+      {
+        "e": "💧",
+        "fr": "Le pays n’a pas de mer, mais il a plus de 10 000 lacs.",
+        "en": "The country has no sea, but it has more than 10,000 lakes."
+      },
+      {
+        "e": "🥔",
+        "fr": "On y adore les draniki, des galettes de pommes de terre.",
+        "en": "People love draniki there, which are potato pancakes."
+      }
+    ]
+  },
+  "CH": {
+    "capitale": {
+      "fr": "Berne",
+      "en": "Bern"
+    },
+    "faits": [
+      {
+        "e": "🧀",
+        "fr": "Elle est célèbre pour ses fromages à trous, son chocolat et ses montres.",
+        "en": "It is famous for cheese with holes, chocolate and watches."
+      },
+      {
+        "e": "🗣️",
+        "fr": "On y parle quatre langues : l’allemand, le français, l’italien et le romanche.",
+        "en": "Four languages are spoken there: German, French, Italian and Romansh."
+      },
+      {
+        "e": "🏔️",
+        "fr": "Dans les Alpes se dresse le Cervin, une montagne pointue comme une pyramide.",
+        "en": "In the Alps stands the Matterhorn, a mountain as pointy as a pyramid."
+      }
+    ]
+  },
+  "CY": {
+    "capitale": {
+      "fr": "Nicosie",
+      "en": "Nicosia"
+    },
+    "faits": [
+      {
+        "e": "🏝️",
+        "fr": "C’est une île de la mer Méditerranée, où il fait très souvent beau.",
+        "en": "It is an island in the Mediterranean Sea, and it is very often sunny."
+      },
+      {
+        "e": "🐢",
+        "fr": "Des tortues de mer viennent pondre leurs œufs sur ses plages.",
+        "en": "Sea turtles come to lay their eggs on its beaches."
+      },
+      {
+        "e": "🌊",
+        "fr": "Une légende grecque raconte que la déesse Aphrodite est née dans l’écume de ses vagues.",
+        "en": "A Greek legend says the goddess Aphrodite was born in the foam of its waves."
+      }
+    ]
+  },
+  "CZ": {
+    "capitale": {
+      "fr": "Prague",
+      "en": "Prague"
+    },
+    "faits": [
+      {
+        "e": "🏰",
+        "fr": "Le château de Prague est un des plus grands châteaux du monde.",
+        "en": "Prague Castle is one of the biggest castles in the world."
+      },
+      {
+        "e": "🕰️",
+        "fr": "À Prague, une horloge de plus de 600 ans fait défiler des statues chaque heure.",
+        "en": "In Prague, a clock over 600 years old parades little statues every hour."
+      },
+      {
+        "e": "🐾",
+        "fr": "La Petite Taupe, héroïne de dessins animés, vient de là-bas.",
+        "en": "The Little Mole, a cartoon hero, comes from there."
+      }
+    ]
+  },
+  "DE": {
+    "capitale": {
+      "fr": "Berlin",
+      "en": "Berlin"
+    },
+    "faits": [
+      {
+        "e": "🏰",
+        "fr": "Le château de Neuschwanstein a inspiré le château de La Belle au bois dormant de Disney.",
+        "en": "Neuschwanstein Castle inspired Disney’s Sleeping Beauty castle."
+      },
+      {
+        "e": "📖",
+        "fr": "Les frères Grimm y ont rassemblé des contes comme Blanche-Neige et Hansel et Gretel.",
+        "en": "The Brothers Grimm collected fairy tales there, like Snow White and Hansel and Gretel."
+      },
+      {
+        "e": "🥨",
+        "fr": "On y mange des bretzels, des pains en forme de nœud.",
+        "en": "People eat pretzels there, bread shaped like a knot."
+      }
+    ]
+  },
+  "DK": {
+    "capitale": {
+      "fr": "Copenhague",
+      "en": "Copenhagen"
+    },
+    "faits": [
+      {
+        "e": "🧱",
+        "fr": "Les briques LEGO ont été inventées au Danemark.",
+        "en": "LEGO bricks were invented in Denmark."
+      },
+      {
+        "e": "🧜",
+        "fr": "La statue de la Petite Sirène, héroïne d’un conte d’Andersen, regarde la mer à Copenhague.",
+        "en": "The statue of the Little Mermaid, from a tale by Andersen, looks out to sea in Copenhagen."
+      },
+      {
+        "e": "🚲",
+        "fr": "Beaucoup de gens y vont à l’école et au travail à vélo.",
+        "en": "Many people there ride a bike to school and to work."
+      }
+    ]
+  },
+  "EE": {
+    "capitale": {
+      "fr": "Tallinn",
+      "en": "Tallinn"
+    },
+    "faits": [
+      {
+        "e": "🌲",
+        "fr": "La moitié du pays est couverte de forêts.",
+        "en": "Half of the country is covered in forest."
+      },
+      {
+        "e": "🏝️",
+        "fr": "Il compte plus de 2000 îles dans la mer Baltique.",
+        "en": "It has more than 2,000 islands in the Baltic Sea."
+      },
+      {
+        "e": "🥾",
+        "fr": "On s’y promène dans des marais sur de longs chemins en planches.",
+        "en": "People walk across its bogs on long wooden boardwalks."
+      }
+    ]
+  },
+  "ES": {
+    "capitale": {
+      "fr": "Madrid",
+      "en": "Madrid"
+    },
+    "faits": [
+      {
+        "e": "💃",
+        "fr": "Le flamenco est une danse où l’on claque des mains et des talons.",
+        "en": "Flamenco is a dance with clapping hands and stamping heels."
+      },
+      {
+        "e": "🍅",
+        "fr": "Dans la ville de Buñol, une fête où tout le monde se lance des tomates : la Tomatina.",
+        "en": "In the town of Buñol, there is a festival where everyone throws tomatoes: La Tomatina."
+      },
+      {
+        "e": "⛪",
+        "fr": "À Barcelone, la Sagrada Família est une immense église commencée il y a plus de 140 ans.",
+        "en": "In Barcelona, the Sagrada Família is a huge church started more than 140 years ago."
+      }
+    ]
+  },
+  "FI": {
+    "capitale": {
+      "fr": "Helsinki",
+      "en": "Helsinki"
+    },
+    "faits": [
+      {
+        "e": "🎅",
+        "fr": "Les Finlandais disent que le Père Noël habite chez eux, en Laponie.",
+        "en": "Finns say Santa Claus lives in their country, in Lapland."
+      },
+      {
+        "e": "🧖",
+        "fr": "Il y a des millions de saunas : presque un par famille.",
+        "en": "There are millions of saunas: almost one per family."
+      },
+      {
+        "e": "💧",
+        "fr": "Le pays compte plus de 180 000 lacs.",
+        "en": "The country has more than 180,000 lakes."
+      }
+    ]
+  },
+  "FR": {
+    "capitale": {
+      "fr": "Paris",
+      "en": "Paris"
+    },
+    "faits": [
+      {
+        "e": "🗼",
+        "fr": "La tour Eiffel, à Paris, mesure plus de 300 mètres de haut.",
+        "en": "The Eiffel Tower, in Paris, is more than 300 metres tall."
+      },
+      {
+        "e": "🏔️",
+        "fr": "Le mont Blanc, dans les Alpes, est la plus haute montagne d’Europe de l’Ouest.",
+        "en": "Mont Blanc, in the Alps, is the highest mountain in Western Europe."
+      },
+      {
+        "e": "🌴",
+        "fr": "La France a aussi des terres très loin, comme la Guyane ou l’île de La Réunion.",
+        "en": "France also has lands far away, like French Guiana or the island of Réunion."
+      }
+    ]
+  },
+  "GB": {
+    "capitale": {
+      "fr": "Londres",
+      "en": "London"
+    },
+    "faits": [
+      {
+        "e": "🕰️",
+        "fr": "Big Ben est le nom de la grosse cloche de la tour de l’horloge, à Londres.",
+        "en": "Big Ben is the name of the big bell in the clock tower in London."
+      },
+      {
+        "e": "🧩",
+        "fr": "Le pays réunit quatre nations : l’Angleterre, l’Écosse, le pays de Galles et l’Irlande du Nord.",
+        "en": "The country brings together four nations: England, Scotland, Wales and Northern Ireland."
+      },
+      {
+        "e": "⚽",
+        "fr": "Les règles du football moderne ont été écrites en Angleterre.",
+        "en": "The rules of modern football were written in England."
+      }
+    ]
+  },
+  "GR": {
+    "capitale": {
+      "fr": "Athènes",
+      "en": "Athens"
+    },
+    "faits": [
+      {
+        "e": "🏅",
+        "fr": "Il y a très longtemps, les Grecs ont inventé les Jeux olympiques.",
+        "en": "A very long time ago, the Greeks invented the Olympic Games."
+      },
+      {
+        "e": "⚡",
+        "fr": "D’après les légendes, Zeus et les dieux grecs vivaient sur le mont Olympe.",
+        "en": "According to legend, Zeus and the Greek gods lived on Mount Olympus."
+      },
+      {
+        "e": "🏝️",
+        "fr": "Elle compte des milliers d’îles.",
+        "en": "It has thousands of islands."
+      }
+    ]
+  },
+  "HR": {
+    "capitale": {
+      "fr": "Zagreb",
+      "en": "Zagreb"
+    },
+    "faits": [
+      {
+        "e": "🐶",
+        "fr": "Les chiens dalmatiens tirent leur nom de la Dalmatie, une région de Croatie.",
+        "en": "Dalmatian dogs are named after Dalmatia, a region of Croatia."
+      },
+      {
+        "e": "👔",
+        "fr": "La cravate vient d’une écharpe que portaient des soldats croates.",
+        "en": "The necktie comes from a scarf worn by Croatian soldiers."
+      },
+      {
+        "e": "🏝️",
+        "fr": "Plus de 1000 îles parsèment sa côte, dans la mer Adriatique.",
+        "en": "More than 1,000 islands dot its coast, in the Adriatic Sea."
+      }
+    ]
+  },
+  "HU": {
+    "capitale": {
+      "fr": "Budapest",
+      "en": "Budapest"
+    },
+    "faits": [
+      {
+        "e": "🧩",
+        "fr": "Le Rubik’s Cube a été inventé par un Hongrois, Ernő Rubik.",
+        "en": "The Rubik’s Cube was invented by a Hungarian, Ernő Rubik."
+      },
+      {
+        "e": "🌉",
+        "fr": "Le Danube coupe la capitale en deux : Buda d’un côté, Pest de l’autre.",
+        "en": "The Danube cuts the capital in two: Buda on one side, Pest on the other."
+      },
+      {
+        "e": "♨️",
+        "fr": "Grâce à des sources chaudes, on s’y baigne dehors même en hiver.",
+        "en": "Thanks to hot springs, people swim outdoors there even in winter."
+      }
+    ]
+  },
+  "IE": {
+    "capitale": {
+      "fr": "Dublin",
+      "en": "Dublin"
+    },
+    "faits": [
+      {
+        "e": "☘️",
+        "fr": "Son symbole est le trèfle, et le jour de la Saint-Patrick, tout le monde s’habille en vert.",
+        "en": "Its symbol is the shamrock, and on Saint Patrick’s Day everyone dresses in green."
+      },
+      {
+        "e": "🌧️",
+        "fr": "Il pleut souvent, l’herbe y est très verte : on l’appelle « l’île d’émeraude ».",
+        "en": "It rains often and the grass is very green: it is called “the Emerald Isle”."
+      },
+      {
+        "e": "🎃",
+        "fr": "Halloween vient d’une très vieille fête irlandaise.",
+        "en": "Halloween comes from a very old Irish festival."
+      }
+    ]
+  },
+  "IS": {
+    "capitale": {
+      "fr": "Reykjavik",
+      "en": "Reykjavík"
+    },
+    "faits": [
+      {
+        "e": "🌋",
+        "fr": "Une île pleine de volcans et de geysers, des jets d’eau chaude qui jaillissent du sol.",
+        "en": "An island full of volcanoes and geysers, jets of hot water shooting out of the ground."
+      },
+      {
+        "e": "🐦",
+        "fr": "Des millions de macareux, petits oiseaux au bec coloré, viennent y faire leur nid.",
+        "en": "Millions of puffins, small birds with colourful beaks, come there to nest."
+      },
+      {
+        "e": "🌌",
+        "fr": "L’hiver, on y voit souvent des aurores boréales, des lumières qui dansent dans le ciel.",
+        "en": "In winter, you can often see the northern lights there, lights dancing in the sky."
+      }
+    ]
+  },
+  "IT": {
+    "capitale": {
+      "fr": "Rome",
+      "en": "Rome"
+    },
+    "faits": [
+      {
+        "e": "👢",
+        "fr": "Sur la carte, le pays a la forme d’une botte !",
+        "en": "On the map, the country is shaped like a boot!"
+      },
+      {
+        "e": "🍕",
+        "fr": "La pizza et beaucoup de sortes de pâtes viennent d’Italie.",
+        "en": "Pizza and many kinds of pasta come from Italy."
+      },
+      {
+        "e": "🗼",
+        "fr": "À Pise, une tour penche depuis des centaines d’années.",
+        "en": "In Pisa, a tower has been leaning for hundreds of years."
+      }
+    ]
+  },
+  "LI": {
+    "capitale": {
+      "fr": "Vaduz",
+      "en": "Vaduz"
+    },
+    "faits": [
+      {
+        "e": "🏔️",
+        "fr": "Un tout petit pays des Alpes, coincé entre la Suisse et l’Autriche.",
+        "en": "A tiny country in the Alps, squeezed between Switzerland and Austria."
+      },
+      {
+        "e": "🚲",
+        "fr": "Il est si petit qu’on peut le traverser à vélo en une matinée.",
+        "en": "It is so small that you can cross it by bike in one morning."
+      },
+      {
+        "e": "🦷",
+        "fr": "C’est un des plus grands fabricants de fausses dents du monde.",
+        "en": "It is one of the world’s biggest makers of false teeth."
+      }
+    ]
+  },
+  "LT": {
+    "capitale": {
+      "fr": "Vilnius",
+      "en": "Vilnius"
+    },
+    "faits": [
+      {
+        "e": "🏀",
+        "fr": "Le basket est le sport préféré du pays.",
+        "en": "Basketball is the country’s favourite sport."
+      },
+      {
+        "e": "🟡",
+        "fr": "Sur ses plages, on trouve de l’ambre, de la résine d’arbre devenue pierre.",
+        "en": "On its beaches you can find amber, tree resin that has turned to stone."
+      },
+      {
+        "e": "🏜️",
+        "fr": "Au bord de la mer, d’immenses dunes de sable ressemblent à un petit désert.",
+        "en": "By the sea, huge sand dunes look like a little desert."
+      }
+    ]
+  },
+  "LU": {
+    "capitale": {
+      "fr": "Luxembourg",
+      "en": "Luxembourg"
+    },
+    "faits": [
+      {
+        "e": "🤏",
+        "fr": "Un des plus petits pays d’Europe, entre la Belgique, la France et l’Allemagne.",
+        "en": "One of the smallest countries in Europe, between Belgium, France and Germany."
+      },
+      {
+        "e": "🚌",
+        "fr": "Les bus et les trains y sont gratuits pour tout le monde.",
+        "en": "Buses and trains there are free for everyone."
+      },
+      {
+        "e": "🗣️",
+        "fr": "On y parle luxembourgeois, français et allemand.",
+        "en": "People there speak Luxembourgish, French and German."
+      }
+    ]
+  },
+  "LV": {
+    "capitale": {
+      "fr": "Riga",
+      "en": "Riga"
+    },
+    "faits": [
+      {
+        "e": "🌲",
+        "fr": "Plus de la moitié du pays est couverte de forêts.",
+        "en": "More than half of the country is covered in forest."
+      },
+      {
+        "e": "🎄",
+        "fr": "On raconte qu’un des premiers sapins de Noël décorés a été dressé à Riga, il y a 500 ans.",
+        "en": "It is said that one of the first decorated Christmas trees was put up in Riga, 500 years ago."
+      },
+      {
+        "e": "🎶",
+        "fr": "Lors d’une grande fête, des milliers de chanteurs chantent tous ensemble.",
+        "en": "At a big festival, thousands of singers all sing together."
+      }
+    ]
+  },
+  "MC": {
+    "capitale": {
+      "fr": "Monaco",
+      "en": "Monaco"
+    },
+    "faits": [
+      {
+        "e": "🤏",
+        "fr": "C’est le deuxième plus petit pays du monde, après le Vatican.",
+        "en": "It is the second smallest country in the world, after Vatican City."
+      },
+      {
+        "e": "🏎️",
+        "fr": "Chaque année, une course de Formule 1 passe dans ses rues.",
+        "en": "Every year, a Formula One race runs through its streets."
+      },
+      {
+        "e": "👑",
+        "fr": "Le pays est dirigé par un prince.",
+        "en": "The country is ruled by a prince."
+      }
+    ]
+  },
+  "MD": {
+    "capitale": {
+      "fr": "Chișinău",
+      "en": "Chișinău"
+    },
+    "faits": [
+      {
+        "e": "🍇",
+        "fr": "Sur la carte, on dit que le pays a la forme d’une grappe de raisin.",
+        "en": "On the map, people say the country is shaped like a bunch of grapes."
+      },
+      {
+        "e": "🗣️",
+        "fr": "On y parle roumain, comme chez son voisin la Roumanie.",
+        "en": "People there speak Romanian, like in neighbouring Romania."
+      },
+      {
+        "e": "🌻",
+        "fr": "Il n’a pas de mer, mais de grands champs de tournesols.",
+        "en": "It has no sea, but big fields of sunflowers."
+      }
+    ]
+  },
+  "ME": {
+    "capitale": {
+      "fr": "Podgorica",
+      "en": "Podgorica"
+    },
+    "faits": [
+      {
+        "e": "⛰️",
+        "fr": "Son nom veut dire « la montagne noire ».",
+        "en": "Its name means “the black mountain”."
+      },
+      {
+        "e": "🌊",
+        "fr": "Dans la baie de Kotor, la mer s’enfonce entre de hautes montagnes.",
+        "en": "In the Bay of Kotor, the sea reaches deep in between tall mountains."
+      },
+      {
+        "e": "🤏",
+        "fr": "Il y vit moins d’un million de personnes, moins que dans beaucoup de grandes villes.",
+        "en": "Fewer than a million people live there, fewer than in many big cities."
+      }
+    ]
+  },
+  "MK": {
+    "capitale": {
+      "fr": "Skopje",
+      "en": "Skopje"
+    },
+    "faits": [
+      {
+        "e": "🏞️",
+        "fr": "Le lac d’Ohrid est un des plus vieux lacs du monde : il a plus d’un million d’années.",
+        "en": "Lake Ohrid is one of the oldest lakes in the world: it is over a million years old."
+      },
+      {
+        "e": "⛰️",
+        "fr": "Le pays n’a pas de mer et il est entouré de montagnes.",
+        "en": "The country has no sea and is surrounded by mountains."
+      },
+      {
+        "e": "🗿",
+        "fr": "Sa capitale, Skopje, est remplie de statues géantes.",
+        "en": "Its capital, Skopje, is full of giant statues."
+      }
+    ]
+  },
+  "MT": {
+    "capitale": {
+      "fr": "La Valette",
+      "en": "Valletta"
+    },
+    "faits": [
+      {
+        "e": "🏝️",
+        "fr": "Un groupe de petites îles au milieu de la Méditerranée, au sud de l’Italie.",
+        "en": "A group of small islands in the middle of the Mediterranean, south of Italy."
+      },
+      {
+        "e": "🏛️",
+        "fr": "On y trouve des temples de pierre plus vieux que les pyramides d’Égypte.",
+        "en": "It has stone temples older than the pyramids of Egypt."
+      },
+      {
+        "e": "🐕",
+        "fr": "Le petit chien bichon maltais porte son nom.",
+        "en": "The little Maltese dog is named after it."
+      }
+    ]
+  },
+  "NL": {
+    "capitale": {
+      "fr": "Amsterdam",
+      "en": "Amsterdam"
+    },
+    "faits": [
+      {
+        "e": "🌷",
+        "fr": "Elle est célèbre pour ses champs de tulipes et ses moulins à vent.",
+        "en": "It is famous for its tulip fields and windmills."
+      },
+      {
+        "e": "🌊",
+        "fr": "Une grande partie du pays est plus basse que la mer, protégée par des digues.",
+        "en": "A large part of the country is lower than the sea, protected by dykes."
+      },
+      {
+        "e": "🚲",
+        "fr": "Il y a plus de vélos que d’habitants.",
+        "en": "There are more bikes than people."
+      }
+    ]
+  },
+  "NO": {
+    "capitale": {
+      "fr": "Oslo",
+      "en": "Oslo"
+    },
+    "faits": [
+      {
+        "e": "🌞",
+        "fr": "Dans le nord, en été, le soleil ne se couche pas : c’est le soleil de minuit.",
+        "en": "In the north, in summer, the sun never sets: it is the midnight sun."
+      },
+      {
+        "e": "🏞️",
+        "fr": "Sa côte est découpée par des fjords, de longs bras de mer entre les montagnes.",
+        "en": "Its coast is cut by fjords, long arms of sea between the mountains."
+      },
+      {
+        "e": "⛵",
+        "fr": "Il y a plus de 1000 ans, des Vikings partaient de là en bateau.",
+        "en": "More than 1,000 years ago, Vikings set off from there by boat."
+      }
+    ]
+  },
+  "PL": {
+    "capitale": {
+      "fr": "Varsovie",
+      "en": "Warsaw"
+    },
+    "faits": [
+      {
+        "e": "🔬",
+        "fr": "Marie Curie, une savante qui a reçu deux prix Nobel, est née à Varsovie.",
+        "en": "Marie Curie, a scientist who won two Nobel Prizes, was born in Warsaw."
+      },
+      {
+        "e": "🔭",
+        "fr": "Copernic, qui a compris que la Terre tourne autour du Soleil, était polonais.",
+        "en": "Copernicus, who understood that the Earth goes around the Sun, was Polish."
+      },
+      {
+        "e": "🥟",
+        "fr": "On y mange des pierogi, des sortes de gros raviolis.",
+        "en": "People eat pierogi there, a kind of big dumpling."
+      }
+    ]
+  },
+  "PT": {
+    "capitale": {
+      "fr": "Lisbonne",
+      "en": "Lisbon"
+    },
+    "faits": [
+      {
+        "e": "🟦",
+        "fr": "Beaucoup de murs sont couverts de carreaux bleus et blancs, les azulejos.",
+        "en": "Many walls are covered in blue and white tiles called azulejos."
+      },
+      {
+        "e": "🌊",
+        "fr": "À Nazaré, des surfeurs glissent sur certaines des plus grosses vagues du monde.",
+        "en": "In Nazaré, surfers ride some of the biggest waves in the world."
+      },
+      {
+        "e": "🗣️",
+        "fr": "On parle aussi portugais au Brésil, de l’autre côté de l’océan.",
+        "en": "Portuguese is also spoken in Brazil, on the other side of the ocean."
+      }
+    ]
+  },
+  "RO": {
+    "capitale": {
+      "fr": "Bucarest",
+      "en": "Bucharest"
+    },
+    "faits": [
+      {
+        "e": "🏰",
+        "fr": "Le château de Bran est surnommé « le château de Dracula ».",
+        "en": "Bran Castle is nicknamed “Dracula’s castle”."
+      },
+      {
+        "e": "🐻",
+        "fr": "Beaucoup d’ours bruns vivent dans ses montagnes, les Carpates.",
+        "en": "Many brown bears live in its mountains, the Carpathians."
+      },
+      {
+        "e": "🦢",
+        "fr": "Là où le Danube rejoint la mer Noire, des pélicans vivent dans un immense delta.",
+        "en": "Where the Danube meets the Black Sea, pelicans live in a huge delta."
+      }
+    ]
+  },
+  "RS": {
+    "capitale": {
+      "fr": "Belgrade",
+      "en": "Belgrade"
+    },
+    "faits": [
+      {
+        "e": "🎾",
+        "fr": "Novak Djokovic, un des plus grands joueurs de tennis de l’histoire, est serbe.",
+        "en": "Novak Djokovic, one of the greatest tennis players ever, is Serbian."
+      },
+      {
+        "e": "🌉",
+        "fr": "À Belgrade, deux rivières se rejoignent : le Danube et la Save.",
+        "en": "In Belgrade, two rivers meet: the Danube and the Sava."
+      },
+      {
+        "e": "💡",
+        "fr": "L’inventeur Nikola Tesla était d’une famille serbe.",
+        "en": "The inventor Nikola Tesla came from a Serbian family."
+      }
+    ]
+  },
+  "RU": {
+    "capitale": {
+      "fr": "Moscou",
+      "en": "Moscow"
+    },
+    "faits": [
+      {
+        "e": "🌍",
+        "fr": "C’est le plus grand pays du monde : il s’étend sur l’Europe et sur l’Asie.",
+        "en": "It is the biggest country in the world: it stretches across Europe and Asia."
+      },
+      {
+        "e": "🪆",
+        "fr": "Les matriochkas sont des poupées en bois qui s’emboîtent les unes dans les autres.",
+        "en": "Matryoshkas are wooden dolls that fit inside one another."
+      },
+      {
+        "e": "🚂",
+        "fr": "Le train Transsibérien met environ une semaine pour traverser le pays.",
+        "en": "The Trans-Siberian train takes about a week to cross the country."
+      }
+    ]
+  },
+  "SE": {
+    "capitale": {
+      "fr": "Stockholm",
+      "en": "Stockholm"
+    },
+    "faits": [
+      {
+        "e": "👧",
+        "fr": "Fifi Brindacier, l’héroïne aux couettes rousses, a été inventée par une Suédoise, Astrid Lindgren.",
+        "en": "Pippi Longstocking, the girl with red pigtails, was created by a Swede, Astrid Lindgren."
+      },
+      {
+        "e": "🫎",
+        "fr": "Des élans, de très grands cerfs, vivent dans ses forêts.",
+        "en": "Moose, very big deer, live in its forests."
+      },
+      {
+        "e": "🏆",
+        "fr": "Chaque année, la plupart des prix Nobel sont remis à Stockholm.",
+        "en": "Every year, most of the Nobel Prizes are awarded in Stockholm."
+      }
+    ]
+  },
+  "SI": {
+    "capitale": {
+      "fr": "Ljubljana",
+      "en": "Ljubljana"
+    },
+    "faits": [
+      {
+        "e": "🐉",
+        "fr": "Le dragon est le symbole de sa capitale, Ljubljana.",
+        "en": "The dragon is the symbol of its capital, Ljubljana."
+      },
+      {
+        "e": "🦎",
+        "fr": "Dans ses grottes vit le protée, un petit animal aveugle surnommé « bébé dragon ».",
+        "en": "Its caves are home to the olm, a small blind animal nicknamed “baby dragon”."
+      },
+      {
+        "e": "⛪",
+        "fr": "Au milieu du lac de Bled, une petite île porte une église.",
+        "en": "In the middle of Lake Bled, a little island holds a church."
+      }
+    ]
+  },
+  "SK": {
+    "capitale": {
+      "fr": "Bratislava",
+      "en": "Bratislava"
+    },
+    "faits": [
+      {
+        "e": "🏰",
+        "fr": "Le pays compte plus de 100 châteaux, debout ou en ruine.",
+        "en": "The country has more than 100 castles, standing or in ruins."
+      },
+      {
+        "e": "🏔️",
+        "fr": "Les Hautes Tatras sont de hautes montagnes au nord du pays.",
+        "en": "The High Tatras are tall mountains in the north of the country."
+      },
+      {
+        "e": "🤝",
+        "fr": "Sa capitale touche deux autres pays : l’Autriche et la Hongrie.",
+        "en": "Its capital touches two other countries: Austria and Hungary."
+      }
+    ]
+  },
+  "SM": {
+    "capitale": {
+      "fr": "Saint-Marin",
+      "en": "San Marino"
+    },
+    "faits": [
+      {
+        "e": "🏰",
+        "fr": "Un tout petit pays entièrement entouré par l’Italie.",
+        "en": "A tiny country completely surrounded by Italy."
+      },
+      {
+        "e": "📜",
+        "fr": "On raconte qu’il a été fondé en l’an 301 : c’est un des plus vieux pays du monde.",
+        "en": "It is said to have been founded in the year 301: it is one of the oldest countries in the world."
+      },
+      {
+        "e": "⛰️",
+        "fr": "Il est bâti sur une montagne coiffée de trois tours.",
+        "en": "It is built on a mountain topped by three towers."
+      }
+    ]
+  },
+  "UA": {
+    "capitale": {
+      "fr": "Kyiv",
+      "en": "Kyiv"
+    },
+    "faits": [
+      {
+        "e": "🌻",
+        "fr": "Le tournesol est sa fleur : ses champs de tournesols sont immenses.",
+        "en": "The sunflower is its flower: its sunflower fields are huge."
+      },
+      {
+        "e": "🗺️",
+        "fr": "C’est le plus grand pays qui soit entièrement en Europe.",
+        "en": "It is the biggest country that lies entirely in Europe."
+      },
+      {
+        "e": "🥚",
+        "fr": "On y décore des œufs avec des motifs très fins : les pyssanky.",
+        "en": "People there decorate eggs with very fine patterns: pysanky."
+      }
+    ]
+  },
+  "VA": {
+    "capitale": {
+      "fr": "Cité du Vatican",
+      "en": "Vatican City"
+    },
+    "faits": [
+      {
+        "e": "🤏",
+        "fr": "C’est le plus petit pays du monde, plus petit que beaucoup de parcs.",
+        "en": "It is the smallest country in the world, smaller than many parks."
+      },
+      {
+        "e": "⛪",
+        "fr": "C’est là que vit le pape, au milieu de la ville de Rome.",
+        "en": "This is where the Pope lives, in the middle of the city of Rome."
+      },
+      {
+        "e": "💂",
+        "fr": "Ses gardes portent des uniformes rayés jaune, bleu et rouge : c’est la garde suisse.",
+        "en": "Its guards wear yellow, blue and red striped uniforms: they are the Swiss Guard."
+      }
+    ]
+  },
+  "XK": {
+    "capitale": {
+      "fr": "Pristina",
+      "en": "Pristina"
+    },
+    "faits": [
+      {
+        "e": "🎂",
+        "fr": "Il a déclaré son indépendance en 2008 : c’est un des plus jeunes pays du monde.",
+        "en": "It declared independence in 2008: it is one of the youngest countries in the world."
+      },
+      {
+        "e": "🧒",
+        "fr": "Ses habitants sont parmi les plus jeunes d’Europe.",
+        "en": "Its people are among the youngest in Europe."
+      },
+      {
+        "e": "📚",
+        "fr": "Sa grande bibliothèque est couverte de dômes et d’un filet de métal.",
+        "en": "Its big library is covered in domes and a metal net."
+      }
+    ]
+  }
+}

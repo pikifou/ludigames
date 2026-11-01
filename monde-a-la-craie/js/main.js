@@ -1,5 +1,6 @@
 // Le Monde à la craie : chargement, progression, passage d'un écran à l'autre.
 import { chargerMonde } from './carte.js';
+import { fiche, prochainSavoir } from './savoirs.js';
 import { charger, sauver } from './progres.js';
 import { langue, choisirLangue } from './textes.js';
 import { sonActif } from './sons.js';
@@ -18,7 +19,10 @@ const rand = params.has('graine') ? mulberry32(+params.get('graine')) : Math.ran
 if (params.has('vite')) document.documentElement.classList.add('vite');
 
 const ECRANS = { accueil, partie, decouvrir };
-const monde = await chargerMonde('data/monde.json');
+// Les savoirs sont un plus : sans eux (fichier absent), le jeu marche comme avant.
+const [monde, savoirs] = await Promise.all([chargerMonde('data/monde.json'),
+  fetch('data/savoirs.json').then(r => (r.ok ? r.json() : {})).catch(() => ({}))]);
+const savoirsVus = new Map();
 const proprietes = new Map(monde.map(f => [f.properties.code, f.properties]));
 // Ludiworld : le kit, et le prénom de l'enfant (il arrive juste après le démarrage, par un message de Ludiworld).
 const Ludi = window.Ludi;
@@ -59,6 +63,9 @@ const app = {
   nom(code) { const p = proprietes.get(code); return p ? p[langue] : ''; },
   // Avec le pays de rattachement pour un territoire : « Groenland (Danemark) ».
   nomComplet(code) { const p = proprietes.get(code); return p ? (p.de ? `${p[langue]} (${p.de[langue]})` : p[langue]) : ''; },
+  // Ce qu'on sait d'un pays (Découvrir), et un seul savoir à la fois après une erreur.
+  fiche(code) { return fiche(savoirs, code, langue); },
+  savoir(code) { return prochainSavoir(savoirs, code, langue, savoirsVus); },
   zoneDe(code) { const p = proprietes.get(code); return p && p.zone; },
   paysDeZone(id) {
     return monde.filter(f => f.properties.quiz && (id === 'monde' || f.properties.zone === id))

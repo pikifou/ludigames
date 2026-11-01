@@ -1,11 +1,11 @@
 // Service worker du Monde à la craie : tout le jeu est gardé à l'installation, il se joue hors ligne.
 // VERSION est l'empreinte des fichiers du jeu : node tools/version.js la met à jour.
-const VERSION = 'monde-a-la-craie-246c40338b';
+const VERSION = 'monde-a-la-craie-15cc3ef3bd';
 const FICHIERS = [
   './', 'index.html', 'style.css', 'manifest.webmanifest', 'ludi.js',
-  'data/monde.json',
+  'data/monde.json', 'data/savoirs.json',
   'lib/d3-array.min.js', 'lib/d3-geo.min.js', 'lib/topojson-client.min.js',
-  'js/main.js', 'js/carte.js', 'js/zones.js', 'js/regles.js', 'js/progres.js', 'js/toucher.js',
+  'js/main.js', 'js/carte.js', 'js/zones.js', 'js/regles.js', 'js/progres.js', 'js/toucher.js', 'js/savoirs.js',
   'js/textes.js', 'js/sons.js', 'js/voix.js', 'js/icones.js',
   'js/ecrans/accueil.js', 'js/ecrans/partie.js', 'js/ecrans/decouvrir.js',
   'fonts/baloo2-500.woff2', 'fonts/baloo2-700.woff2', 'fonts/baloo2-800.woff2', 'fonts/lexend.woff2',

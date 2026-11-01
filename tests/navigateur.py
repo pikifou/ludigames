@@ -1,4 +1,4 @@
-"""Tests dans le navigateur (Playwright) : python tests/navigateur.py [carte|ecrans|appli]
+"""Tests dans le navigateur (Playwright) : python tests/navigateur.py [carte|ecrans|appli|corrections|savoirs]
 
 Lance un petit serveur sur le port 7360 à la racine de ludigames (jamais 8000).
 """
@@ -176,6 +176,13 @@ def lancer(page, zone, action='jouer'):
     page.wait_for_function('window.jeu.carte && window.jeu.carte.zone.id === ' + repr(zone))
 
 
+def continuer(page):
+    """Après une erreur sur un pays qui a ses savoirs, le jeu attend qu'on touche la note « Le savais-tu ? »."""
+    page.wait_for_timeout(900)
+    if page.locator('.savoir:not([hidden])').count():
+        page.click('.savoir')
+
+
 def finir_manche(page):
     vus = []
     while not page.evaluate('jeu.manche.finie'):
@@ -215,7 +222,7 @@ def test_ecrans(nav):
     toucher(page, q)
     verifier(page.inner_text('#compteur') == avant and page.evaluate('jeu.manche.question') != q,
              "un toucher pendant l'animation d'erreur est ignoré")
-    page.wait_for_timeout(1600)
+    continuer(page)
     vus = finir_manche(page)
     verifier(q in vus, f'le pays raté revient avant la fin ({q})')
     verifier(not erreurs, f'aucune erreur ({erreurs[:2]})')
@@ -378,12 +385,13 @@ def test_corrections(nav):
     while page.evaluate('jeu.manche.faites') < 11:
         toucher(page, page.evaluate('jeu.manche.question'))
     toucher(page, page.evaluate(AUTRE_PAYS, 'europe'))
-    page.wait_for_timeout(1700)
+    continuer(page)
     toucher(page, page.evaluate(AUTRE_PAYS, 'europe'))
     page.click('[data-action="pause"]')
     page.wait_for_timeout(1700)
     verifier(page.locator('.fin').count() == 0, "pause pendant l'erreur : la fin attend la reprise")
     page.click('[data-action="reprendre"]')
+    continuer(page)
     page.wait_for_selector('.fin', timeout=3000)
     page.click('[data-action="encore"]')
     page.wait_for_timeout(300)
@@ -425,7 +433,79 @@ def test_corrections(nav):
     page.close()
 
 
-SECTIONS = {'carte': test_carte, 'ecrans': test_ecrans, 'appli': test_appli, 'corrections': test_corrections}
+def test_savoirs(nav):
+    print('savoirs')
+    CAPTURES.mkdir(exist_ok=True)
+    # Découvrir l'Europe : à côté de la carte, une fiche avec la capitale et trois savoirs, qui ne cache jamais la carte.
+    for (nom, w, h) in [('tablette', 1280, 800), ('portrait', 390, 844), ('paysage-telephone', 800, 360)]:
+        page, erreurs = ouvrir_jeu(nav, w, h)
+        lancer(page, 'europe', 'decouvrir')
+        verifier(page.locator('.fiche-pays').is_visible(), f'{nom} : Découvrir l’Europe montre la fiche')
+        toucher(page, 'ES')
+        page.wait_for_timeout(300)
+        texte = page.inner_text('.fiche-pays')
+        verifier('Madrid' in texte and page.locator('.fiche-pays .fait').count() == 3, f'{nom} : la fiche de l’Espagne ({texte[:60]!r})')
+        b = page.locator('.fiche-pays').bounding_box()
+        v = page.evaluate('jeu.carte.zoneVisible')
+        verifier(v['x1'] <= b['x'] + 1 or v['y1'] <= b['y'] + 1, f'{nom} : la fiche ne couvre pas la carte ({b} / {v})')
+        verifier(b['y'] + b['height'] <= h - 60, f'{nom} : la fiche laisse les boutons du bas libres ({b})')
+        page.screenshot(path=str(CAPTURES / f'savoirs-decouvrir-{nom}.png'))
+        verifier(not erreurs, f'{nom} : aucune erreur ({erreurs[:2]})')
+        page.close()
+
+    # Ailleurs (pas encore de savoirs) : pas de fiche, la carte garde toute la place.
+    page, erreurs = ouvrir_jeu(nav)
+    lancer(page, 'afrique', 'decouvrir')
+    verifier(page.locator('.fiche-pays').count() == 0, 'Découvrir l’Afrique : pas de fiche vide')
+    page.close()
+
+    # Une erreur en Europe : une note « Le savais-tu ? » sur le bon pays, le chrono s'arrête, on touche pour continuer.
+    for (nom, w, h) in [('tablette', 1280, 800), ('portrait', 390, 844)]:
+        page, erreurs = ouvrir_jeu(nav, w, h)
+        lancer(page, 'europe')
+        q = page.evaluate('jeu.manche.question')
+        toucher(page, page.evaluate(AUTRE_PAYS, 'europe'))
+        page.wait_for_timeout(200)
+        verifier(page.locator('.savoir').is_visible(), f'{nom} : après une erreur, la note « Le savais-tu ? »')
+        nomPays = page.evaluate('c => jeu.app.nom(c)', q)
+        verifier(nomPays in page.inner_text('.savoir'), f'{nom} : la note parle du pays à trouver ({nomPays})')
+        b = page.locator('.savoir').bounding_box()
+        x, y = page.evaluate('c => jeu.carte.ancreEcran(c)', q)
+        verifier(not (b['x'] <= x <= b['x'] + b['width'] and b['y'] <= y <= b['y'] + b['height']), f'{nom} : la note ne cache pas le pays entouré')
+        page.screenshot(path=str(CAPTURES / f'savoirs-erreur-{nom}.png'))
+        chrono = page.inner_text('#chrono')
+        page.click('.savoir')
+        verifier(page.locator('.savoir').is_visible(), f'{nom} : un toucher trop rapide ne fait pas passer la note')
+        page.wait_for_timeout(1800)
+        verifier(page.locator('.savoir').is_visible() and page.inner_text('#nom').strip() == nomPays, f'{nom} : la manche attend qu’on ait lu')
+        verifier(page.inner_text('#chrono') == chrono, f'{nom} : le chrono s’arrête pendant la lecture ({chrono} / {page.inner_text("#chrono")})')
+        page.click('.savoir')
+        page.wait_for_timeout(200)
+        verifier(page.locator('.savoir').is_hidden() and page.inner_text('#nom').strip() != nomPays, f'{nom} : toucher la note fait continuer')
+        page.wait_for_timeout(1200)
+        verifier(page.inner_text('#chrono') != chrono, f'{nom} : le chrono repart')
+        verifier(not erreurs, f'{nom} : aucune erreur ({erreurs[:2]})')
+        page.close()
+
+    # Une erreur hors d'Europe : comme avant, on continue tout seul.
+    page, erreurs = ouvrir_jeu(nav)
+    lancer(page, 'afrique')
+    q = page.evaluate('jeu.manche.question')
+    toucher(page, page.evaluate(AUTRE_PAYS, 'afrique'))
+    page.wait_for_timeout(1800)
+    verifier(page.locator('.savoir:not([hidden])').count() == 0 and page.evaluate('jeu.manche.question') != q, 'hors d’Europe : on continue tout seul')
+    page.close()
+
+    # En anglais : la capitale aussi.
+    page, erreurs = ouvrir_jeu(nav, init="localStorage.setItem('monde-a-la-craie.v1', JSON.stringify({ langue: 'en' }))")
+    lancer(page, 'europe', 'decouvrir')
+    toucher(page, 'GB')
+    texte = page.inner_text('.fiche-pays')
+    verifier('Capital' in texte and 'London' in texte, f'en anglais : {texte[:50]!r}')
+    page.close()
+
+
+SECTIONS = {'carte': test_carte, 'ecrans': test_ecrans, 'appli': test_appli, 'corrections': test_corrections, 'savoirs': test_savoirs}
 
 if __name__ == '__main__':
     voulues = sys.argv[1:] or list(SECTIONS)

@@ -1,4 +1,5 @@
 // Une manche : le nom s'écrit à la craie, on touche le pays. 12 pays, un chrono qui ne sert qu'à battre son temps.
+// Après une erreur sur un pays dont on a des savoirs : une note « Le savais-tu ? », le chrono s'arrête, on touche pour continuer.
 import { creerCarte } from '../carte.js';
 import { zoneParId } from '../zones.js';
 import { TAILLE_MANCHE, DUREE_ERREUR, choisirManche, Manche, pourcentage } from '../regles.js';
@@ -24,9 +25,11 @@ export function partie(app, zoneId) {
       <button class="bouton-rond" data-action="pause" aria-label="${t('pause')}" title="${t('pause')}">${ICONES.pause}</button>
     </div>
     <div class="coin-bas gauche zone-courante craie">${zone[app.langue]}</div>
+    <button class="savoir" data-action="continuer" hidden></button>
     <div class="voile" hidden></div>`;
   const nom = hud.querySelector('#nom'), compteur = hud.querySelector('#compteur'), chrono = hud.querySelector('#chrono');
-  const voile = hud.querySelector('.voile');
+  const voile = hud.querySelector('.voile'), note = hud.querySelector('.savoir');
+  const GARDE = 800;   // ms avant qu'un toucher fasse passer la note : on ne la saute pas sans l'avoir vue
 
   const zonePays = app.paysDeZone(zoneId);
   // La place du nom le plus long de la zone est réservée : un nom sur deux lignes ne recouvre jamais la carte.
@@ -42,6 +45,7 @@ export function partie(app, zoneId) {
   const annonces = new Set();
   let manche, couleur = 0, ecoule = 0, depart = 0, enPause = false, attente = 0, finie = false;
   let suite = null;   // ce qui reste à faire après l'animation d'une erreur (la pause la met en attente)
+  let lecture = false, garde = 0;   // la note « Le savais-tu ? » est ouverte : la manche attend un toucher
   window.jeu.carte = carte;
 
   // ---------- le chrono : il ne compte que pendant le jeu ----------
@@ -59,7 +63,7 @@ export function partie(app, zoneId) {
     carte.effacer(); carte.vueEntiere();
     manche = new Manche(choisirManche(zonePays, etat.connus, app.rand));
     window.jeu.manche = manche;
-    clearTimeout(attente); suite = null; enPause = false;
+    clearTimeout(attente); suite = null; enPause = false; lecture = false; note.hidden = true;
     couleur = 0; ecoule = 0; annonces.clear(); depart = performance.now(); finie = false;
     voile.hidden = true;
     majCompteur();
@@ -67,7 +71,8 @@ export function partie(app, zoneId) {
   }
 
   carte.surToucher(code => {
-    if (enPause || finie || suite) return;
+    if (enPause || finie) return;
+    if (suite) { if (lecture) continuer(); return; }
     const question = manche.question;
     const r = manche.toucher(code);
     if (r.resultat === 'ignore') return;
@@ -87,8 +92,10 @@ export function partie(app, zoneId) {
     carte.etat(r.bon, 'montre');
     son('faux');
     majCompteur();
+    const savoir = app.savoir(r.bon);
     suite = () => {
       suite = null;
+      if (lecture) { lecture = false; note.hidden = true; depart = performance.now(); }
       carte.etat(code, 'vide'); carte.ecrire(code, '');
       const montreDeBon = manche.resultats.has(r.bon);   // raté deux fois : il reste montré
       if (!montreDeBon) carte.etat(r.bon, 'vide');
@@ -96,8 +103,26 @@ export function partie(app, zoneId) {
       if (manche.finie) terminer(); else ecrireNom(app.nom(manche.question));
     };
     clearTimeout(attente);
-    attente = setTimeout(suite, DUREE_ERREUR);
+    if (savoir) montrerSavoir(r.bon, savoir); else attente = setTimeout(suite, DUREE_ERREUR);
   });
+
+  // La note se pose du côté de l'écran où n'est pas le bon pays, pour qu'il reste visible.
+  function montrerSavoir(code, savoir) {
+    ecoule = temps(); depart = 0;
+    lecture = true; garde = performance.now() + GARDE;
+    note.innerHTML = `<span class="savoir-titre"><small>${t('savaisTu')}</small> <span class="craie">${app.nom(code)}</span></span>
+      <span class="fait"><span class="emoji" aria-hidden="true">${savoir.e}</span><span>${savoir.texte}</span></span>
+      <small class="astuce">${t('toucheContinuer')}</small>`;
+    const [, y] = carte.ancreEcran(code), cadre = hud.getBoundingClientRect();
+    const enHaut = y > cadre.top + cadre.height / 2;
+    note.classList.toggle('en-haut', enHaut); note.classList.toggle('en-bas', !enHaut);
+    note.style.setProperty('--haut', hud.querySelector('.haut').offsetHeight + 6 + 'px');
+    note.hidden = false;
+    if (avecVoix) dire(`${app.nom(code)}. ${savoir.texte}`, app.langue);
+  }
+  function continuer() {
+    if (suite && lecture && !enPause && performance.now() >= garde) suite();
+  }
 
   function terminer() {
     if (finie) return;
@@ -135,7 +160,9 @@ export function partie(app, zoneId) {
     voile.hidden = false;
   }
   function reprendre() {
-    enPause = false; depart = performance.now(); voile.hidden = true;
+    enPause = false; voile.hidden = true;
+    if (lecture) return;   // la note est encore là : le chrono attend qu'on l'ait lue
+    depart = performance.now();
     if (suite) attente = setTimeout(suite, DUREE_ERREUR / 3);
   }
 
@@ -146,6 +173,7 @@ export function partie(app, zoneId) {
     if (a === 'vue') carte.vueEntiere();
     else if (a === 'pause') pause();
     else if (a === 'reprendre') reprendre();
+    else if (a === 'continuer') continuer();
     else if (a === 'quitter' || a === 'changer') app.aller('accueil');
     else if (a === 'encore') { son('effacer'); nouvelleManche(); }
     else if (a === 'ecouter' && manche.question) dire(app.nom(manche.question), app.langue);
