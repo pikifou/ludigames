@@ -3,6 +3,7 @@
 Lance un petit serveur sur le port 7360 à la racine de ludigames (jamais 8000).
 """
 import pathlib
+import json
 import re
 import subprocess
 import sys
@@ -235,7 +236,8 @@ def test_ecrans(nav):
     page.screenshot(path=str(CAPTURES / 'decouvrir-tablette.png'))
     page.close()
 
-    page, erreurs = ouvrir_jeu(nav, 360, 640)
+    # En Difficile : le nom le plus long d'Afrique peut être demandé.
+    page, erreurs = ouvrir_jeu(nav, 360, 640, init="localStorage.setItem('monde-a-la-craie.v1', JSON.stringify({ niveaux: { afrique: 'difficile' } }))")
     page.screenshot(path=str(CAPTURES / 'accueil-portrait.png'))
     lancer(page, 'afrique')
     page.evaluate("jeu.ecrireNom('République démocratique du Congo')")
@@ -453,10 +455,28 @@ def test_savoirs(nav):
         verifier(not erreurs, f'{nom} : aucune erreur ({erreurs[:2]})')
         page.close()
 
-    # Ailleurs (pas encore de savoirs) : pas de fiche, la carte garde toute la place.
+    # Tous les continents ont leurs savoirs ; Israël et la Palestine, sans capitale (elle est disputée).
     page, erreurs = ouvrir_jeu(nav)
     lancer(page, 'afrique', 'decouvrir')
-    verifier(page.locator('.fiche-pays').count() == 0, 'Découvrir l’Afrique : pas de fiche vide')
+    toucher(page, 'KE')
+    page.wait_for_timeout(300)
+    verifier('Nairobi' in page.inner_text('.fiche-pays') and page.locator('.fiche-pays .fait').count() == 3, 'Découvrir l’Afrique : la fiche du Kenya')
+    page.close()
+    page, erreurs = ouvrir_jeu(nav)
+    lancer(page, 'asie', 'decouvrir')
+    toucher(page, 'IL')
+    page.wait_for_timeout(300)
+    verifier('Capitale' not in page.inner_text('.fiche-pays') and page.locator('.fiche-pays .fait').count() == 3, 'Israël : trois savoirs, pas de capitale')
+    verifier(not erreurs, f'asie : aucune erreur ({erreurs[:2]})')
+    page.close()
+
+    # Sans le fichier des savoirs : pas de fiche, la carte garde toute la place.
+    page = nav.new_page(viewport={'width': 1280, 'height': 800}, locale='fr-FR')
+    page.route('**/savoirs.json', lambda r: r.abort())
+    page.goto(JEU)
+    page.wait_for_function('window.jeu && window.jeu.pret', timeout=15000)
+    lancer(page, 'europe', 'decouvrir')
+    verifier(page.locator('.fiche-pays').count() == 0, 'sans savoirs : pas de fiche vide')
     page.close()
 
     # Une erreur en Europe : une note « Le savais-tu ? » sur le bon pays, le chrono s'arrête, on touche pour continuer.
@@ -487,13 +507,25 @@ def test_savoirs(nav):
         verifier(not erreurs, f'{nom} : aucune erreur ({erreurs[:2]})')
         page.close()
 
-    # Une erreur hors d'Europe : comme avant, on continue tout seul.
-    page, erreurs = ouvrir_jeu(nav)
+    # Sans le fichier des savoirs : après une erreur, on continue tout seul, comme avant.
+    page = nav.new_page(viewport={'width': 1280, 'height': 800}, locale='fr-FR')
+    page.route('**/savoirs.json', lambda r: r.abort())
+    page.goto(JEU)
+    page.wait_for_function('window.jeu && window.jeu.pret', timeout=15000)
     lancer(page, 'afrique')
     q = page.evaluate('jeu.manche.question')
     toucher(page, page.evaluate(AUTRE_PAYS, 'afrique'))
     page.wait_for_timeout(1800)
-    verifier(page.locator('.savoir:not([hidden])').count() == 0 and page.evaluate('jeu.manche.question') != q, 'hors d’Europe : on continue tout seul')
+    verifier(page.locator('.savoir:not([hidden])').count() == 0 and page.evaluate('jeu.manche.question') != q, 'sans savoirs : on continue tout seul')
+    page.close()
+
+    # Une erreur en Afrique : la note « Le savais-tu ? » aussi.
+    page, erreurs = ouvrir_jeu(nav)
+    lancer(page, 'afrique')
+    toucher(page, page.evaluate(AUTRE_PAYS, 'afrique'))
+    page.wait_for_timeout(300)
+    verifier(page.locator('.savoir').is_visible(), 'erreur en Afrique : la note s’ouvre')
+    page.screenshot(path=str(CAPTURES / 'savoirs-erreur-afrique.png'))
     page.close()
 
     # En anglais : la capitale aussi.
@@ -505,7 +537,84 @@ def test_savoirs(nav):
     page.close()
 
 
-SECTIONS = {'carte': test_carte, 'ecrans': test_ecrans, 'appli': test_appli, 'corrections': test_corrections, 'savoirs': test_savoirs}
+FACILES = "import('./js/niveaux.js').then(m => m.LISTES.facile)"
+
+
+def test_niveaux(nav):
+    print('niveaux')
+    CAPTURES.mkdir(exist_ok=True)
+    # Par défaut, Facile : 14 pays d'Europe, les autres estompés, sans rond pour le Vatican.
+    for (nom, w, h) in [('tablette', 1280, 800), ('portrait', 390, 844)]:
+        page, erreurs = ouvrir_jeu(nav, w, h)
+        page.click('[data-zone="europe"]')
+        verifier(page.get_attribute('[data-niveau="facile"]', 'aria-pressed') == 'true', f'{nom} : Facile choisi par défaut')
+        verifier('14 pays' in page.inner_text('[data-niveau="facile"]') and '46 pays' in page.inner_text('[data-niveau="difficile"]'),
+                 f'{nom} : chaque niveau dit son nombre de pays')
+        page.screenshot(path=str(CAPTURES / f'niveaux-{nom}.png'))
+        page.close()
+
+    page, erreurs = ouvrir_jeu(nav)
+    lancer(page, 'europe')
+    faciles = page.evaluate(FACILES)
+    verifier('Facile' in page.inner_text('.zone-courante'), 'le niveau est écrit en bas de la carte')
+    verifier('estompe' in (page.get_attribute('path[data-code="MD"]', 'class') or ''), 'Facile : la Moldavie est estompée')
+    verifier('estompe' not in (page.get_attribute('path[data-code="FR"]', 'class') or ''), 'Facile : la France ne l’est pas')
+    verifier(page.locator('.rond[data-code="VA"]').count() == 0, 'Facile : pas de rond pour le Vatican')
+    page.screenshot(path=str(CAPTURES / 'niveau-facile-tablette.png'))
+    # Toucher un pays estompé : une erreur comme une autre, son nom s'écrit.
+    toucher(page, 'MD')
+    verifier('erreur' in (page.get_attribute('path[data-code="MD"]', 'class') or ''), 'un pays estompé touché compte comme une erreur')
+    continuer(page)
+    vus = finir_manche(page)
+    page.wait_for_selector('.fin', timeout=3000)
+    verifier(all(c in faciles for c in vus), f'Facile : seulement des pays faciles ({[c for c in vus if c not in faciles]})')
+    verifier(not erreurs, f'aucune erreur ({erreurs[:2]})')
+
+    # Difficile : rien d'estompé, et le choix est gardé.
+    page.click('[data-action="changer"]')
+    page.click('[data-zone="europe"]')
+    page.click('[data-niveau="difficile"]')
+    page.click('[data-action="jouer"]')
+    page.wait_for_function('window.jeu.manche')
+    verifier(page.locator('path.estompe').count() == 0, 'Difficile : aucun pays estompé')
+    page.reload()
+    page.wait_for_function('window.jeu && window.jeu.pret')
+    page.click('[data-zone="europe"]')
+    verifier(page.get_attribute('[data-niveau="difficile"]', 'aria-pressed') == 'true', 'le niveau choisi est gardé pour l’Europe')
+    page.click('[data-action="fermer"]')
+    page.click('[data-zone="afrique"]')
+    verifier(page.get_attribute('[data-niveau="facile"]', 'aria-pressed') == 'true', '… et seulement pour l’Europe')
+    page.close()
+
+    # L'Océanie en Facile : une manche courte, de 4 pays.
+    page, erreurs = ouvrir_jeu(nav)
+    lancer(page, 'oceanie')
+    verifier(page.inner_text('#compteur').strip() == '0 / 4', f"Océanie facile : {page.inner_text('#compteur')!r}")
+    finir_manche(page)
+    page.wait_for_selector('.fin', timeout=3000)
+    verifier('4 pays' in page.inner_text('.fin'), 'Océanie facile : la manche finit après 4 pays')
+    page.close()
+
+    # Le monde entier : ouvert en Facile quand les pays faciles sont connus ; Moyen reste fermé.
+    page, erreurs = ouvrir_jeu(nav)
+    faciles = page.evaluate(FACILES)
+    page.close()
+    init = "localStorage.setItem('monde-a-la-craie.v1', JSON.stringify({ connus: %s }))" % json.dumps(faciles)
+    page, erreurs = ouvrir_jeu(nav, init=init)
+    page.click('[data-zone="monde"]')
+    verifier(page.locator('[data-niveau="moyen"][aria-disabled="true"]').count() == 1, 'monde : Moyen fermé')
+    page.click('[data-niveau="moyen"]', force=True)
+    verifier(page.locator('.niveau-ferme').is_visible() and page.get_attribute('[data-niveau="facile"]', 'aria-pressed') == 'true',
+             'monde : toucher Moyen explique comment l’ouvrir, Facile reste choisi')
+    page.screenshot(path=str(CAPTURES / 'niveaux-monde.png'))
+    page.click('[data-action="jouer"]')
+    page.wait_for_function('window.jeu.manche')
+    verifier(page.evaluate('jeu.manche.file').__len__() == 12 and all(c in faciles for c in page.evaluate('jeu.manche.file')), 'monde facile : 12 pays faciles')
+    verifier(not erreurs, f'monde : aucune erreur ({erreurs[:2]})')
+    page.close()
+
+
+SECTIONS = {'carte': test_carte, 'ecrans': test_ecrans, 'appli': test_appli, 'corrections': test_corrections, 'savoirs': test_savoirs, 'niveaux': test_niveaux}
 
 if __name__ == '__main__':
     voulues = sys.argv[1:] or list(SECTIONS)

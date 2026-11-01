@@ -1,9 +1,10 @@
-// Une manche : le nom s'écrit à la craie, on touche le pays. 12 pays, un chrono qui ne sert qu'à battre son temps.
+// Une manche : le nom s'écrit à la craie, on touche le pays. 12 pays (moins en Facile sur un petit continent), un chrono qui ne sert qu'à battre son temps.
 // Après une erreur sur un pays dont on a des savoirs : une note « Le savais-tu ? », le chrono s'arrête, on touche pour continuer.
 import { creerCarte } from '../carte.js';
 import { zoneParId } from '../zones.js';
-import { TAILLE_MANCHE, DUREE_ERREUR, choisirManche, Manche, pourcentage } from '../regles.js';
-import { enregistrerManche } from '../progres.js';
+import { DUREE_ERREUR, choisirManche, Manche, pourcentage } from '../regles.js';
+import { enregistrerManche, cleRecord } from '../progres.js';
+import { dansNiveau } from '../niveaux.js';
 import { t, duree } from '../textes.js';
 import { son } from '../sons.js';
 import { dire, voixDisponible } from '../voix.js';
@@ -11,7 +12,7 @@ import { ICONES } from '../icones.js';
 
 export function partie(app, zoneId) {
   const { hud, etat } = app;
-  const zone = zoneParId(zoneId);
+  const zone = zoneParId(zoneId), niveau = app.niveau(zoneId);
   const avecVoix = etat.voix && voixDisponible(app.langue);
   hud.innerHTML = `
     <header class="haut haut-partie">
@@ -24,14 +25,16 @@ export function partie(app, zoneId) {
       <button class="bouton-rond" data-action="vue" aria-label="${t('vueEntiere')}" title="${t('vueEntiere')}">${ICONES.vue}</button>
       <button class="bouton-rond" data-action="pause" aria-label="${t('pause')}" title="${t('pause')}">${ICONES.pause}</button>
     </div>
-    <div class="coin-bas gauche zone-courante craie">${zone[app.langue]}</div>
+    <div class="coin-bas gauche zone-courante craie">${zone[app.langue]} · ${t(niveau)}</div>
     <button class="savoir" data-action="continuer" hidden></button>
     <div class="voile" hidden></div>`;
+  // Les pays qu'on peut demander : de la zone et du niveau. En Facile et Moyen, les autres sont estompés.
+  function enJeu(p) { return p.quiz && (zoneId === 'monde' || p.zone === zoneId) && dansNiveau(p.code, niveau); }
   const nom = hud.querySelector('#nom'), compteur = hud.querySelector('#compteur'), chrono = hud.querySelector('#chrono');
   const voile = hud.querySelector('.voile'), note = hud.querySelector('.savoir');
   const GARDE = 800;   // ms avant qu'un toucher fasse passer la note : on ne la saute pas sans l'avoir vue
 
-  const zonePays = app.paysDeZone(zoneId);
+  const zonePays = app.paysDeZone(zoneId, niveau);
   // La place du nom le plus long de la zone est réservée : un nom sur deux lignes ne recouvre jamais la carte.
   const plusLong = zonePays.map(p => app.nom(p.code)).sort((a, b) => b.length - a.length)[0];
   function reserverNom() {
@@ -41,7 +44,7 @@ export function partie(app, zoneId) {
     return hud.querySelector('.haut').offsetHeight + 6;
   }
   const carte = creerCarte(app.nouvelleCarte(), app.monde, zone, () => ({ haut: reserverNom(), bas: 62, gauche: 8, droite: 8 }),
-    { ronds: p => p.quiz && (zoneId === 'monde' || p.zone === zoneId) });
+    { ronds: enJeu, estompe: p => niveau !== 'difficile' && !enJeu(p) });
   const annonces = new Set();
   let manche, couleur = 0, ecoule = 0, depart = 0, enPause = false, attente = 0, finie = false;
   let suite = null;   // ce qui reste à faire après l'animation d'une erreur (la pause la met en attente)
@@ -57,7 +60,7 @@ export function partie(app, zoneId) {
     nom.classList.remove('ecrit'); void nom.offsetWidth; nom.classList.add('ecrit');
     son('craie');
   }
-  function majCompteur() { compteur.textContent = t('compteur', { n: manche.faites, total: TAILLE_MANCHE }); }
+  function majCompteur() { compteur.textContent = t('compteur', { n: manche.faites, total: manche.total }); }
 
   function nouvelleManche() {
     carte.effacer(); carte.vueEntiere();
@@ -129,18 +132,18 @@ export function partie(app, zoneId) {
     finie = true;
     const secondes = temps();
     ecoule = secondes; depart = 0;
-    const { record } = enregistrerManche(etat, zoneId, manche.resultats, secondes);
+    const { record } = enregistrerManche(etat, zoneId, manche.resultats, secondes, niveau);
     app.sauver();
     const premiers = [...manche.resultats.values()].filter(Boolean).length;
-    const pct = pourcentage(zonePays.map(p => p.code), etat.connus);
+    const pct = pourcentage(app.paysDeZone(zoneId).map(p => p.code), etat.connus);   // toute la zone, pour Ludiworld
     son('fin');
-    app.evenement('fin', { zone: zoneId, secondes, pourcentage: pct, record });
+    app.evenement('fin', { zone: zoneId, niveau, secondes, pourcentage: pct, record });
     const encore = app.encoreUneManche ? app.encoreUneManche() : true;
     voile.classList.add('clair');
     voile.innerHTML = `<div class="note-tableau fin">
       <p class="grand craie">${t('trouves', { n: manche.trouves })}</p>
       <p>${t('premierCoup', { n: premiers })} · ${t('temps', { t: duree(secondes) })}</p>
-      <p class="record craie">${record ? t('record') : t('meilleur', { t: duree(etat.meilleurs[zoneId]) })}</p>
+      <p class="record craie">${record ? t('record') : t('meilleur', { t: duree(etat.meilleurs[cleRecord(zoneId, niveau)]) })}</p>
       <div class="boutons">
         ${encore ? `<button class="bouton-craie plein" data-action="encore">${t('encore')}</button>` : `<p>${t('plusDeManche')}</p>`}
         <button class="bouton-craie" data-action="changer">${t('changer')}</button>

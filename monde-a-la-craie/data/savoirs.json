@@ -22,6 +22,75 @@
       }
     ]
   },
+  "AE": {
+    "capitale": {
+      "fr": "Abou Dabi",
+      "en": "Abu Dhabi"
+    },
+    "faits": [
+      {
+        "e": "🏙️",
+        "fr": "À Dubaï se dresse le Burj Khalifa, la plus haute tour du monde.",
+        "en": "Dubai is home to the Burj Khalifa, the tallest tower in the world."
+      },
+      {
+        "e": "🌴",
+        "fr": "Près de Dubaï, on a construit dans la mer des îles en forme de palmier.",
+        "en": "Near Dubai, islands shaped like a palm tree have been built in the sea."
+      },
+      {
+        "e": "🦅",
+        "fr": "Le faucon est l’oiseau symbole du pays : il a même un hôpital rien que pour lui.",
+        "en": "The falcon is the country’s symbol: there is even a hospital just for falcons."
+      }
+    ]
+  },
+  "AF": {
+    "capitale": {
+      "fr": "Kaboul",
+      "en": "Kabul"
+    },
+    "faits": [
+      {
+        "e": "🏔️",
+        "fr": "Les hautes montagnes de l’Hindou Kouch traversent le pays.",
+        "en": "The high Hindu Kush mountains cross the country."
+      },
+      {
+        "e": "💎",
+        "fr": "On y extrait depuis des milliers d’années le lapis-lazuli, une pierre d’un bleu profond.",
+        "en": "Lapis lazuli, a deep blue stone, has been dug up there for thousands of years."
+      },
+      {
+        "e": "🪁",
+        "fr": "Faire voler des cerfs-volants est un jeu très aimé des enfants.",
+        "en": "Flying kites is a game children there love."
+      }
+    ]
+  },
+  "AG": {
+    "capitale": {
+      "fr": "Saint John’s",
+      "en": "St. John’s"
+    },
+    "faits": [
+      {
+        "e": "🏖️",
+        "fr": "On dit qu’Antigua a 365 plages : une pour chaque jour de l’année !",
+        "en": "People say Antigua has 365 beaches: one for every day of the year!"
+      },
+      {
+        "e": "🐦",
+        "fr": "Sur l’île de Barbuda vivent des milliers de frégates, des oiseaux à la gorge rouge qui se gonfle.",
+        "en": "Thousands of frigatebirds live on the island of Barbuda; they puff up their red throats."
+      },
+      {
+        "e": "⛵",
+        "fr": "Chaque année, de nombreux voiliers viennent y faire la course pendant la Semaine de la voile.",
+        "en": "Every year, lots of sailing boats come to race there during Sailing Week."
+      }
+    ]
+  },
   "AL": {
     "capitale": {
       "fr": "Tirana",
@@ -42,6 +111,75 @@
         "e": "🎨",
         "fr": "À Tirana, la capitale, beaucoup d’immeubles sont peints de toutes les couleurs.",
         "en": "In Tirana, the capital, many buildings are painted in every colour."
+      }
+    ]
+  },
+  "AM": {
+    "capitale": {
+      "fr": "Erevan",
+      "en": "Yerevan"
+    },
+    "faits": [
+      {
+        "e": "🏔️",
+        "fr": "Depuis Erevan, on voit le mont Ararat, une grande montagne au sommet enneigé.",
+        "en": "From Yerevan, you can see Mount Ararat, a big mountain with a snowy top."
+      },
+      {
+        "e": "👞",
+        "fr": "On y a trouvé la plus vieille chaussure en cuir connue : elle a environ 5500 ans.",
+        "en": "The oldest known leather shoe was found there: it is about 5,500 years old."
+      },
+      {
+        "e": "🎵",
+        "fr": "Le doudouk est un instrument à vent en bois d’abricotier, au son très doux.",
+        "en": "The duduk is a wind instrument made of apricot wood, with a very soft sound."
+      }
+    ]
+  },
+  "AO": {
+    "capitale": {
+      "fr": "Luanda",
+      "en": "Luanda"
+    },
+    "faits": [
+      {
+        "e": "💧",
+        "fr": "Les chutes de Kalandula sont parmi les plus grandes cascades d’Afrique.",
+        "en": "The Kalandula Falls are among the biggest waterfalls in Africa."
+      },
+      {
+        "e": "🦌",
+        "fr": "L’hippotrague noir géant, une antilope aux longues cornes courbées, est le symbole du pays.",
+        "en": "The giant sable antelope, with its long curved horns, is the symbol of the country."
+      },
+      {
+        "e": "🗺️",
+        "fr": "Un petit bout du pays, Cabinda, est séparé du reste par une bande de terre du Congo voisin.",
+        "en": "A small piece of the country, Cabinda, is cut off from the rest by a strip of neighbouring Congo."
+      }
+    ]
+  },
+  "AR": {
+    "capitale": {
+      "fr": "Buenos Aires",
+      "en": "Buenos Aires"
+    },
+    "faits": [
+      {
+        "e": "🏔️",
+        "fr": "L’Aconcagua, dans les Andes, est la plus haute montagne des Amériques.",
+        "en": "Aconcagua, in the Andes, is the highest mountain in the Americas."
+      },
+      {
+        "e": "🐧",
+        "fr": "Des manchots viennent faire leur nid sur les côtes de Patagonie, dans le sud.",
+        "en": "Penguins come to nest on the coasts of Patagonia, in the south."
+      },
+      {
+        "e": "💃",
+        "fr": "Buenos Aires est la ville du tango, une danse que l’on fait à deux.",
+        "en": "Buenos Aires is the city of tango, a dance for two."
       }
     ]
   },
@@ -68,6 +206,52 @@
       }
     ]
   },
+  "AU": {
+    "capitale": {
+      "fr": "Canberra",
+      "en": "Canberra"
+    },
+    "faits": [
+      {
+        "e": "🦘",
+        "fr": "Les bébés kangourous et koalas grandissent dans une poche sur le ventre de leur maman.",
+        "en": "Baby kangaroos and koalas grow up in a pouch on their mother’s tummy."
+      },
+      {
+        "e": "🐠",
+        "fr": "La Grande Barrière de corail est le plus grand récif de corail du monde.",
+        "en": "The Great Barrier Reef is the largest coral reef in the world."
+      },
+      {
+        "e": "🎭",
+        "fr": "À Sydney, le toit de l’Opéra ressemble à des voiles de bateau.",
+        "en": "In Sydney, the roof of the Opera House looks like the sails of a boat."
+      }
+    ]
+  },
+  "AZ": {
+    "capitale": {
+      "fr": "Bakou",
+      "en": "Baku"
+    },
+    "faits": [
+      {
+        "e": "🌊",
+        "fr": "Il est au bord de la mer Caspienne, le plus grand lac du monde.",
+        "en": "It lies on the Caspian Sea, the largest lake in the world."
+      },
+      {
+        "e": "🔥",
+        "fr": "Sur une colline, des flammes sortent du sol et brûlent jour et nuit.",
+        "en": "On one hillside, flames come out of the ground and burn day and night."
+      },
+      {
+        "e": "🌋",
+        "fr": "Il compte des centaines de volcans de boue, qui font des bulles de boue grise.",
+        "en": "It has hundreds of mud volcanoes, which bubble with grey mud."
+      }
+    ]
+  },
   "BA": {
     "capitale": {
       "fr": "Sarajevo",
@@ -88,6 +272,52 @@
         "e": "🏖️",
         "fr": "Le pays ne touche la mer que sur une vingtaine de kilomètres.",
         "en": "The country touches the sea for only about 20 kilometres."
+      }
+    ]
+  },
+  "BB": {
+    "capitale": {
+      "fr": "Bridgetown",
+      "en": "Bridgetown"
+    },
+    "faits": [
+      {
+        "e": "🧭",
+        "fr": "C’est l’île la plus à l’est des Caraïbes, un peu à l’écart dans l’océan Atlantique.",
+        "en": "It is the most easterly island of the Caribbean, a little apart in the Atlantic Ocean."
+      },
+      {
+        "e": "🍊",
+        "fr": "Le pamplemousse est né à la Barbade, d’un mélange naturel entre deux agrumes.",
+        "en": "The grapefruit was born in Barbados, from a natural mix of two citrus fruits."
+      },
+      {
+        "e": "🐒",
+        "fr": "Des singes verts vivent dans ses forêts et ses jardins.",
+        "en": "Green monkeys live in its forests and gardens."
+      }
+    ]
+  },
+  "BD": {
+    "capitale": {
+      "fr": "Dacca",
+      "en": "Dhaka"
+    },
+    "faits": [
+      {
+        "e": "🐅",
+        "fr": "Le tigre du Bengale vit dans les Sundarbans, la plus grande mangrove du monde.",
+        "en": "The Bengal tiger lives in the Sundarbans, the largest mangrove forest in the world."
+      },
+      {
+        "e": "🚲",
+        "fr": "Les rues de Dacca sont remplies de rickshaws, des vélos-taxis très colorés.",
+        "en": "The streets of Dhaka are full of rickshaws, very colourful bicycle taxis."
+      },
+      {
+        "e": "🏖️",
+        "fr": "La plage de Cox’s Bazar est l’une des plus longues plages du monde.",
+        "en": "Cox’s Bazar beach is one of the longest beaches in the world."
       }
     ]
   },
@@ -114,6 +344,29 @@
       }
     ]
   },
+  "BF": {
+    "capitale": {
+      "fr": "Ouagadougou",
+      "en": "Ouagadougou"
+    },
+    "faits": [
+      {
+        "e": "🎬",
+        "fr": "À Ouagadougou a lieu le FESPACO, le plus grand festival de cinéma d’Afrique.",
+        "en": "Ouagadougou hosts FESPACO, the biggest film festival in Africa."
+      },
+      {
+        "e": "🧭",
+        "fr": "Il n’a pas de mer et il est entouré de six pays, dont le Mali et le Ghana.",
+        "en": "It has no sea and is surrounded by six countries, including Mali and Ghana."
+      },
+      {
+        "e": "🌰",
+        "fr": "On y récolte les noix de karité, qui servent à faire un beurre doux pour la peau.",
+        "en": "People there gather shea nuts, used to make a soft butter for the skin."
+      }
+    ]
+  },
   "BG": {
     "capitale": {
       "fr": "Sofia",
@@ -134,6 +387,213 @@
         "e": "🥛",
         "fr": "Le yaourt y est si ancien qu’une bactérie du yaourt porte le nom du pays.",
         "en": "Yogurt is so old there that a yogurt bacterium is named after the country."
+      }
+    ]
+  },
+  "BH": {
+    "capitale": {
+      "fr": "Manama",
+      "en": "Manama"
+    },
+    "faits": [
+      {
+        "e": "🌉",
+        "fr": "Ce pays fait de petites îles est relié à l’Arabie saoudite par un long pont.",
+        "en": "This country made of small islands is linked to Saudi Arabia by a long bridge."
+      },
+      {
+        "e": "🦪",
+        "fr": "Pendant des siècles, des plongeurs y ont cherché des perles au fond de la mer.",
+        "en": "For centuries, divers searched for pearls at the bottom of the sea there."
+      },
+      {
+        "e": "🌳",
+        "fr": "L’Arbre de vie pousse tout seul au milieu du désert depuis des centaines d’années.",
+        "en": "The Tree of Life has grown all alone in the middle of the desert for hundreds of years."
+      }
+    ]
+  },
+  "BI": {
+    "capitale": {
+      "fr": "Gitega",
+      "en": "Gitega"
+    },
+    "faits": [
+      {
+        "e": "🥁",
+        "fr": "Ses joueurs de tambour frappent d’énormes tambours en dansant : un trésor protégé par l’UNESCO.",
+        "en": "Its drummers beat huge drums while dancing: a treasure protected by UNESCO."
+      },
+      {
+        "e": "🏞️",
+        "fr": "Il borde le lac Tanganyika, le lac d’eau douce le plus long du monde.",
+        "en": "It lies on Lake Tanganyika, the longest freshwater lake in the world."
+      },
+      {
+        "e": "🏙️",
+        "fr": "Sa capitale est Gitega, au centre du pays, mais sa plus grande ville s’appelle Bujumbura.",
+        "en": "Its capital is Gitega, in the middle of the country, but its biggest city is called Bujumbura."
+      }
+    ]
+  },
+  "BJ": {
+    "capitale": {
+      "fr": "Porto-Novo",
+      "en": "Porto-Novo"
+    },
+    "faits": [
+      {
+        "e": "🛶",
+        "fr": "Ganvié est un village bâti sur un lac : on va de maison en maison en pirogue.",
+        "en": "Ganvié is a village built on a lake: people go from house to house by canoe."
+      },
+      {
+        "e": "👑",
+        "fr": "À Abomey, on peut visiter les palais des anciens rois du Dahomey.",
+        "en": "In Abomey, you can visit the palaces of the old kings of Dahomey."
+      },
+      {
+        "e": "🦛",
+        "fr": "Dans le parc de la Pendjari vivent des éléphants, des lions et des hippopotames.",
+        "en": "Elephants, lions and hippos live in Pendjari National Park."
+      }
+    ]
+  },
+  "BN": {
+    "capitale": {
+      "fr": "Bandar Seri Begawan",
+      "en": "Bandar Seri Begawan"
+    },
+    "faits": [
+      {
+        "e": "🏝️",
+        "fr": "Il est sur la grande île de Bornéo, qu’il partage avec la Malaisie et l’Indonésie.",
+        "en": "It is on the big island of Borneo, which it shares with Malaysia and Indonesia."
+      },
+      {
+        "e": "🏘️",
+        "fr": "Dans la capitale, tout un village est construit sur pilotis, au-dessus de l’eau.",
+        "en": "In the capital, a whole village is built on stilts, above the water."
+      },
+      {
+        "e": "🐒",
+        "fr": "Dans ses forêts vivent des nasiques, des singes au très grand nez.",
+        "en": "Proboscis monkeys, monkeys with a very big nose, live in its forests."
+      }
+    ]
+  },
+  "BO": {
+    "capitale": {
+      "fr": "Sucre",
+      "en": "Sucre"
+    },
+    "faits": [
+      {
+        "e": "🧂",
+        "fr": "Le salar d’Uyuni est le plus grand désert de sel du monde, tout blanc comme de la neige.",
+        "en": "The Uyuni salt flat is the largest salt desert in the world, as white as snow."
+      },
+      {
+        "e": "🚠",
+        "fr": "Le gouvernement siège à La Paz, où des téléphériques servent de bus dans le ciel.",
+        "en": "The government sits in La Paz, where cable cars are used like buses in the sky."
+      },
+      {
+        "e": "🏞️",
+        "fr": "Il partage avec le Pérou le lac Titicaca, très haut dans les montagnes.",
+        "en": "It shares Lake Titicaca with Peru, high up in the mountains."
+      }
+    ]
+  },
+  "BR": {
+    "capitale": {
+      "fr": "Brasilia",
+      "en": "Brasília"
+    },
+    "faits": [
+      {
+        "e": "🌳",
+        "fr": "La forêt amazonienne, la plus grande forêt tropicale du monde, couvre une grande partie du pays.",
+        "en": "The Amazon, the largest rainforest in the world, covers a big part of the country."
+      },
+      {
+        "e": "🗣️",
+        "fr": "C’est le plus grand pays d’Amérique du Sud, et on y parle portugais.",
+        "en": "It is the largest country in South America, and people there speak Portuguese."
+      },
+      {
+        "e": "⚽",
+        "fr": "Le football y est une passion : le Brésil a gagné plusieurs fois la Coupe du monde.",
+        "en": "Football is a passion there: Brazil has won the World Cup several times."
+      }
+    ]
+  },
+  "BS": {
+    "capitale": {
+      "fr": "Nassau",
+      "en": "Nassau"
+    },
+    "faits": [
+      {
+        "e": "🐷",
+        "fr": "Sur une petite île, des cochons nagent dans une mer turquoise !",
+        "en": "On a little island, pigs swim in a turquoise sea!"
+      },
+      {
+        "e": "🏝️",
+        "fr": "Le pays est fait de centaines d’îles, dont beaucoup sont toutes petites.",
+        "en": "The country is made of hundreds of islands, many of them tiny."
+      },
+      {
+        "e": "🦩",
+        "fr": "Son oiseau national est le flamant rose, aux longues pattes fines.",
+        "en": "Its national bird is the pink flamingo, with long thin legs."
+      }
+    ]
+  },
+  "BT": {
+    "capitale": {
+      "fr": "Thimphou",
+      "en": "Thimphu"
+    },
+    "faits": [
+      {
+        "e": "🐉",
+        "fr": "Son nom veut dire « pays du dragon tonnerre », et un dragon orne son drapeau.",
+        "en": "Its name means “land of the thunder dragon”, and a dragon is on its flag."
+      },
+      {
+        "e": "🏯",
+        "fr": "Le monastère du Nid du Tigre est accroché au bord d’une haute falaise.",
+        "en": "The Tiger’s Nest monastery clings to the edge of a high cliff."
+      },
+      {
+        "e": "🚦",
+        "fr": "Dans la capitale, il n’y a pas de feux rouges : des policiers guident les voitures.",
+        "en": "In the capital, there are no traffic lights: police officers guide the cars."
+      }
+    ]
+  },
+  "BW": {
+    "capitale": {
+      "fr": "Gaborone",
+      "en": "Gaborone"
+    },
+    "faits": [
+      {
+        "e": "🐘",
+        "fr": "C’est le pays qui compte le plus d’éléphants au monde.",
+        "en": "It is the country with the most elephants in the world."
+      },
+      {
+        "e": "🌿",
+        "fr": "Le fleuve Okavango ne va pas à la mer : il s’étale dans le désert en un immense delta vert.",
+        "en": "The Okavango River never reaches the sea: it spreads out in the desert into a huge green delta."
+      },
+      {
+        "e": "💎",
+        "fr": "C’est l’un des pays qui produisent le plus de diamants au monde.",
+        "en": "It is one of the countries that produce the most diamonds in the world."
       }
     ]
   },
@@ -160,6 +620,121 @@
       }
     ]
   },
+  "BZ": {
+    "capitale": {
+      "fr": "Belmopan",
+      "en": "Belmopan"
+    },
+    "faits": [
+      {
+        "e": "🐆",
+        "fr": "Le premier parc au monde créé pour protéger les jaguars se trouve au Belize.",
+        "en": "The world’s first park created to protect jaguars is in Belize."
+      },
+      {
+        "e": "🔵",
+        "fr": "En pleine mer, le Grand Trou bleu est un immense trou rond et très profond.",
+        "en": "Out at sea, the Great Blue Hole is a huge, round and very deep hole."
+      },
+      {
+        "e": "🗣️",
+        "fr": "C’est le seul pays d’Amérique centrale où la langue officielle est l’anglais.",
+        "en": "It is the only country in Central America where the official language is English."
+      }
+    ]
+  },
+  "CA": {
+    "capitale": {
+      "fr": "Ottawa",
+      "en": "Ottawa"
+    },
+    "faits": [
+      {
+        "e": "🍁",
+        "fr": "Le sirop d’érable est fait avec la sève des érables, dont la feuille orne le drapeau.",
+        "en": "Maple syrup is made from the sap of maple trees, whose leaf is on the flag."
+      },
+      {
+        "e": "📏",
+        "fr": "C’est le deuxième plus grand pays du monde, après la Russie.",
+        "en": "It is the second largest country in the world, after Russia."
+      },
+      {
+        "e": "🗣️",
+        "fr": "Au Québec, on parle français, comme en France.",
+        "en": "In Quebec, people speak French, like in France."
+      }
+    ]
+  },
+  "CD": {
+    "capitale": {
+      "fr": "Kinshasa",
+      "en": "Kinshasa"
+    },
+    "faits": [
+      {
+        "e": "🦒",
+        "fr": "L’okapi, aux pattes rayées comme un zèbre, est un cousin de la girafe qui vit dans ses forêts.",
+        "en": "The okapi, with legs striped like a zebra, is a cousin of the giraffe that lives in its forests."
+      },
+      {
+        "e": "🌊",
+        "fr": "Le fleuve Congo est le plus profond du monde : plus de 200 mètres par endroits.",
+        "en": "The Congo River is the deepest in the world: more than 200 metres in places."
+      },
+      {
+        "e": "🗣️",
+        "fr": "Kinshasa est la plus grande ville du monde où l’on parle français.",
+        "en": "Kinshasa is the biggest French-speaking city in the world."
+      }
+    ]
+  },
+  "CF": {
+    "capitale": {
+      "fr": "Bangui",
+      "en": "Bangui"
+    },
+    "faits": [
+      {
+        "e": "📍",
+        "fr": "Son nom dit tout : il est au centre de l’Afrique, loin de toutes les mers.",
+        "en": "Its name says it all: it is in the middle of Africa, far from any sea."
+      },
+      {
+        "e": "🐘",
+        "fr": "À Dzanga-Sangha, des dizaines d’éléphants de forêt se retrouvent dans une grande clairière.",
+        "en": "At Dzanga-Sangha, dozens of forest elephants gather in a big clearing."
+      },
+      {
+        "e": "🗣️",
+        "fr": "On y parle le sango, une langue que presque tout le monde comprend, et le français.",
+        "en": "People there speak Sango, a language almost everyone understands, and French."
+      }
+    ]
+  },
+  "CG": {
+    "capitale": {
+      "fr": "Brazzaville",
+      "en": "Brazzaville"
+    },
+    "faits": [
+      {
+        "e": "🏙️",
+        "fr": "Brazzaville et Kinshasa se font face, de chaque côté du fleuve Congo.",
+        "en": "Brazzaville and Kinshasa face each other across the Congo River."
+      },
+      {
+        "e": "🎶",
+        "fr": "On y danse la rumba congolaise, une musique joyeuse protégée par l’UNESCO.",
+        "en": "People there dance to Congolese rumba, a joyful music protected by UNESCO."
+      },
+      {
+        "e": "🌍",
+        "fr": "La ligne de l’équateur traverse le pays, au milieu de grandes forêts.",
+        "en": "The equator crosses the country, through big forests."
+      }
+    ]
+  },
   "CH": {
     "capitale": {
       "fr": "Berne",
@@ -180,6 +755,190 @@
         "e": "🏔️",
         "fr": "Dans les Alpes se dresse le Cervin, une montagne pointue comme une pyramide.",
         "en": "In the Alps stands the Matterhorn, a mountain as pointy as a pyramid."
+      }
+    ]
+  },
+  "CI": {
+    "capitale": {
+      "fr": "Yamoussoukro",
+      "en": "Yamoussoukro"
+    },
+    "faits": [
+      {
+        "e": "🍫",
+        "fr": "C’est le pays qui produit le plus de cacao au monde, de quoi faire du chocolat.",
+        "en": "It is the country that grows the most cocoa in the world, to make chocolate."
+      },
+      {
+        "e": "🐘",
+        "fr": "Son équipe de football s’appelle « les Éléphants ».",
+        "en": "Its football team is called \"the Elephants\"."
+      },
+      {
+        "e": "🏙️",
+        "fr": "Sa plus grande ville, Abidjan, est construite autour d’une lagune.",
+        "en": "Its biggest city, Abidjan, is built around a lagoon."
+      }
+    ]
+  },
+  "CL": {
+    "capitale": {
+      "fr": "Santiago",
+      "en": "Santiago"
+    },
+    "faits": [
+      {
+        "e": "📏",
+        "fr": "Sur la carte, le pays est très long et très fin, comme un ruban au bord de la mer.",
+        "en": "On the map, the country is very long and very thin, like a ribbon along the sea."
+      },
+      {
+        "e": "🗿",
+        "fr": "Sur l’île de Pâques se dressent les moaïs, de grandes statues de pierre.",
+        "en": "On Easter Island stand the moai, great stone statues."
+      },
+      {
+        "e": "🏜️",
+        "fr": "Le désert d’Atacama est l’un des endroits les plus secs du monde.",
+        "en": "The Atacama Desert is one of the driest places in the world."
+      }
+    ]
+  },
+  "CM": {
+    "capitale": {
+      "fr": "Yaoundé",
+      "en": "Yaoundé"
+    },
+    "faits": [
+      {
+        "e": "🗺️",
+        "fr": "On l’appelle « l’Afrique en miniature » : il a forêts, savane, montagnes et plages.",
+        "en": "It is called \"Africa in miniature\": it has forests, savannah, mountains and beaches."
+      },
+      {
+        "e": "🌋",
+        "fr": "Le mont Cameroun est un volcan de plus de 4 000 mètres, tout près de la mer.",
+        "en": "Mount Cameroon is a volcano over 4,000 metres high, right next to the sea."
+      },
+      {
+        "e": "🗣️",
+        "fr": "On y parle à la fois français et anglais.",
+        "en": "People there speak both French and English."
+      }
+    ]
+  },
+  "CN": {
+    "capitale": {
+      "fr": "Pékin",
+      "en": "Beijing"
+    },
+    "faits": [
+      {
+        "e": "🧱",
+        "fr": "La Grande Muraille serpente sur des milliers de kilomètres.",
+        "en": "The Great Wall winds for thousands of kilometres."
+      },
+      {
+        "e": "🐼",
+        "fr": "Le panda géant, qui mange du bambou, vit dans ses montagnes.",
+        "en": "The giant panda, which eats bamboo, lives in its mountains."
+      },
+      {
+        "e": "📜",
+        "fr": "Le papier a été inventé en Chine il y a environ 2000 ans.",
+        "en": "Paper was invented in China about 2,000 years ago."
+      }
+    ]
+  },
+  "CO": {
+    "capitale": {
+      "fr": "Bogota",
+      "en": "Bogotá"
+    },
+    "faits": [
+      {
+        "e": "🦜",
+        "fr": "C’est le pays qui a le plus d’espèces d’oiseaux au monde.",
+        "en": "It is the country with the most kinds of birds in the world."
+      },
+      {
+        "e": "🌈",
+        "fr": "La rivière Caño Cristales se colore de rouge, de jaune et de vert grâce à ses plantes.",
+        "en": "The Caño Cristales river turns red, yellow and green thanks to its plants."
+      },
+      {
+        "e": "🌊",
+        "fr": "C’est le seul pays d’Amérique du Sud bordé par l’océan Pacifique et la mer des Caraïbes.",
+        "en": "It is the only country in South America with coasts on both the Pacific and the Caribbean Sea."
+      }
+    ]
+  },
+  "CR": {
+    "capitale": {
+      "fr": "San José",
+      "en": "San José"
+    },
+    "faits": [
+      {
+        "e": "🦥",
+        "fr": "Des paresseux vivent dans ses forêts : ils bougent tout doucement et dorment beaucoup.",
+        "en": "Sloths live in its forests: they move very slowly and sleep a lot."
+      },
+      {
+        "e": "🌋",
+        "fr": "Le pays a de nombreux volcans, comme l’Arenal, en forme de cône presque parfait.",
+        "en": "The country has many volcanoes, like Arenal, shaped like an almost perfect cone."
+      },
+      {
+        "e": "😊",
+        "fr": "Pour dire bonjour ou merci, on y dit souvent « pura vida », la vie pure.",
+        "en": "To say hello or thank you, people there often say “pura vida”, pure life."
+      }
+    ]
+  },
+  "CU": {
+    "capitale": {
+      "fr": "La Havane",
+      "en": "Havana"
+    },
+    "faits": [
+      {
+        "e": "🐦",
+        "fr": "Le plus petit oiseau du monde, le colibri d’Elena, vit à Cuba.",
+        "en": "The smallest bird in the world, the bee hummingbird, lives in Cuba."
+      },
+      {
+        "e": "🐊",
+        "fr": "On dit que, sur la carte, l’île a la forme d’un crocodile.",
+        "en": "People say that, on the map, the island is shaped like a crocodile."
+      },
+      {
+        "e": "🚗",
+        "fr": "À La Havane, de vieilles voitures très colorées roulent encore dans les rues.",
+        "en": "In Havana, very colourful old cars still drive through the streets."
+      }
+    ]
+  },
+  "CV": {
+    "capitale": {
+      "fr": "Praia",
+      "en": "Praia"
+    },
+    "faits": [
+      {
+        "e": "🏝️",
+        "fr": "Ce sont dix îles volcaniques au milieu de l’océan Atlantique, au large du Sénégal.",
+        "en": "It is made of ten volcanic islands in the Atlantic Ocean, off the coast of Senegal."
+      },
+      {
+        "e": "🌋",
+        "fr": "Sur l’île de Fogo se dresse un volcan de plus de 2 800 mètres.",
+        "en": "On the island of Fogo stands a volcano more than 2,800 metres high."
+      },
+      {
+        "e": "🎶",
+        "fr": "La chanteuse Cesária Évora chantait la morna, une musique douce, pieds nus sur scène.",
+        "en": "The singer Cesária Évora sang morna, a gentle music, barefoot on stage."
       }
     ]
   },
@@ -252,6 +1011,29 @@
       }
     ]
   },
+  "DJ": {
+    "capitale": {
+      "fr": "Djibouti",
+      "en": "Djibouti"
+    },
+    "faits": [
+      {
+        "e": "🧂",
+        "fr": "Le lac Assal est le point le plus bas d’Afrique, et son eau est très salée.",
+        "en": "Lake Assal is the lowest point in Africa, and its water is very salty."
+      },
+      {
+        "e": "🦈",
+        "fr": "L’hiver, des requins-baleines, les plus gros poissons du monde, nagent près de ses côtes.",
+        "en": "In winter, whale sharks, the biggest fish in the world, swim near its coast."
+      },
+      {
+        "e": "📍",
+        "fr": "Ce petit pays est à l’entrée de la mer Rouge, entre l’Éthiopie et la Somalie.",
+        "en": "This small country sits at the entrance to the Red Sea, between Ethiopia and Somalia."
+      }
+    ]
+  },
   "DK": {
     "capitale": {
       "fr": "Copenhague",
@@ -272,6 +1054,98 @@
         "e": "🚲",
         "fr": "Beaucoup de gens y vont à l’école et au travail à vélo.",
         "en": "Many people there ride a bike to school and to work."
+      }
+    ]
+  },
+  "DM": {
+    "capitale": {
+      "fr": "Roseau",
+      "en": "Roseau"
+    },
+    "faits": [
+      {
+        "e": "♨️",
+        "fr": "Dans ses montagnes se cache un lac dont l’eau bouillonne, chauffée par la terre.",
+        "en": "Hidden in its mountains is a lake whose water bubbles, heated by the earth."
+      },
+      {
+        "e": "🦜",
+        "fr": "Le perroquet sisserou, qui ne vit que sur cette île, est dessiné sur le drapeau.",
+        "en": "The sisserou parrot, which lives only on this island, is drawn on the flag."
+      },
+      {
+        "e": "🐋",
+        "fr": "Des cachalots, de grandes baleines, vivent toute l’année près de ses côtes.",
+        "en": "Sperm whales, big whales, live near its coast all year round."
+      }
+    ]
+  },
+  "DO": {
+    "capitale": {
+      "fr": "Saint-Domingue",
+      "en": "Santo Domingo"
+    },
+    "faits": [
+      {
+        "e": "🏝️",
+        "fr": "Le pays partage l’île d’Hispaniola avec son voisin Haïti.",
+        "en": "The country shares the island of Hispaniola with its neighbour Haiti."
+      },
+      {
+        "e": "⚾",
+        "fr": "Le baseball y est le sport préféré, et beaucoup de grands champions en viennent.",
+        "en": "Baseball is the favourite sport there, and many great champions come from there."
+      },
+      {
+        "e": "🏔️",
+        "fr": "Le pic Duarte est la plus haute montagne de toutes les îles des Caraïbes.",
+        "en": "Pico Duarte is the highest mountain of all the Caribbean islands."
+      }
+    ]
+  },
+  "DZ": {
+    "capitale": {
+      "fr": "Alger",
+      "en": "Algiers"
+    },
+    "faits": [
+      {
+        "e": "🏜️",
+        "fr": "C’est le plus grand pays d’Afrique, et le Sahara en couvre la plus grande partie.",
+        "en": "It is the biggest country in Africa, and the Sahara covers most of it."
+      },
+      {
+        "e": "🦒",
+        "fr": "Dans le Tassili n’Ajjer, on voit des girafes peintes sur les rochers il y a des milliers d’années.",
+        "en": "In the Tassili n’Ajjer, giraffes were painted on the rocks thousands of years ago."
+      },
+      {
+        "e": "🌴",
+        "fr": "Dans les oasis du désert, on cultive des palmiers qui donnent des dattes.",
+        "en": "In the desert oases, people grow palm trees that give dates."
+      }
+    ]
+  },
+  "EC": {
+    "capitale": {
+      "fr": "Quito",
+      "en": "Quito"
+    },
+    "faits": [
+      {
+        "e": "🌍",
+        "fr": "La ligne de l’équateur traverse le pays : c’est de là que vient son nom.",
+        "en": "The equator line crosses the country: that is where its name comes from."
+      },
+      {
+        "e": "🐢",
+        "fr": "Aux îles Galápagos vivent des tortues géantes.",
+        "en": "Giant tortoises live on the Galápagos Islands."
+      },
+      {
+        "e": "👒",
+        "fr": "Le chapeau panama, tressé en paille, est en fait fabriqué en Équateur.",
+        "en": "The Panama hat, woven from straw, is actually made in Ecuador."
       }
     ]
   },
@@ -298,6 +1172,52 @@
       }
     ]
   },
+  "EG": {
+    "capitale": {
+      "fr": "Le Caire",
+      "en": "Cairo"
+    },
+    "faits": [
+      {
+        "e": "🔺",
+        "fr": "Les pyramides de Gizeh ont été construites il y a plus de 4 500 ans.",
+        "en": "The pyramids of Giza were built more than 4,500 years ago."
+      },
+      {
+        "e": "🌊",
+        "fr": "Le Nil, l’un des plus longs fleuves du monde, traverse tout le pays du sud au nord.",
+        "en": "The Nile, one of the longest rivers in the world, crosses the whole country from south to north."
+      },
+      {
+        "e": "📜",
+        "fr": "Les anciens Égyptiens écrivaient avec de petits dessins : les hiéroglyphes.",
+        "en": "The ancient Egyptians wrote with little pictures: hieroglyphs."
+      }
+    ]
+  },
+  "ER": {
+    "capitale": {
+      "fr": "Asmara",
+      "en": "Asmara"
+    },
+    "faits": [
+      {
+        "e": "🏙️",
+        "fr": "Sa capitale, Asmara, est perchée à plus de 2 300 mètres d’altitude.",
+        "en": "Its capital, Asmara, is perched more than 2,300 metres high."
+      },
+      {
+        "e": "🐠",
+        "fr": "Il a une longue côte sur la mer Rouge, avec des îles et des récifs de corail.",
+        "en": "It has a long coast on the Red Sea, with islands and coral reefs."
+      },
+      {
+        "e": "🚲",
+        "fr": "Le vélo y est adoré : le coureur Biniam Girmay a gagné le maillot vert du Tour de France.",
+        "en": "Cycling is loved there: the rider Biniam Girmay won the green jersey at the Tour de France."
+      }
+    ]
+  },
   "ES": {
     "capitale": {
       "fr": "Madrid",
@@ -318,6 +1238,29 @@
         "e": "⛪",
         "fr": "À Barcelone, la Sagrada Família est une immense église commencée il y a plus de 140 ans.",
         "en": "In Barcelona, the Sagrada Família is a huge church started more than 140 years ago."
+      }
+    ]
+  },
+  "ET": {
+    "capitale": {
+      "fr": "Addis-Abeba",
+      "en": "Addis Ababa"
+    },
+    "faits": [
+      {
+        "e": "☕",
+        "fr": "Le café vient d’Éthiopie : selon une légende, un berger l’a découvert grâce à ses chèvres.",
+        "en": "Coffee comes from Ethiopia: legend says a shepherd discovered it thanks to his goats."
+      },
+      {
+        "e": "📅",
+        "fr": "Son calendrier a 13 mois !",
+        "en": "Its calendar has 13 months!"
+      },
+      {
+        "e": "🌊",
+        "fr": "Le Nil Bleu, l’une des deux grandes branches du Nil, part du lac Tana.",
+        "en": "The Blue Nile, one of the two great branches of the Nile, flows out of Lake Tana."
       }
     ]
   },
@@ -344,6 +1287,52 @@
       }
     ]
   },
+  "FJ": {
+    "capitale": {
+      "fr": "Suva",
+      "en": "Suva"
+    },
+    "faits": [
+      {
+        "e": "🏝️",
+        "fr": "Le pays compte plus de 300 îles au milieu de l’océan Pacifique.",
+        "en": "The country has more than 300 islands in the middle of the Pacific Ocean."
+      },
+      {
+        "e": "👋",
+        "fr": "Pour dire bonjour, on dit « Bula ! » avec un grand sourire.",
+        "en": "To say hello, people say “Bula!” with a big smile."
+      },
+      {
+        "e": "🥇",
+        "fr": "Son équipe de rugby à 7 a gagné la médaille d’or aux Jeux olympiques.",
+        "en": "Its rugby sevens team has won the gold medal at the Olympic Games."
+      }
+    ]
+  },
+  "FM": {
+    "capitale": {
+      "fr": "Palikir",
+      "en": "Palikir"
+    },
+    "faits": [
+      {
+        "e": "🗺️",
+        "fr": "Le pays réunit 4 États et plus de 600 îles éparpillées dans l’océan.",
+        "en": "The country brings together 4 states and more than 600 islands scattered across the ocean."
+      },
+      {
+        "e": "💰",
+        "fr": "Sur l’île de Yap, d’énormes disques de pierre servaient de monnaie.",
+        "en": "On the island of Yap, huge stone discs were used as money."
+      },
+      {
+        "e": "🏛️",
+        "fr": "Nan Madol est une ville ancienne construite sur de petites îles de pierre.",
+        "en": "Nan Madol is an ancient city built on small stone islands."
+      }
+    ]
+  },
   "FR": {
     "capitale": {
       "fr": "Paris",
@@ -364,6 +1353,29 @@
         "e": "🌴",
         "fr": "La France a aussi des terres très loin, comme la Guyane ou l’île de La Réunion.",
         "en": "France also has lands far away, like French Guiana or the island of Réunion."
+      }
+    ]
+  },
+  "GA": {
+    "capitale": {
+      "fr": "Libreville",
+      "en": "Libreville"
+    },
+    "faits": [
+      {
+        "e": "🌳",
+        "fr": "La forêt tropicale couvre presque tout le pays.",
+        "en": "Rainforest covers almost the whole country."
+      },
+      {
+        "e": "🦛",
+        "fr": "Au parc de Loango, des éléphants et des hippopotames se promènent sur la plage.",
+        "en": "In Loango National Park, elephants and hippos stroll along the beach."
+      },
+      {
+        "e": "🐒",
+        "fr": "Le mandrill, un singe au museau rouge et bleu, vit dans ses forêts.",
+        "en": "The mandrill, a monkey with a red and blue snout, lives in its forests."
       }
     ]
   },
@@ -390,6 +1402,144 @@
       }
     ]
   },
+  "GD": {
+    "capitale": {
+      "fr": "Saint-Georges",
+      "en": "St. George’s"
+    },
+    "faits": [
+      {
+        "e": "🌰",
+        "fr": "On l’appelle l’île aux épices : une noix de muscade est même dessinée sur son drapeau.",
+        "en": "It is called the Spice Island: a nutmeg is even drawn on its flag."
+      },
+      {
+        "e": "🤿",
+        "fr": "Sous la mer, un parc de statues se visite avec un masque et un tuba.",
+        "en": "Under the sea, a park of statues can be visited with a mask and snorkel."
+      },
+      {
+        "e": "🧭",
+        "fr": "Elle se trouve tout au sud des petites îles des Caraïbes, au nord de Trinité-et-Tobago.",
+        "en": "It lies at the very south of the small Caribbean islands, north of Trinidad and Tobago."
+      }
+    ]
+  },
+  "GE": {
+    "capitale": {
+      "fr": "Tbilissi",
+      "en": "Tbilisi"
+    },
+    "faits": [
+      {
+        "e": "🏔️",
+        "fr": "Il est entre la mer Noire et les hautes montagnes du Caucase.",
+        "en": "It lies between the Black Sea and the high Caucasus Mountains."
+      },
+      {
+        "e": "🧀",
+        "fr": "Le khatchapouri est un pain en forme de bateau, garni de fromage et d’un œuf.",
+        "en": "Khachapuri is a boat-shaped bread filled with cheese and an egg."
+      },
+      {
+        "e": "🚀",
+        "fr": "Un chant géorgien voyage dans l’espace, à bord de la sonde Voyager.",
+        "en": "A Georgian song is travelling through space, aboard the Voyager probe."
+      }
+    ]
+  },
+  "GH": {
+    "capitale": {
+      "fr": "Accra",
+      "en": "Accra"
+    },
+    "faits": [
+      {
+        "e": "🧵",
+        "fr": "Le kente est un tissu tissé à la main, en bandes aux couleurs vives.",
+        "en": "Kente is a hand-woven cloth made of brightly coloured strips."
+      },
+      {
+        "e": "🌊",
+        "fr": "Le lac Volta est le plus grand lac créé par l’homme au monde, en surface.",
+        "en": "Lake Volta is the largest man-made lake in the world by area."
+      },
+      {
+        "e": "🌳",
+        "fr": "Au parc de Kakum, on marche sur des ponts suspendus au-dessus des arbres.",
+        "en": "In Kakum National Park, you walk on rope bridges high above the trees."
+      }
+    ]
+  },
+  "GM": {
+    "capitale": {
+      "fr": "Banjul",
+      "en": "Banjul"
+    },
+    "faits": [
+      {
+        "e": "🤏",
+        "fr": "C’est le plus petit pays du continent africain.",
+        "en": "It is the smallest country on the African mainland."
+      },
+      {
+        "e": "🐍",
+        "fr": "Il est tout en longueur le long du fleuve Gambie, entouré par le Sénégal.",
+        "en": "It is long and thin, along the Gambia River, surrounded by Senegal."
+      },
+      {
+        "e": "🐊",
+        "fr": "À Bakau, des crocodiles très calmes vivent dans un bassin, et certains se laissent caresser.",
+        "en": "In Bakau, very calm crocodiles live in a pool, and some can be stroked."
+      }
+    ]
+  },
+  "GN": {
+    "capitale": {
+      "fr": "Conakry",
+      "en": "Conakry"
+    },
+    "faits": [
+      {
+        "e": "💧",
+        "fr": "On l’appelle « le château d’eau de l’Afrique de l’Ouest » : le fleuve Niger y prend sa source.",
+        "en": "It is called \"the water tower of West Africa\": the Niger River starts there."
+      },
+      {
+        "e": "🥁",
+        "fr": "Le djembé, un tambour en forme de coupe, résonne dans les fêtes du pays.",
+        "en": "The djembe, a goblet-shaped drum, rings out at celebrations across the country."
+      },
+      {
+        "e": "🥫",
+        "fr": "Son sol est riche en bauxite, une roche qui sert à fabriquer l’aluminium des canettes.",
+        "en": "Its ground is rich in bauxite, a rock used to make the aluminium for cans."
+      }
+    ]
+  },
+  "GQ": {
+    "capitale": {
+      "fr": "Ciudad de la Paz",
+      "en": "Ciudad de la Paz"
+    },
+    "faits": [
+      {
+        "e": "🗣️",
+        "fr": "C’est le seul pays d’Afrique où l’espagnol est une langue officielle.",
+        "en": "It is the only country in Africa where Spanish is an official language."
+      },
+      {
+        "e": "🏝️",
+        "fr": "Le pays a une partie sur le continent et des îles, comme Bioko, où se trouve Malabo.",
+        "en": "The country has a part on the mainland and islands, like Bioko, where Malabo is."
+      },
+      {
+        "e": "🐢",
+        "fr": "Des tortues de mer viennent pondre leurs œufs sur les plages de l’île de Bioko.",
+        "en": "Sea turtles come to lay their eggs on the beaches of Bioko Island."
+      }
+    ]
+  },
   "GR": {
     "capitale": {
       "fr": "Athènes",
@@ -410,6 +1560,98 @@
         "e": "🏝️",
         "fr": "Elle compte des milliers d’îles.",
         "en": "It has thousands of islands."
+      }
+    ]
+  },
+  "GT": {
+    "capitale": {
+      "fr": "Guatemala",
+      "en": "Guatemala City"
+    },
+    "faits": [
+      {
+        "e": "🦜",
+        "fr": "Le quetzal, un oiseau vert à très longue queue, a donné son nom à la monnaie du pays.",
+        "en": "The quetzal, a green bird with a very long tail, gave its name to the country’s money."
+      },
+      {
+        "e": "🌋",
+        "fr": "Le lac Atitlán est entouré de trois volcans.",
+        "en": "Lake Atitlán is surrounded by three volcanoes."
+      },
+      {
+        "e": "🧵",
+        "fr": "Ses tissus, tissés à la main, sont pleins de couleurs vives et de motifs.",
+        "en": "Its fabrics, woven by hand, are full of bright colours and patterns."
+      }
+    ]
+  },
+  "GW": {
+    "capitale": {
+      "fr": "Bissau",
+      "en": "Bissau"
+    },
+    "faits": [
+      {
+        "e": "🏝️",
+        "fr": "Au large, l’archipel des Bijagos compte des dizaines d’îles.",
+        "en": "Offshore, the Bijagós archipelago has dozens of islands."
+      },
+      {
+        "e": "🦛",
+        "fr": "Sur l’île d’Orango, des hippopotames nagent dans l’eau salée de la mer.",
+        "en": "On the island of Orango, hippos swim in the salty sea water."
+      },
+      {
+        "e": "🥜",
+        "fr": "C’est l’un des grands producteurs de noix de cajou au monde.",
+        "en": "It is one of the world’s big producers of cashew nuts."
+      }
+    ]
+  },
+  "GY": {
+    "capitale": {
+      "fr": "Georgetown",
+      "en": "Georgetown"
+    },
+    "faits": [
+      {
+        "e": "🏞️",
+        "fr": "La chute de Kaieteur tombe d’un seul coup de plus de 200 mètres de haut.",
+        "en": "Kaieteur Falls drops more than 200 metres in one single plunge."
+      },
+      {
+        "e": "🗣️",
+        "fr": "C’est le seul pays d’Amérique du Sud où la langue officielle est l’anglais.",
+        "en": "It is the only country in South America where the official language is English."
+      },
+      {
+        "e": "🌸",
+        "fr": "Sa fleur nationale est un nénuphar géant, aux feuilles plus grandes qu’un enfant.",
+        "en": "Its national flower is a giant water lily, with leaves bigger than a child."
+      }
+    ]
+  },
+  "HN": {
+    "capitale": {
+      "fr": "Tegucigalpa",
+      "en": "Tegucigalpa"
+    },
+    "faits": [
+      {
+        "e": "🦜",
+        "fr": "Son oiseau national est l’ara rouge, un grand perroquet rouge, jaune et bleu.",
+        "en": "Its national bird is the scarlet macaw, a big red, yellow and blue parrot."
+      },
+      {
+        "e": "🏛️",
+        "fr": "À Copán, une cité maya, un grand escalier de pierre est couvert d’écritures anciennes.",
+        "en": "In Copán, a Mayan city, a great stone staircase is covered in ancient writing."
+      },
+      {
+        "e": "🐠",
+        "fr": "Ses îles de la Baie sont entourées d’un récif de corail plein de poissons.",
+        "en": "Its Bay Islands are surrounded by a coral reef full of fish."
       }
     ]
   },
@@ -436,6 +1678,29 @@
       }
     ]
   },
+  "HT": {
+    "capitale": {
+      "fr": "Port-au-Prince",
+      "en": "Port-au-Prince"
+    },
+    "faits": [
+      {
+        "e": "🗣️",
+        "fr": "Sur l’île qu’il partage avec la République dominicaine, on parle créole et français.",
+        "en": "On the island it shares with the Dominican Republic, people speak Creole and French."
+      },
+      {
+        "e": "🏰",
+        "fr": "Au sommet d’une montagne se dresse la Citadelle, une immense forteresse en pierre.",
+        "en": "On top of a mountain stands the Citadelle, a huge stone fortress."
+      },
+      {
+        "e": "🎨",
+        "fr": "Ses peintres sont connus pour leurs tableaux aux couleurs très vives.",
+        "en": "Its painters are known for their pictures in very bright colours."
+      }
+    ]
+  },
   "HU": {
     "capitale": {
       "fr": "Budapest",
@@ -459,6 +1724,29 @@
       }
     ]
   },
+  "ID": {
+    "capitale": {
+      "fr": "Jakarta",
+      "en": "Jakarta"
+    },
+    "faits": [
+      {
+        "e": "🏝️",
+        "fr": "C’est le plus grand pays fait d’îles : il en compte plus de 17 000.",
+        "en": "It is the largest country made of islands: it has more than 17,000."
+      },
+      {
+        "e": "🦎",
+        "fr": "Sur l’île de Komodo vit le dragon de Komodo, le plus grand lézard du monde.",
+        "en": "The Komodo dragon, the largest lizard in the world, lives on the island of Komodo."
+      },
+      {
+        "e": "🌋",
+        "fr": "Le pays compte beaucoup de volcans, dont plus de cent sont encore actifs.",
+        "en": "The country has many volcanoes, and more than a hundred are still active."
+      }
+    ]
+  },
   "IE": {
     "capitale": {
       "fr": "Dublin",
@@ -479,6 +1767,95 @@
         "e": "🎃",
         "fr": "Halloween vient d’une très vieille fête irlandaise.",
         "en": "Halloween comes from a very old Irish festival."
+      }
+    ]
+  },
+  "IL": {
+    "capitale": null,
+    "faits": [
+      {
+        "e": "🌊",
+        "fr": "Dans la mer Morte, l’eau est si salée qu’on flotte sans nager.",
+        "en": "In the Dead Sea, the water is so salty that you float without swimming."
+      },
+      {
+        "e": "🌵",
+        "fr": "Le désert du Néguev couvre plus de la moitié du pays.",
+        "en": "The Negev Desert covers more than half of the country."
+      },
+      {
+        "e": "🐦",
+        "fr": "Chaque année, des millions d’oiseaux le survolent en voyageant entre l’Europe et l’Afrique.",
+        "en": "Every year, millions of birds fly over it on their way between Europe and Africa."
+      }
+    ]
+  },
+  "IN": {
+    "capitale": {
+      "fr": "New Delhi",
+      "en": "New Delhi"
+    },
+    "faits": [
+      {
+        "e": "🕌",
+        "fr": "Le Taj Mahal, en marbre blanc, est l’un des monuments les plus célèbres du monde.",
+        "en": "The Taj Mahal, made of white marble, is one of the most famous monuments in the world."
+      },
+      {
+        "e": "♟️",
+        "fr": "L’ancêtre du jeu d’échecs est né en Inde il y a environ 1500 ans.",
+        "en": "The ancestor of chess was born in India about 1,500 years ago."
+      },
+      {
+        "e": "👥",
+        "fr": "C’est le pays qui compte le plus d’habitants au monde.",
+        "en": "It is the country with the most people in the world."
+      }
+    ]
+  },
+  "IQ": {
+    "capitale": {
+      "fr": "Bagdad",
+      "en": "Baghdad"
+    },
+    "faits": [
+      {
+        "e": "🏞️",
+        "fr": "Deux grands fleuves le traversent : le Tigre et l’Euphrate.",
+        "en": "Two great rivers flow through it: the Tigris and the Euphrates."
+      },
+      {
+        "e": "✍️",
+        "fr": "On y a inventé l’une des premières écritures du monde, il y a plus de 5000 ans.",
+        "en": "One of the first writing systems in the world was invented there, more than 5,000 years ago."
+      },
+      {
+        "e": "🌴",
+        "fr": "Des millions de palmiers y donnent des dattes, un fruit sucré très aimé.",
+        "en": "Millions of palm trees there grow dates, a sweet fruit people love."
+      }
+    ]
+  },
+  "IR": {
+    "capitale": {
+      "fr": "Téhéran",
+      "en": "Tehran"
+    },
+    "faits": [
+      {
+        "e": "🐈",
+        "fr": "Le chat persan, au long poil soyeux, porte l’ancien nom du pays, la Perse.",
+        "en": "The Persian cat, with its long silky fur, bears the country’s old name, Persia."
+      },
+      {
+        "e": "🌸",
+        "fr": "On y récolte la plus grande partie du safran du monde, une épice tirée d’une fleur.",
+        "en": "Most of the world’s saffron, a spice that comes from a flower, is harvested there."
+      },
+      {
+        "e": "🏔️",
+        "fr": "Le mont Damavand est le plus haut volcan d’Asie.",
+        "en": "Mount Damavand is the highest volcano in Asia."
       }
     ]
   },
@@ -528,6 +1905,374 @@
       }
     ]
   },
+  "JM": {
+    "capitale": {
+      "fr": "Kingston",
+      "en": "Kingston"
+    },
+    "faits": [
+      {
+        "e": "🎵",
+        "fr": "Le reggae, la musique de Bob Marley, est né en Jamaïque.",
+        "en": "Reggae, the music of Bob Marley, was born in Jamaica."
+      },
+      {
+        "e": "🏃",
+        "fr": "Usain Bolt, l’un des coureurs les plus rapides de l’histoire, est jamaïcain.",
+        "en": "Usain Bolt, one of the fastest runners in history, is Jamaican."
+      },
+      {
+        "e": "🏞️",
+        "fr": "On peut y grimper une cascade, marche après marche, depuis la plage.",
+        "en": "There, you can climb a waterfall, step by step, starting from the beach."
+      }
+    ]
+  },
+  "JO": {
+    "capitale": {
+      "fr": "Amman",
+      "en": "Amman"
+    },
+    "faits": [
+      {
+        "e": "🏛️",
+        "fr": "Pétra est une ville taillée dans la roche rose, il y a plus de 2000 ans.",
+        "en": "Petra is a city carved into pink rock more than 2,000 years ago."
+      },
+      {
+        "e": "🏜️",
+        "fr": "Le désert du Wadi Rum, au sable rouge, a servi de décor à des films sur Mars.",
+        "en": "The red sands of the Wadi Rum desert have been used as a set for films about Mars."
+      },
+      {
+        "e": "🐠",
+        "fr": "Le pays touche la mer Rouge à Aqaba, où l’on plonge parmi les coraux.",
+        "en": "The country reaches the Red Sea at Aqaba, where people dive among the corals."
+      }
+    ]
+  },
+  "JP": {
+    "capitale": {
+      "fr": "Tokyo",
+      "en": "Tokyo"
+    },
+    "faits": [
+      {
+        "e": "🗻",
+        "fr": "Le mont Fuji, un volcan au sommet enneigé, est le symbole du pays.",
+        "en": "Mount Fuji, a volcano with a snowy top, is the symbol of the country."
+      },
+      {
+        "e": "📚",
+        "fr": "Les mangas, des bandes dessinées qui se lisent de droite à gauche, viennent du Japon.",
+        "en": "Manga, comics that are read from right to left, come from Japan."
+      },
+      {
+        "e": "🚄",
+        "fr": "Le Shinkansen, un train très rapide au nez pointu, y roule depuis 1964.",
+        "en": "The Shinkansen, a very fast train with a pointed nose, has run there since 1964."
+      }
+    ]
+  },
+  "KE": {
+    "capitale": {
+      "fr": "Nairobi",
+      "en": "Nairobi"
+    },
+    "faits": [
+      {
+        "e": "🐃",
+        "fr": "Chaque année, d’immenses troupeaux de gnous traversent la rivière Mara.",
+        "en": "Every year, huge herds of wildebeest cross the Mara River."
+      },
+      {
+        "e": "🏃",
+        "fr": "Le coureur Eliud Kipchoge a été le premier à courir un marathon en moins de 2 heures.",
+        "en": "The runner Eliud Kipchoge was the first person to run a marathon in under 2 hours."
+      },
+      {
+        "e": "🏔️",
+        "fr": "Le mont Kenya, deuxième plus haute montagne d’Afrique, a donné son nom au pays.",
+        "en": "Mount Kenya, the second highest mountain in Africa, gave the country its name."
+      }
+    ]
+  },
+  "KG": {
+    "capitale": {
+      "fr": "Bichkek",
+      "en": "Bishkek"
+    },
+    "faits": [
+      {
+        "e": "🏔️",
+        "fr": "Les montagnes du Tian Shan couvrent presque tout le pays.",
+        "en": "The Tian Shan mountains cover almost the whole country."
+      },
+      {
+        "e": "⛺",
+        "fr": "Au centre de son drapeau, on voit le haut d’une yourte, la tente ronde des bergers.",
+        "en": "In the middle of its flag, you can see the top of a yurt, the round tent of herders."
+      },
+      {
+        "e": "🌊",
+        "fr": "Le grand lac Issyk-Koul, entouré de montagnes, ne gèle jamais, même en hiver.",
+        "en": "Big Lake Issyk-Kul, surrounded by mountains, never freezes, even in winter."
+      }
+    ]
+  },
+  "KH": {
+    "capitale": {
+      "fr": "Phnom Penh",
+      "en": "Phnom Penh"
+    },
+    "faits": [
+      {
+        "e": "🛕",
+        "fr": "Angkor Vat, le plus grand temple du monde, est dessiné sur son drapeau.",
+        "en": "Angkor Wat, the largest temple in the world, is drawn on its flag."
+      },
+      {
+        "e": "🔄",
+        "fr": "À la saison des pluies, le lac Tonlé Sap grossit tant qu’une rivière change de sens !",
+        "en": "In the rainy season, Tonlé Sap lake grows so much that a river changes direction!"
+      },
+      {
+        "e": "🐟",
+        "fr": "L’amok est un plat de poisson au lait de coco, cuit dans une feuille de bananier.",
+        "en": "Amok is a fish dish with coconut milk, cooked in a banana leaf."
+      }
+    ]
+  },
+  "KI": {
+    "capitale": {
+      "fr": "Tarawa-Sud",
+      "en": "South Tarawa"
+    },
+    "faits": [
+      {
+        "e": "🌅",
+        "fr": "C’est l’un des tout premiers pays du monde à fêter la nouvelle année.",
+        "en": "It is one of the very first countries in the world to celebrate the New Year."
+      },
+      {
+        "e": "🌍",
+        "fr": "C’est le seul pays situé dans les quatre moitiés de la Terre : nord, sud, est et ouest.",
+        "en": "It is the only country in all four halves of the Earth: north, south, east and west."
+      },
+      {
+        "e": "🏝️",
+        "fr": "L’île Kiritimati est le plus grand atoll du monde, un anneau de corail.",
+        "en": "Kiritimati Island is the largest atoll in the world, a ring of coral."
+      }
+    ]
+  },
+  "KM": {
+    "capitale": {
+      "fr": "Moroni",
+      "en": "Moroni"
+    },
+    "faits": [
+      {
+        "e": "🐟",
+        "fr": "Dans ses eaux vit le cœlacanthe, un poisson qui existait déjà au temps des dinosaures.",
+        "en": "The coelacanth, a fish that already existed in the time of the dinosaurs, lives in its waters."
+      },
+      {
+        "e": "🌸",
+        "fr": "On l’appelle « l’archipel aux parfums » : on y cultive l’ylang-ylang, une fleur qui sent bon.",
+        "en": "It is called \"the perfume islands\": people grow ylang-ylang there, a sweet-smelling flower."
+      },
+      {
+        "e": "📍",
+        "fr": "Ces îles se trouvent entre Madagascar et la côte de l’Afrique.",
+        "en": "These islands lie between Madagascar and the coast of Africa."
+      }
+    ]
+  },
+  "KN": {
+    "capitale": {
+      "fr": "Basseterre",
+      "en": "Basseterre"
+    },
+    "faits": [
+      {
+        "e": "🤏",
+        "fr": "C’est le plus petit pays de tout le continent américain.",
+        "en": "It is the smallest country on the whole American continent."
+      },
+      {
+        "e": "🚂",
+        "fr": "Un petit train qui transportait la canne à sucre promène aujourd’hui les visiteurs.",
+        "en": "A little train that once carried sugar cane now takes visitors for a ride."
+      },
+      {
+        "e": "🌋",
+        "fr": "L’île de Niévès est presque ronde, avec un grand volcan endormi au milieu.",
+        "en": "The island of Nevis is almost round, with a big sleeping volcano in the middle."
+      }
+    ]
+  },
+  "KP": {
+    "capitale": {
+      "fr": "Pyongyang",
+      "en": "Pyongyang"
+    },
+    "faits": [
+      {
+        "e": "🗺️",
+        "fr": "Il occupe le nord d’une péninsule et touche la Chine et la Russie.",
+        "en": "It covers the north of a peninsula and borders China and Russia."
+      },
+      {
+        "e": "🏔️",
+        "fr": "Le mont Paektu est un volcan avec un grand lac bleu dans son cratère.",
+        "en": "Mount Paektu is a volcano with a big blue lake in its crater."
+      },
+      {
+        "e": "🥢",
+        "fr": "Les naengmyeon sont des nouilles froides servies dans un bouillon glacé.",
+        "en": "Naengmyeon are cold noodles served in an icy broth."
+      }
+    ]
+  },
+  "KR": {
+    "capitale": {
+      "fr": "Séoul",
+      "en": "Seoul"
+    },
+    "faits": [
+      {
+        "e": "🥬",
+        "fr": "Le kimchi, du chou fermenté et pimenté, est servi à presque tous les repas.",
+        "en": "Kimchi, spicy fermented cabbage, is served at almost every meal."
+      },
+      {
+        "e": "📝",
+        "fr": "Son alphabet, le hangeul, a été inventé par un roi pour que tout le monde sache lire.",
+        "en": "Its alphabet, Hangul, was invented by a king so that everyone could read."
+      },
+      {
+        "e": "🥋",
+        "fr": "Le taekwondo, un art martial plein de coups de pied, vient de Corée.",
+        "en": "Taekwondo, a martial art full of kicks, comes from Korea."
+      }
+    ]
+  },
+  "KW": {
+    "capitale": {
+      "fr": "Koweït",
+      "en": "Kuwait City"
+    },
+    "faits": [
+      {
+        "e": "🗺️",
+        "fr": "Ce petit pays est au fond du Golfe, entre l’Irak et l’Arabie saoudite.",
+        "en": "This small country is at the far end of the Gulf, between Iraq and Saudi Arabia."
+      },
+      {
+        "e": "🗼",
+        "fr": "Les tours du Koweït portent de grosses boules couvertes de disques bleus et verts.",
+        "en": "The Kuwait Towers carry big balls covered in blue and green discs."
+      },
+      {
+        "e": "⛵",
+        "fr": "Autrefois, ses marins partaient très loin sur des boutres, de grands bateaux en bois.",
+        "en": "Long ago, its sailors travelled far on dhows, big wooden boats."
+      }
+    ]
+  },
+  "KZ": {
+    "capitale": {
+      "fr": "Astana",
+      "en": "Astana"
+    },
+    "faits": [
+      {
+        "e": "🗺️",
+        "fr": "C’est le plus grand pays du monde sans accès à la mer.",
+        "en": "It is the largest country in the world with no access to the sea."
+      },
+      {
+        "e": "🚀",
+        "fr": "C’est de Baïkonour, au Kazakhstan, que le premier homme est parti dans l’espace.",
+        "en": "The first person to go into space took off from Baikonur, in Kazakhstan."
+      },
+      {
+        "e": "🍎",
+        "fr": "Les pommiers sauvages de ses forêts sont les ancêtres de nos pommes.",
+        "en": "The wild apple trees in its forests are the ancestors of our apples."
+      }
+    ]
+  },
+  "LA": {
+    "capitale": {
+      "fr": "Vientiane",
+      "en": "Vientiane"
+    },
+    "faits": [
+      {
+        "e": "🏞️",
+        "fr": "Le grand fleuve Mékong le traverse du nord au sud.",
+        "en": "The great Mekong River flows through it from north to south."
+      },
+      {
+        "e": "🐘",
+        "fr": "Autrefois, on l’appelait le royaume du million d’éléphants.",
+        "en": "Long ago, it was called the kingdom of a million elephants."
+      },
+      {
+        "e": "🏺",
+        "fr": "Dans la plaine des Jarres, des milliers de jarres géantes en pierre sont posées dans l’herbe.",
+        "en": "On the Plain of Jars, thousands of giant stone jars sit in the grass."
+      }
+    ]
+  },
+  "LB": {
+    "capitale": {
+      "fr": "Beyrouth",
+      "en": "Beirut"
+    },
+    "faits": [
+      {
+        "e": "🌲",
+        "fr": "Un cèdre, grand arbre aux branches plates, est dessiné sur son drapeau.",
+        "en": "A cedar, a tall tree with flat branches, is drawn on its flag."
+      },
+      {
+        "e": "🔤",
+        "fr": "Il y a 3000 ans, les Phéniciens d’ici ont créé un alphabet, ancêtre du nôtre.",
+        "en": "3,000 years ago, the Phoenicians who lived here created an alphabet, the ancestor of ours."
+      },
+      {
+        "e": "🥗",
+        "fr": "Le taboulé libanais est une salade de persil, de tomates et de boulgour.",
+        "en": "Lebanese tabbouleh is a salad of parsley, tomatoes and bulgur."
+      }
+    ]
+  },
+  "LC": {
+    "capitale": {
+      "fr": "Castries",
+      "en": "Castries"
+    },
+    "faits": [
+      {
+        "e": "⛰️",
+        "fr": "Les Pitons sont deux montagnes pointues qui sortent tout droit de la mer.",
+        "en": "The Pitons are two pointed mountains rising straight out of the sea."
+      },
+      {
+        "e": "🗣️",
+        "fr": "Beaucoup d’habitants parlent un créole qui ressemble au français.",
+        "en": "Many people there speak a Creole that sounds like French."
+      },
+      {
+        "e": "🌋",
+        "fr": "Près d’un volcan, on peut se baigner dans des bains de boue chaude.",
+        "en": "Near a volcano, you can bathe in warm mud baths."
+      }
+    ]
+  },
   "LI": {
     "capitale": {
       "fr": "Vaduz",
@@ -548,6 +2293,75 @@
         "e": "🦷",
         "fr": "C’est un des plus grands fabricants de fausses dents du monde.",
         "en": "It is one of the world’s biggest makers of false teeth."
+      }
+    ]
+  },
+  "LK": {
+    "capitale": {
+      "fr": "Sri Jayawardenapura Kotte",
+      "en": "Sri Jayawardenapura Kotte"
+    },
+    "faits": [
+      {
+        "e": "💧",
+        "fr": "Sur la carte, cette île au sud de l’Inde a la forme d’une goutte d’eau.",
+        "en": "On the map, this island south of India is shaped like a drop of water."
+      },
+      {
+        "e": "🍵",
+        "fr": "Le thé de Ceylan, cultivé sur ses collines, est bu dans le monde entier.",
+        "en": "Ceylon tea, grown on its hills, is drunk all over the world."
+      },
+      {
+        "e": "🐋",
+        "fr": "Au large de ses côtes, on peut voir des baleines bleues, les plus grands animaux du monde.",
+        "en": "Off its coast, you can see blue whales, the largest animals in the world."
+      }
+    ]
+  },
+  "LR": {
+    "capitale": {
+      "fr": "Monrovia",
+      "en": "Monrovia"
+    },
+    "faits": [
+      {
+        "e": "🌧️",
+        "fr": "Monrovia est l’une des capitales où il pleut le plus au monde.",
+        "en": "Monrovia is one of the rainiest capital cities in the world."
+      },
+      {
+        "e": "🦛",
+        "fr": "L’hippopotame pygmée, pas plus grand qu’un gros cochon, vit dans ses forêts.",
+        "en": "The pygmy hippo, no bigger than a large pig, lives in its forests."
+      },
+      {
+        "e": "🌳",
+        "fr": "Il possède les plus grandes forêts tropicales d’Afrique de l’Ouest.",
+        "en": "It has the largest rainforests in West Africa."
+      }
+    ]
+  },
+  "LS": {
+    "capitale": {
+      "fr": "Maseru",
+      "en": "Maseru"
+    },
+    "faits": [
+      {
+        "e": "🗺️",
+        "fr": "Il est entièrement entouré par l’Afrique du Sud.",
+        "en": "It is completely surrounded by South Africa."
+      },
+      {
+        "e": "⛰️",
+        "fr": "Tout le pays est à plus de 1 000 mètres d’altitude : un record mondial.",
+        "en": "The whole country is more than 1,000 metres high: a world record."
+      },
+      {
+        "e": "👒",
+        "fr": "Le chapeau basotho, en paille et en forme de cône, est le symbole du pays.",
+        "en": "The Basotho hat, made of straw and shaped like a cone, is the symbol of the country."
       }
     ]
   },
@@ -620,6 +2434,52 @@
       }
     ]
   },
+  "LY": {
+    "capitale": {
+      "fr": "Tripoli",
+      "en": "Tripoli"
+    },
+    "faits": [
+      {
+        "e": "🏜️",
+        "fr": "Il borde la mer Méditerranée, mais le Sahara couvre presque tout le pays.",
+        "en": "It lies on the Mediterranean Sea, but the Sahara covers almost the whole country."
+      },
+      {
+        "e": "🏛️",
+        "fr": "Leptis Magna est une immense ville romaine en ruines, au bord de la mer.",
+        "en": "Leptis Magna is a huge ancient Roman city in ruins, by the sea."
+      },
+      {
+        "e": "💧",
+        "fr": "Des tuyaux géants transportent l’eau cachée sous le désert jusqu’aux villes.",
+        "en": "Giant pipes carry water hidden under the desert all the way to the cities."
+      }
+    ]
+  },
+  "MA": {
+    "capitale": {
+      "fr": "Rabat",
+      "en": "Rabat"
+    },
+    "faits": [
+      {
+        "e": "🐐",
+        "fr": "Des chèvres grimpent dans les arbres, les arganiers, pour en manger les fruits !",
+        "en": "Goats climb up argan trees to eat their fruit!"
+      },
+      {
+        "e": "🍲",
+        "fr": "Le tajine est un plat cuit dans un pot en terre au couvercle pointu.",
+        "en": "Tagine is a dish cooked in a clay pot with a pointed lid."
+      },
+      {
+        "e": "⛴️",
+        "fr": "Il n’est qu’à 14 km de l’Espagne, de l’autre côté du détroit de Gibraltar.",
+        "en": "It is only 14 km from Spain, across the Strait of Gibraltar."
+      }
+    ]
+  },
   "MC": {
     "capitale": {
       "fr": "Monaco",
@@ -689,6 +2549,52 @@
       }
     ]
   },
+  "MG": {
+    "capitale": {
+      "fr": "Antananarivo",
+      "en": "Antananarivo"
+    },
+    "faits": [
+      {
+        "e": "🐒",
+        "fr": "Les lémuriens, aux grands yeux et à la longue queue, ne vivent en liberté qu’à Madagascar.",
+        "en": "Lemurs, with their big eyes and long tails, only live in the wild in Madagascar."
+      },
+      {
+        "e": "🏝️",
+        "fr": "C’est la quatrième plus grande île du monde.",
+        "en": "It is the fourth largest island in the world."
+      },
+      {
+        "e": "🍦",
+        "fr": "C’est le pays qui produit le plus de vanille au monde.",
+        "en": "It is the country that grows the most vanilla in the world."
+      }
+    ]
+  },
+  "MH": {
+    "capitale": {
+      "fr": "Majuro",
+      "en": "Majuro"
+    },
+    "faits": [
+      {
+        "e": "🏝️",
+        "fr": "Le pays est fait de 29 atolls, des anneaux de corail autour d’un lagon.",
+        "en": "The country is made of 29 atolls, rings of coral around a lagoon."
+      },
+      {
+        "e": "🧭",
+        "fr": "Autrefois, les marins se guidaient avec des cartes faites de bâtons et de coquillages.",
+        "en": "Long ago, sailors found their way with maps made of sticks and shells."
+      },
+      {
+        "e": "🥥",
+        "fr": "On y mange beaucoup de noix de coco et le fruit de l’arbre à pain.",
+        "en": "People there eat lots of coconuts and the fruit of the breadfruit tree."
+      }
+    ]
+  },
   "MK": {
     "capitale": {
       "fr": "Skopje",
@@ -712,6 +2618,98 @@
       }
     ]
   },
+  "ML": {
+    "capitale": {
+      "fr": "Bamako",
+      "en": "Bamako"
+    },
+    "faits": [
+      {
+        "e": "🕌",
+        "fr": "La grande mosquée de Djenné est le plus grand bâtiment du monde construit en terre.",
+        "en": "The Great Mosque of Djenné is the largest building in the world made of mud."
+      },
+      {
+        "e": "🌊",
+        "fr": "Le fleuve Niger le traverse en dessinant une grande boucle.",
+        "en": "The Niger River crosses it, drawing a big loop."
+      },
+      {
+        "e": "📚",
+        "fr": "La ville de Tombouctou garde de très vieux livres écrits à la main il y a des siècles.",
+        "en": "The city of Timbuktu keeps very old books written by hand centuries ago."
+      }
+    ]
+  },
+  "MM": {
+    "capitale": {
+      "fr": "Naypyidaw",
+      "en": "Naypyidaw"
+    },
+    "faits": [
+      {
+        "e": "🎈",
+        "fr": "À Bagan, des montgolfières survolent plus de 2000 temples anciens.",
+        "en": "In Bagan, hot-air balloons float over more than 2,000 ancient temples."
+      },
+      {
+        "e": "🚣",
+        "fr": "Sur le lac Inle, des pêcheurs rament avec une jambe pour garder les mains libres.",
+        "en": "On Inle Lake, fishermen row with one leg to keep their hands free."
+      },
+      {
+        "e": "🌳",
+        "fr": "Beaucoup de gens se mettent sur les joues une crème jaune faite d’écorce : le thanaka.",
+        "en": "Many people put a yellow cream made from tree bark on their cheeks: thanaka."
+      }
+    ]
+  },
+  "MN": {
+    "capitale": {
+      "fr": "Oulan-Bator",
+      "en": "Ulaanbaatar"
+    },
+    "faits": [
+      {
+        "e": "🐎",
+        "fr": "Il y a plus de chevaux que d’habitants dans le pays.",
+        "en": "There are more horses than people in the country."
+      },
+      {
+        "e": "🦖",
+        "fr": "Dans le désert de Gobi, on a trouvé beaucoup d’os et d’œufs de dinosaures.",
+        "en": "Many dinosaur bones and eggs have been found in the Gobi Desert."
+      },
+      {
+        "e": "🐫",
+        "fr": "Le chameau à deux bosses vit dans ses steppes et ses déserts.",
+        "en": "The two-humped camel lives in its grasslands and deserts."
+      }
+    ]
+  },
+  "MR": {
+    "capitale": {
+      "fr": "Nouakchott",
+      "en": "Nouakchott"
+    },
+    "faits": [
+      {
+        "e": "👁️",
+        "fr": "L’« œil du Sahara » est un immense cercle de roches, si grand qu’on le voit de l’espace.",
+        "en": "The \"Eye of the Sahara\" is a huge circle of rocks, so big it can be seen from space."
+      },
+      {
+        "e": "🚂",
+        "fr": "L’un des trains les plus longs du monde y traverse le désert, chargé de minerai de fer.",
+        "en": "One of the longest trains in the world crosses the desert there, loaded with iron ore."
+      },
+      {
+        "e": "🐦",
+        "fr": "Au banc d’Arguin, des millions d’oiseaux viennent passer l’hiver au bord de l’océan.",
+        "en": "At the Banc d’Arguin, millions of birds come to spend the winter by the ocean."
+      }
+    ]
+  },
   "MT": {
     "capitale": {
       "fr": "La Valette",
@@ -732,6 +2730,236 @@
         "e": "🐕",
         "fr": "Le petit chien bichon maltais porte son nom.",
         "en": "The little Maltese dog is named after it."
+      }
+    ]
+  },
+  "MU": {
+    "capitale": {
+      "fr": "Port-Louis",
+      "en": "Port Louis"
+    },
+    "faits": [
+      {
+        "e": "🐦",
+        "fr": "Le dodo, un drôle de gros oiseau qui ne volait pas, est le symbole de l’île.",
+        "en": "The dodo, a funny big bird that could not fly, is the symbol of the island."
+      },
+      {
+        "e": "🌈",
+        "fr": "À Chamarel, la terre a plusieurs couleurs : on l’appelle la Terre des Sept Couleurs.",
+        "en": "In Chamarel, the earth has many colours: it is called the Seven Coloured Earth."
+      },
+      {
+        "e": "🌊",
+        "fr": "Vu d’avion, le sable sous la mer donne l’illusion d’une cascade sous l’eau.",
+        "en": "Seen from a plane, the sand under the sea looks like an underwater waterfall."
+      }
+    ]
+  },
+  "MV": {
+    "capitale": {
+      "fr": "Malé",
+      "en": "Malé"
+    },
+    "faits": [
+      {
+        "e": "🐠",
+        "fr": "Ses îles sont posées sur des atolls, des anneaux de corail au milieu de l’océan Indien.",
+        "en": "Its islands sit on atolls, rings of coral in the middle of the Indian Ocean."
+      },
+      {
+        "e": "📏",
+        "fr": "C’est le pays le plus plat du monde : la terre y dépasse à peine le niveau de la mer.",
+        "en": "It is the flattest country in the world: the land is barely higher than the sea."
+      },
+      {
+        "e": "🐢",
+        "fr": "Des tortues de mer et des raies mantas nagent autour de ses récifs.",
+        "en": "Sea turtles and manta rays swim around its reefs."
+      }
+    ]
+  },
+  "MW": {
+    "capitale": {
+      "fr": "Lilongwe",
+      "en": "Lilongwe"
+    },
+    "faits": [
+      {
+        "e": "🐟",
+        "fr": "Le lac Malawi abrite plus d’espèces de poissons que n’importe quel autre lac du monde.",
+        "en": "Lake Malawi has more kinds of fish than any other lake in the world."
+      },
+      {
+        "e": "📏",
+        "fr": "Le pays est long et étroit, collé le long du grand lac Malawi.",
+        "en": "The country is long and narrow, stretched along the big Lake Malawi."
+      },
+      {
+        "e": "❤️",
+        "fr": "On l’appelle « le cœur chaleureux de l’Afrique ».",
+        "en": "It is called \"the warm heart of Africa\"."
+      }
+    ]
+  },
+  "MX": {
+    "capitale": {
+      "fr": "Mexico",
+      "en": "Mexico City"
+    },
+    "faits": [
+      {
+        "e": "🌮",
+        "fr": "Les tacos sont des galettes de maïs garnies, nées au Mexique.",
+        "en": "Tacos are filled corn tortillas that come from Mexico."
+      },
+      {
+        "e": "🦋",
+        "fr": "Des millions de papillons monarques y viennent passer l’hiver, après un long voyage.",
+        "en": "Millions of monarch butterflies spend the winter there, after a long journey."
+      },
+      {
+        "e": "🏛️",
+        "fr": "À Chichén Itzá, les Mayas ont construit une grande pyramide à marches.",
+        "en": "At Chichén Itzá, the Maya built a great stepped pyramid."
+      }
+    ]
+  },
+  "MY": {
+    "capitale": {
+      "fr": "Kuala Lumpur",
+      "en": "Kuala Lumpur"
+    },
+    "faits": [
+      {
+        "e": "🏢",
+        "fr": "Les tours Petronas, deux tours jumelles reliées par un pont, sont dans la capitale.",
+        "en": "The Petronas Towers, twin towers joined by a bridge, are in the capital."
+      },
+      {
+        "e": "🦧",
+        "fr": "Les orangs-outans, de grands singes roux, vivent dans ses forêts.",
+        "en": "Orangutans, great apes with red hair, live in its forests."
+      },
+      {
+        "e": "🌺",
+        "fr": "La rafflesia, une des plus grandes fleurs du monde, pousse dans ses forêts.",
+        "en": "The rafflesia, one of the biggest flowers in the world, grows in its forests."
+      }
+    ]
+  },
+  "MZ": {
+    "capitale": {
+      "fr": "Maputo",
+      "en": "Maputo"
+    },
+    "faits": [
+      {
+        "e": "🌊",
+        "fr": "Le grand fleuve Zambèze le traverse avant de se jeter dans l’océan Indien.",
+        "en": "The great Zambezi River crosses it before flowing into the Indian Ocean."
+      },
+      {
+        "e": "🐋",
+        "fr": "Près des îles de Bazaruto vivent des dugongs, qu’on appelle aussi « vaches de mer ».",
+        "en": "Near the Bazaruto islands live dugongs, also called \"sea cows\"."
+      },
+      {
+        "e": "🗣️",
+        "fr": "On y parle portugais, comme au Portugal et au Brésil.",
+        "en": "People there speak Portuguese, like in Portugal and Brazil."
+      }
+    ]
+  },
+  "NA": {
+    "capitale": {
+      "fr": "Windhoek",
+      "en": "Windhoek"
+    },
+    "faits": [
+      {
+        "e": "🏜️",
+        "fr": "Dans le désert du Namib, des dunes de sable orange sont parmi les plus hautes du monde.",
+        "en": "In the Namib Desert, orange sand dunes are among the highest in the world."
+      },
+      {
+        "e": "🦓",
+        "fr": "Au parc d’Etosha, éléphants, girafes et zèbres viennent boire aux mêmes points d’eau.",
+        "en": "In Etosha National Park, elephants, giraffes and zebras drink at the same waterholes."
+      },
+      {
+        "e": "☄️",
+        "fr": "La plus grosse météorite jamais trouvée sur Terre est toujours là où elle est tombée.",
+        "en": "The biggest meteorite ever found on Earth is still where it fell."
+      }
+    ]
+  },
+  "NE": {
+    "capitale": {
+      "fr": "Niamey",
+      "en": "Niamey"
+    },
+    "faits": [
+      {
+        "e": "🦒",
+        "fr": "Près de Kouré, des girafes en liberté se promènent autour des villages.",
+        "en": "Near Kouré, wild giraffes wander around the villages."
+      },
+      {
+        "e": "🏜️",
+        "fr": "Le désert du Ténéré est une immense mer de sable au cœur du Sahara.",
+        "en": "The Ténéré Desert is a huge sea of sand in the heart of the Sahara."
+      },
+      {
+        "e": "🌊",
+        "fr": "Le pays porte le nom du fleuve Niger, qui passe par sa capitale.",
+        "en": "The country is named after the Niger River, which flows through its capital."
+      }
+    ]
+  },
+  "NG": {
+    "capitale": {
+      "fr": "Abuja",
+      "en": "Abuja"
+    },
+    "faits": [
+      {
+        "e": "👥",
+        "fr": "C’est le pays d’Afrique où vivent le plus de gens.",
+        "en": "It is the country in Africa where the most people live."
+      },
+      {
+        "e": "🎬",
+        "fr": "Son cinéma, Nollywood, est l’un de ceux qui tournent le plus de films au monde.",
+        "en": "Its film industry, Nollywood, is one of the busiest in the world."
+      },
+      {
+        "e": "🗣️",
+        "fr": "On y parle plus de 500 langues !",
+        "en": "More than 500 languages are spoken there!"
+      }
+    ]
+  },
+  "NI": {
+    "capitale": {
+      "fr": "Managua",
+      "en": "Managua"
+    },
+    "faits": [
+      {
+        "e": "📏",
+        "fr": "C’est le plus grand pays d’Amérique centrale.",
+        "en": "It is the largest country in Central America."
+      },
+      {
+        "e": "🌋",
+        "fr": "Dans le grand lac Nicaragua, l’île d’Ometepe est formée de deux volcans.",
+        "en": "In the great Lake Nicaragua, the island of Ometepe is made of two volcanoes."
+      },
+      {
+        "e": "🐢",
+        "fr": "Sur certaines plages, des milliers de tortues marines arrivent ensemble pour pondre.",
+        "en": "On some beaches, thousands of sea turtles arrive together to lay their eggs."
       }
     ]
   },
@@ -781,6 +3009,213 @@
       }
     ]
   },
+  "NP": {
+    "capitale": {
+      "fr": "Katmandou",
+      "en": "Kathmandu"
+    },
+    "faits": [
+      {
+        "e": "🏔️",
+        "fr": "L’Everest, la plus haute montagne du monde, est à sa frontière.",
+        "en": "Everest, the highest mountain in the world, is on its border."
+      },
+      {
+        "e": "🚩",
+        "fr": "Son drapeau est le seul au monde qui n’est pas rectangulaire : il a deux pointes.",
+        "en": "Its flag is the only one in the world that is not a rectangle: it has two points."
+      },
+      {
+        "e": "🦏",
+        "fr": "Dans la jungle de Chitwan vivent des rhinocéros à une seule corne.",
+        "en": "One-horned rhinos live in the jungle of Chitwan."
+      }
+    ]
+  },
+  "NR": {
+    "capitale": {
+      "fr": "Yaren",
+      "en": "Yaren"
+    },
+    "faits": [
+      {
+        "e": "🤏",
+        "fr": "C’est une seule petite île ronde, l’un des plus petits pays du monde.",
+        "en": "It is a single small round island, one of the smallest countries in the world."
+      },
+      {
+        "e": "🗺️",
+        "fr": "Le pays n’a pas de capitale officielle : le gouvernement se trouve à Yaren.",
+        "en": "The country has no official capital: the government is in Yaren."
+      },
+      {
+        "e": "🏈",
+        "fr": "Le sport préféré est le football australien, qui se joue avec un ballon ovale.",
+        "en": "The favourite sport is Australian football, played with an oval ball."
+      }
+    ]
+  },
+  "NZ": {
+    "capitale": {
+      "fr": "Wellington",
+      "en": "Wellington"
+    },
+    "faits": [
+      {
+        "e": "🐦",
+        "fr": "Le kiwi, un oiseau qui ne sait pas voler, est le symbole du pays.",
+        "en": "The kiwi, a bird that cannot fly, is the symbol of the country."
+      },
+      {
+        "e": "🏉",
+        "fr": "Avant leurs matchs, les joueurs de rugby font le haka, une danse maorie.",
+        "en": "Before their matches, the rugby players perform the haka, a Maori dance."
+      },
+      {
+        "e": "🧭",
+        "fr": "Le pays est fait de deux grandes îles : l’île du Nord et l’île du Sud.",
+        "en": "The country is made of two big islands: the North Island and the South Island."
+      }
+    ]
+  },
+  "OM": {
+    "capitale": {
+      "fr": "Mascate",
+      "en": "Muscat"
+    },
+    "faits": [
+      {
+        "e": "🗺️",
+        "fr": "Il est à la pointe de la péninsule Arabique, au bord de la mer d’Oman.",
+        "en": "It is at the tip of the Arabian Peninsula, on the Arabian Sea."
+      },
+      {
+        "e": "🌿",
+        "fr": "On y récolte l’encens, une résine d’arbre qui sent bon quand on la brûle.",
+        "en": "Frankincense, a tree resin that smells nice when burned, is harvested there."
+      },
+      {
+        "e": "🏰",
+        "fr": "Le pays compte des centaines de forts et de châteaux anciens.",
+        "en": "The country has hundreds of old forts and castles."
+      }
+    ]
+  },
+  "PA": {
+    "capitale": {
+      "fr": "Panama",
+      "en": "Panama City"
+    },
+    "faits": [
+      {
+        "e": "🌉",
+        "fr": "Le pays est un pont de terre qui relie l’Amérique du Nord et l’Amérique du Sud.",
+        "en": "The country is a land bridge joining North America and South America."
+      },
+      {
+        "e": "🚢",
+        "fr": "Le canal de Panama permet aux bateaux de passer de l’océan Atlantique au Pacifique.",
+        "en": "The Panama Canal lets ships cross from the Atlantic Ocean to the Pacific."
+      },
+      {
+        "e": "🐸",
+        "fr": "La grenouille dorée, toute jaune, est un symbole du pays.",
+        "en": "The golden frog, bright yellow, is a symbol of the country."
+      }
+    ]
+  },
+  "PE": {
+    "capitale": {
+      "fr": "Lima",
+      "en": "Lima"
+    },
+    "faits": [
+      {
+        "e": "🏔️",
+        "fr": "Le Machu Picchu est une ancienne cité inca perchée en haut d’une montagne.",
+        "en": "Machu Picchu is an ancient Inca city perched high on a mountain."
+      },
+      {
+        "e": "🦙",
+        "fr": "Dans les Andes, on élève des lamas et des alpagas pour leur laine très douce.",
+        "en": "In the Andes, people raise llamas and alpacas for their very soft wool."
+      },
+      {
+        "e": "🥔",
+        "fr": "La pomme de terre vient de là : on y cultive des milliers de sortes différentes.",
+        "en": "The potato comes from there: thousands of different kinds are grown there."
+      }
+    ]
+  },
+  "PG": {
+    "capitale": {
+      "fr": "Port Moresby",
+      "en": "Port Moresby"
+    },
+    "faits": [
+      {
+        "e": "🗣️",
+        "fr": "On y parle plus de 800 langues : c’est un record mondial !",
+        "en": "More than 800 languages are spoken there: it is a world record!"
+      },
+      {
+        "e": "🐦",
+        "fr": "L’oiseau de paradis, aux plumes magnifiques, est dessiné sur son drapeau.",
+        "en": "The bird of paradise, with its beautiful feathers, is drawn on its flag."
+      },
+      {
+        "e": "🏝️",
+        "fr": "Il partage la grande île de Nouvelle-Guinée avec l’Indonésie.",
+        "en": "It shares the big island of New Guinea with Indonesia."
+      }
+    ]
+  },
+  "PH": {
+    "capitale": {
+      "fr": "Manille",
+      "en": "Manila"
+    },
+    "faits": [
+      {
+        "e": "🏝️",
+        "fr": "Le pays est fait de plus de 7000 îles.",
+        "en": "The country is made up of more than 7,000 islands."
+      },
+      {
+        "e": "🍫",
+        "fr": "Sur l’île de Bohol, des collines rondes brunissent à la saison sèche : les Chocolate Hills.",
+        "en": "On the island of Bohol, round hills turn brown in the dry season: the Chocolate Hills."
+      },
+      {
+        "e": "👀",
+        "fr": "Le tarsier, un tout petit animal aux yeux immenses, vit dans ses forêts.",
+        "en": "The tarsier, a tiny animal with huge eyes, lives in its forests."
+      }
+    ]
+  },
+  "PK": {
+    "capitale": {
+      "fr": "Islamabad",
+      "en": "Islamabad"
+    },
+    "faits": [
+      {
+        "e": "🏔️",
+        "fr": "Le K2, la deuxième plus haute montagne du monde, est à sa frontière nord.",
+        "en": "K2, the second highest mountain in the world, is on its northern border."
+      },
+      {
+        "e": "🧂",
+        "fr": "Le sel rose dit de l’Himalaya vient d’une immense mine de sel du Pakistan.",
+        "en": "The pink salt called Himalayan salt comes from a huge salt mine in Pakistan."
+      },
+      {
+        "e": "🏏",
+        "fr": "Le cricket y est le sport le plus populaire.",
+        "en": "Cricket is the most popular sport there."
+      }
+    ]
+  },
   "PL": {
     "capitale": {
       "fr": "Varsovie",
@@ -804,6 +3239,26 @@
       }
     ]
   },
+  "PS": {
+    "capitale": null,
+    "faits": [
+      {
+        "e": "🏛️",
+        "fr": "Jéricho est l’une des plus anciennes villes du monde : elle a plus de 10 000 ans.",
+        "en": "Jericho is one of the oldest towns in the world: it is more than 10,000 years old."
+      },
+      {
+        "e": "🌳",
+        "fr": "On y cultive des oliviers depuis des milliers d’années.",
+        "en": "Olive trees have been grown there for thousands of years."
+      },
+      {
+        "e": "🍰",
+        "fr": "La knafeh, un dessert au fromage et au sirop, est une spécialité de Naplouse.",
+        "en": "Knafeh, a dessert made with cheese and syrup, is a speciality of Nablus."
+      }
+    ]
+  },
   "PT": {
     "capitale": {
       "fr": "Lisbonne",
@@ -824,6 +3279,75 @@
         "e": "🗣️",
         "fr": "On parle aussi portugais au Brésil, de l’autre côté de l’océan.",
         "en": "Portuguese is also spoken in Brazil, on the other side of the ocean."
+      }
+    ]
+  },
+  "PW": {
+    "capitale": {
+      "fr": "Ngerulmud",
+      "en": "Ngerulmud"
+    },
+    "faits": [
+      {
+        "e": "🌊",
+        "fr": "Dans le lac aux Méduses, on nage parmi des méduses dorées qui piquent à peine.",
+        "en": "In Jellyfish Lake, people swim among golden jellyfish that barely sting."
+      },
+      {
+        "e": "🏝️",
+        "fr": "Ses îles Rock ressemblent à des centaines de champignons verts posés sur la mer.",
+        "en": "Its Rock Islands look like hundreds of green mushrooms sitting on the sea."
+      },
+      {
+        "e": "🛂",
+        "fr": "En arrivant, les visiteurs signent dans leur passeport une promesse de protéger la nature.",
+        "en": "On arrival, visitors sign a promise in their passport to protect nature."
+      }
+    ]
+  },
+  "PY": {
+    "capitale": {
+      "fr": "Asunción",
+      "en": "Asunción"
+    },
+    "faits": [
+      {
+        "e": "🧭",
+        "fr": "Il n’a pas de mer : il est entouré par l’Argentine, le Brésil et la Bolivie.",
+        "en": "It has no sea: it is surrounded by Argentina, Brazil and Bolivia."
+      },
+      {
+        "e": "🗣️",
+        "fr": "La plupart des habitants parlent deux langues : l’espagnol et le guarani.",
+        "en": "Most people there speak two languages: Spanish and Guarani."
+      },
+      {
+        "e": "⚡",
+        "fr": "Avec le Brésil, il a construit Itaipu, l’un des plus grands barrages du monde.",
+        "en": "Together with Brazil, it built Itaipu, one of the largest dams in the world."
+      }
+    ]
+  },
+  "QA": {
+    "capitale": {
+      "fr": "Doha",
+      "en": "Doha"
+    },
+    "faits": [
+      {
+        "e": "🗺️",
+        "fr": "C’est une presqu’île qui s’avance dans le Golfe, accrochée à l’Arabie saoudite.",
+        "en": "It is a peninsula that sticks out into the Gulf, attached to Saudi Arabia."
+      },
+      {
+        "e": "⚽",
+        "fr": "En 2022, il a accueilli la Coupe du monde de football.",
+        "en": "In 2022, it hosted the football World Cup."
+      },
+      {
+        "e": "🏜️",
+        "fr": "Au sud, une mer intérieure s’avance au milieu des dunes de sable.",
+        "en": "In the south, an inland sea reaches into the middle of the sand dunes."
       }
     ]
   },
@@ -896,6 +3420,121 @@
       }
     ]
   },
+  "RW": {
+    "capitale": {
+      "fr": "Kigali",
+      "en": "Kigali"
+    },
+    "faits": [
+      {
+        "e": "🦍",
+        "fr": "Dans les volcans du nord vivent des gorilles des montagnes.",
+        "en": "Mountain gorillas live on the volcanoes in the north."
+      },
+      {
+        "e": "⛰️",
+        "fr": "On l’appelle « le pays des mille collines ».",
+        "en": "It is called \"the land of a thousand hills\"."
+      },
+      {
+        "e": "🛍️",
+        "fr": "Les sacs en plastique y sont interdits depuis 2008.",
+        "en": "Plastic bags have been banned there since 2008."
+      }
+    ]
+  },
+  "SA": {
+    "capitale": {
+      "fr": "Riyad",
+      "en": "Riyadh"
+    },
+    "faits": [
+      {
+        "e": "🗺️",
+        "fr": "Il occupe la plus grande partie de la péninsule Arabique.",
+        "en": "It covers most of the Arabian Peninsula."
+      },
+      {
+        "e": "🏜️",
+        "fr": "Le Rub al-Khali, ou « Quart vide », est le plus grand désert de sable du monde.",
+        "en": "The Rub’ al Khali, or “Empty Quarter”, is the largest sand desert in the world."
+      },
+      {
+        "e": "💧",
+        "fr": "C’est le plus grand pays du monde où ne coule aucune rivière permanente.",
+        "en": "It is the largest country in the world with no permanent river."
+      }
+    ]
+  },
+  "SB": {
+    "capitale": {
+      "fr": "Honiara",
+      "en": "Honiara"
+    },
+    "faits": [
+      {
+        "e": "🏝️",
+        "fr": "Ses centaines d’îles s’étendent à l’est de la Papouasie-Nouvelle-Guinée.",
+        "en": "Its hundreds of islands stretch out to the east of Papua New Guinea."
+      },
+      {
+        "e": "🦎",
+        "fr": "Un grand lézard y vit dans les arbres et s’accroche aux branches avec sa queue.",
+        "en": "A big lizard lives in the trees there and holds on to branches with its tail."
+      },
+      {
+        "e": "🎋",
+        "fr": "On y fait de la musique en tapant sur de gros tubes de bambou avec des tongs !",
+        "en": "People there make music by hitting big bamboo tubes with flip-flops!"
+      }
+    ]
+  },
+  "SC": {
+    "capitale": {
+      "fr": "Victoria",
+      "en": "Victoria"
+    },
+    "faits": [
+      {
+        "e": "🥥",
+        "fr": "Le coco de mer est la plus grosse graine du monde : elle peut peser plus de 20 kilos.",
+        "en": "The coco de mer is the biggest seed in the world: it can weigh more than 20 kilos."
+      },
+      {
+        "e": "🐢",
+        "fr": "Sur l’atoll d’Aldabra vivent des milliers de tortues géantes.",
+        "en": "Thousands of giant tortoises live on Aldabra Atoll."
+      },
+      {
+        "e": "🏝️",
+        "fr": "C’est le plus petit pays d’Afrique, fait de 115 îles dans l’océan Indien.",
+        "en": "It is the smallest country in Africa, made of 115 islands in the Indian Ocean."
+      }
+    ]
+  },
+  "SD": {
+    "capitale": {
+      "fr": "Khartoum",
+      "en": "Khartoum"
+    },
+    "faits": [
+      {
+        "e": "🔺",
+        "fr": "Il a encore plus de pyramides que l’Égypte, comme celles de Méroé.",
+        "en": "It has even more pyramids than Egypt, like the ones at Meroë."
+      },
+      {
+        "e": "🌊",
+        "fr": "À Khartoum, le Nil Blanc et le Nil Bleu se rejoignent pour former le Nil.",
+        "en": "In Khartoum, the White Nile and the Blue Nile meet to form the Nile."
+      },
+      {
+        "e": "🍬",
+        "fr": "C’est le premier producteur de gomme arabique, une sève d’acacia qu’on met dans des bonbons.",
+        "en": "It is the top producer of gum arabic, an acacia sap used in sweets."
+      }
+    ]
+  },
   "SE": {
     "capitale": {
       "fr": "Stockholm",
@@ -916,6 +3555,29 @@
         "e": "🏆",
         "fr": "Chaque année, la plupart des prix Nobel sont remis à Stockholm.",
         "en": "Every year, most of the Nobel Prizes are awarded in Stockholm."
+      }
+    ]
+  },
+  "SG": {
+    "capitale": {
+      "fr": "Singapour",
+      "en": "Singapore"
+    },
+    "faits": [
+      {
+        "e": "🏝️",
+        "fr": "C’est une île-ville, tout au bout de la Malaisie.",
+        "en": "It is an island city, at the very tip of Malaysia."
+      },
+      {
+        "e": "🦁",
+        "fr": "Son nom veut dire « ville du lion », et sa statue mi-lion mi-poisson crache de l’eau.",
+        "en": "Its name means “lion city”, and its half-lion, half-fish statue spouts water."
+      },
+      {
+        "e": "🌳",
+        "fr": "Dans un jardin géant, des arbres en métal couverts de plantes s’allument la nuit.",
+        "en": "In a giant garden, metal trees covered in plants light up at night."
       }
     ]
   },
@@ -965,6 +3627,29 @@
       }
     ]
   },
+  "SL": {
+    "capitale": {
+      "fr": "Freetown",
+      "en": "Freetown"
+    },
+    "faits": [
+      {
+        "e": "🦁",
+        "fr": "Son nom vient du portugais et veut dire « montagne du lion ».",
+        "en": "Its name comes from Portuguese and means \"lion mountain\"."
+      },
+      {
+        "e": "🐒",
+        "fr": "Près de Freetown, le refuge de Tacugama prend soin de chimpanzés.",
+        "en": "Near Freetown, the Tacugama sanctuary takes care of chimpanzees."
+      },
+      {
+        "e": "🗣️",
+        "fr": "On y parle surtout le krio, une langue née de l’anglais et de langues africaines.",
+        "en": "Most people there speak Krio, a language born from English and African languages."
+      }
+    ]
+  },
   "SM": {
     "capitale": {
       "fr": "Saint-Marin",
@@ -985,6 +3670,489 @@
         "e": "⛰️",
         "fr": "Il est bâti sur une montagne coiffée de trois tours.",
         "en": "It is built on a mountain topped by three towers."
+      }
+    ]
+  },
+  "SN": {
+    "capitale": {
+      "fr": "Dakar",
+      "en": "Dakar"
+    },
+    "faits": [
+      {
+        "e": "🌍",
+        "fr": "Dakar est la ville la plus à l’ouest de tout le continent africain.",
+        "en": "Dakar is the westernmost city of the whole African mainland."
+      },
+      {
+        "e": "🌸",
+        "fr": "Le lac Retba, le « lac Rose », doit sa couleur à une toute petite algue.",
+        "en": "Lake Retba, the \"Pink Lake\", gets its colour from a tiny alga."
+      },
+      {
+        "e": "🌳",
+        "fr": "Le baobab, un arbre au tronc énorme, est le symbole du pays.",
+        "en": "The baobab, a tree with an enormous trunk, is the symbol of the country."
+      }
+    ]
+  },
+  "SO": {
+    "capitale": {
+      "fr": "Mogadiscio",
+      "en": "Mogadishu"
+    },
+    "faits": [
+      {
+        "e": "🗺️",
+        "fr": "Il a la plus longue côte du continent, tout autour de la pointe de la « corne de l’Afrique ».",
+        "en": "It has the longest coastline on the mainland, all around the tip of the \"Horn of Africa\"."
+      },
+      {
+        "e": "🐪",
+        "fr": "C’est l’un des pays qui comptent le plus de dromadaires au monde.",
+        "en": "It is one of the countries with the most camels in the world."
+      },
+      {
+        "e": "🌳",
+        "fr": "On y récolte l’encens, une résine d’arbre qui sent bon quand on la fait brûler.",
+        "en": "People there gather frankincense, a tree resin that smells lovely when burnt."
+      }
+    ]
+  },
+  "SR": {
+    "capitale": {
+      "fr": "Paramaribo",
+      "en": "Paramaribo"
+    },
+    "faits": [
+      {
+        "e": "🤏",
+        "fr": "C’est le plus petit pays d’Amérique du Sud, voisin de la Guyane française.",
+        "en": "It is the smallest country in South America, next to French Guiana."
+      },
+      {
+        "e": "🗣️",
+        "fr": "La langue officielle est le néerlandais, la langue des Pays-Bas.",
+        "en": "The official language is Dutch, the language of the Netherlands."
+      },
+      {
+        "e": "🌳",
+        "fr": "Presque tout le pays est couvert de forêt tropicale.",
+        "en": "Almost the whole country is covered in rainforest."
+      }
+    ]
+  },
+  "SS": {
+    "capitale": {
+      "fr": "Djouba",
+      "en": "Juba"
+    },
+    "faits": [
+      {
+        "e": "🎂",
+        "fr": "C’est le plus jeune pays du monde : il est né en 2011.",
+        "en": "It is the youngest country in the world: it was born in 2011."
+      },
+      {
+        "e": "🌿",
+        "fr": "Le Sudd, sur le Nil Blanc, est l’un des plus grands marais du monde.",
+        "en": "The Sudd, on the White Nile, is one of the largest swamps in the world."
+      },
+      {
+        "e": "🦌",
+        "fr": "Chaque année, des millions d’antilopes y voyagent ensemble à travers la savane.",
+        "en": "Every year, millions of antelopes travel together across the savannah there."
+      }
+    ]
+  },
+  "ST": {
+    "capitale": {
+      "fr": "São Tomé",
+      "en": "São Tomé"
+    },
+    "faits": [
+      {
+        "e": "🏝️",
+        "fr": "C’est le deuxième plus petit pays d’Afrique, fait de deux îles principales.",
+        "en": "It is the second smallest country in Africa, made of two main islands."
+      },
+      {
+        "e": "🌍",
+        "fr": "La ligne de l’équateur passe sur un îlot au sud du pays, l’îlot das Rolas.",
+        "en": "The equator runs across a tiny island in the south of the country, Rolas Islet."
+      },
+      {
+        "e": "⛰️",
+        "fr": "Le Pico Cão Grande est une aiguille de roche qui pointe vers le ciel comme un doigt.",
+        "en": "Pico Cão Grande is a needle of rock that points to the sky like a finger."
+      }
+    ]
+  },
+  "SV": {
+    "capitale": {
+      "fr": "San Salvador",
+      "en": "San Salvador"
+    },
+    "faits": [
+      {
+        "e": "🤏",
+        "fr": "C’est le plus petit pays d’Amérique centrale.",
+        "en": "It is the smallest country in Central America."
+      },
+      {
+        "e": "🌽",
+        "fr": "La pupusa, une galette de maïs farcie de fromage ou de haricots, est le plat national.",
+        "en": "The pupusa, a corn patty filled with cheese or beans, is the national dish."
+      },
+      {
+        "e": "🌋",
+        "fr": "Le volcan Izalco a brillé si longtemps la nuit qu’on l’appelait le phare du Pacifique.",
+        "en": "The Izalco volcano glowed at night for so long that it was called the Lighthouse of the Pacific."
+      }
+    ]
+  },
+  "SY": {
+    "capitale": {
+      "fr": "Damas",
+      "en": "Damascus"
+    },
+    "faits": [
+      {
+        "e": "🏙️",
+        "fr": "Damas est l’une des plus vieilles villes du monde encore habitées.",
+        "en": "Damascus is one of the oldest cities in the world where people still live."
+      },
+      {
+        "e": "🧼",
+        "fr": "Le savon d’Alep, à l’huile d’olive et de laurier, est fabriqué depuis des siècles.",
+        "en": "Aleppo soap, made with olive and laurel oil, has been made for centuries."
+      },
+      {
+        "e": "🌹",
+        "fr": "La rose de Damas, au parfum très doux, porte le nom de la capitale.",
+        "en": "The Damask rose, with its very sweet scent, is named after the capital."
+      }
+    ]
+  },
+  "SZ": {
+    "capitale": {
+      "fr": "Mbabane",
+      "en": "Mbabane"
+    },
+    "faits": [
+      {
+        "e": "🗺️",
+        "fr": "Il est presque entouré par l’Afrique du Sud, et touche aussi le Mozambique.",
+        "en": "It is almost surrounded by South Africa, and also touches Mozambique."
+      },
+      {
+        "e": "🦏",
+        "fr": "Dans le parc de Hlane, on peut voir des rhinocéros blancs et des éléphants.",
+        "en": "In Hlane Park, you can see white rhinos and elephants."
+      },
+      {
+        "e": "🏷️",
+        "fr": "Avant 2018, le pays s’appelait le Swaziland.",
+        "en": "Before 2018, the country was called Swaziland."
+      }
+    ]
+  },
+  "TD": {
+    "capitale": {
+      "fr": "N’Djaména",
+      "en": "N’Djamena"
+    },
+    "faits": [
+      {
+        "e": "🌊",
+        "fr": "Le lac Tchad, partagé avec trois voisins, change de taille selon les saisons.",
+        "en": "Lake Chad, shared with three neighbours, changes size with the seasons."
+      },
+      {
+        "e": "🌬️",
+        "fr": "Dans le massif de l’Ennedi, le vent a sculpté des arches de roche géantes.",
+        "en": "In the Ennedi Mountains, the wind has carved giant rock arches."
+      },
+      {
+        "e": "🏔️",
+        "fr": "L’Emi Koussi, dans le Tibesti, est le plus haut sommet du Sahara.",
+        "en": "Emi Koussi, in the Tibesti Mountains, is the highest peak in the Sahara."
+      }
+    ]
+  },
+  "TG": {
+    "capitale": {
+      "fr": "Lomé",
+      "en": "Lomé"
+    },
+    "faits": [
+      {
+        "e": "📏",
+        "fr": "Sur la carte, c’est une longue bande étroite entre le Ghana et le Bénin.",
+        "en": "On the map, it is a long, narrow strip between Ghana and Benin."
+      },
+      {
+        "e": "🏠",
+        "fr": "Au Koutammakou, les maisons en terre ressemblent à de petits châteaux forts.",
+        "en": "In Koutammakou, the mud houses look like little castles."
+      },
+      {
+        "e": "🚶",
+        "fr": "Sa capitale, Lomé, est juste à côté de la frontière avec le Ghana.",
+        "en": "Its capital, Lomé, is right next to the border with Ghana."
+      }
+    ]
+  },
+  "TH": {
+    "capitale": {
+      "fr": "Bangkok",
+      "en": "Bangkok"
+    },
+    "faits": [
+      {
+        "e": "🛶",
+        "fr": "On y trouve des marchés flottants, où l’on vend fruits et légumes sur des barques.",
+        "en": "There are floating markets, where fruit and vegetables are sold from boats."
+      },
+      {
+        "e": "🥭",
+        "fr": "Le riz gluant à la mangue est un dessert très aimé.",
+        "en": "Mango sticky rice is a much-loved dessert."
+      },
+      {
+        "e": "🔠",
+        "fr": "Le nom complet de Bangkok est le plus long nom de ville du monde.",
+        "en": "Bangkok’s full name is the longest city name in the world."
+      }
+    ]
+  },
+  "TJ": {
+    "capitale": {
+      "fr": "Douchanbé",
+      "en": "Dushanbe"
+    },
+    "faits": [
+      {
+        "e": "🏔️",
+        "fr": "Les monts Pamir, surnommés le « toit du monde », couvrent l’est du pays.",
+        "en": "The Pamir Mountains, nicknamed the “roof of the world”, cover the east of the country."
+      },
+      {
+        "e": "🐏",
+        "fr": "Le mouflon de Marco Polo, aux immenses cornes en spirale, vit dans le Pamir.",
+        "en": "The Marco Polo sheep, with huge spiral horns, lives in the Pamirs."
+      },
+      {
+        "e": "🗣️",
+        "fr": "On y parle le tadjik, une langue proche du persan parlé en Iran.",
+        "en": "People speak Tajik there, a language close to the Persian spoken in Iran."
+      }
+    ]
+  },
+  "TL": {
+    "capitale": {
+      "fr": "Dili",
+      "en": "Dili"
+    },
+    "faits": [
+      {
+        "e": "🏝️",
+        "fr": "Il occupe la moitié est de l’île de Timor, plus un petit morceau à l’ouest.",
+        "en": "It covers the eastern half of the island of Timor, plus a small piece in the west."
+      },
+      {
+        "e": "🐊",
+        "fr": "Une légende raconte que l’île de Timor est un crocodile géant endormi.",
+        "en": "A legend says that the island of Timor is a giant sleeping crocodile."
+      },
+      {
+        "e": "🐠",
+        "fr": "Autour de l’île d’Atauro, les récifs abritent une incroyable variété de poissons.",
+        "en": "Around the island of Atauro, the reefs are home to an amazing variety of fish."
+      }
+    ]
+  },
+  "TM": {
+    "capitale": {
+      "fr": "Achgabat",
+      "en": "Ashgabat"
+    },
+    "faits": [
+      {
+        "e": "🏜️",
+        "fr": "Le désert du Karakoum couvre la plus grande partie du pays.",
+        "en": "The Karakum Desert covers most of the country."
+      },
+      {
+        "e": "🐎",
+        "fr": "Le cheval akhal-téké a une robe qui brille comme du métal.",
+        "en": "The Akhal-Teke horse has a coat that shines like metal."
+      },
+      {
+        "e": "🧶",
+        "fr": "Son drapeau porte des motifs de tapis, car les tapis turkmènes sont célèbres.",
+        "en": "Its flag shows carpet patterns, because Turkmen carpets are famous."
+      }
+    ]
+  },
+  "TN": {
+    "capitale": {
+      "fr": "Tunis",
+      "en": "Tunis"
+    },
+    "faits": [
+      {
+        "e": "⭐",
+        "fr": "La planète désert de Luke Skywalker, dans Star Wars, a été filmée dans le sud du pays.",
+        "en": "Luke Skywalker’s desert planet in Star Wars was filmed in the south of the country."
+      },
+      {
+        "e": "🏛️",
+        "fr": "À El Jem se dresse un immense amphithéâtre romain, comme le Colisée de Rome.",
+        "en": "In El Jem stands a huge Roman amphitheatre, like the Colosseum in Rome."
+      },
+      {
+        "e": "🧭",
+        "fr": "C’est là que se trouve le point le plus au nord de toute l’Afrique.",
+        "en": "The northernmost point of all Africa is found there."
+      }
+    ]
+  },
+  "TO": {
+    "capitale": {
+      "fr": "Nuku’alofa",
+      "en": "Nuku’alofa"
+    },
+    "faits": [
+      {
+        "e": "👑",
+        "fr": "C’est un royaume : le pays a son propre roi, qui habite à Nuku’alofa.",
+        "en": "It is a kingdom: the country has its own king, who lives in Nuku’alofa."
+      },
+      {
+        "e": "🐳",
+        "fr": "Les baleines à bosse viennent y avoir leurs bébés.",
+        "en": "Humpback whales come there to have their babies."
+      },
+      {
+        "e": "💦",
+        "fr": "Sur la côte, la mer jaillit très haut par des trous dans la roche, comme des fontaines.",
+        "en": "On the coast, the sea shoots up high through holes in the rock, like fountains."
+      }
+    ]
+  },
+  "TR": {
+    "capitale": {
+      "fr": "Ankara",
+      "en": "Ankara"
+    },
+    "faits": [
+      {
+        "e": "🌉",
+        "fr": "La ville d’Istanbul est à cheval sur deux continents, l’Europe et l’Asie.",
+        "en": "The city of Istanbul sits on two continents, Europe and Asia."
+      },
+      {
+        "e": "⛰️",
+        "fr": "En Cappadoce, des maisons sont creusées dans des rochers pointus comme des cheminées.",
+        "en": "In Cappadocia, houses are carved into rocks pointed like chimneys."
+      },
+      {
+        "e": "🍬",
+        "fr": "Le loukoum est une confiserie moelleuse saupoudrée de sucre.",
+        "en": "Turkish delight is a soft sweet dusted with sugar."
+      }
+    ]
+  },
+  "TT": {
+    "capitale": {
+      "fr": "Port-d’Espagne",
+      "en": "Port of Spain"
+    },
+    "faits": [
+      {
+        "e": "🥁",
+        "fr": "Le steelpan, un tambour fabriqué dans un baril de métal, a été inventé à Trinité.",
+        "en": "The steelpan, a drum made from a metal barrel, was invented in Trinidad."
+      },
+      {
+        "e": "⚫",
+        "fr": "Le Pitch Lake est un lac de goudron naturel, le plus grand du monde.",
+        "en": "Pitch Lake is a natural lake of tar, the largest in the world."
+      },
+      {
+        "e": "🧭",
+        "fr": "L’île de Trinité est toute proche du Venezuela, en Amérique du Sud.",
+        "en": "The island of Trinidad is very close to Venezuela, in South America."
+      }
+    ]
+  },
+  "TV": {
+    "capitale": {
+      "fr": "Funafuti",
+      "en": "Funafuti"
+    },
+    "faits": [
+      {
+        "e": "🏝️",
+        "fr": "Tuvalu veut dire « huit ensemble » : le nom parle de ses îles habitées.",
+        "en": "Tuvalu means “eight standing together”: the name is about its inhabited islands."
+      },
+      {
+        "e": "🤏",
+        "fr": "C’est le quatrième plus petit pays du monde.",
+        "en": "It is the fourth smallest country in the world."
+      },
+      {
+        "e": "📺",
+        "fr": "Son adresse internet, « .tv », est utilisée par des chaînes de télé du monde entier.",
+        "en": "Its internet address, “.tv”, is used by TV channels all over the world."
+      }
+    ]
+  },
+  "TW": {
+    "capitale": {
+      "fr": "Taipei",
+      "en": "Taipei"
+    },
+    "faits": [
+      {
+        "e": "🥤",
+        "fr": "Le thé aux perles, avec ses boules de tapioca, a été inventé à Taïwan.",
+        "en": "Bubble tea, with its tapioca balls, was invented in Taiwan."
+      },
+      {
+        "e": "⛰️",
+        "fr": "Sur cette île, le mont Yushan est plus haut que le mont Fuji du Japon.",
+        "en": "On this island, Mount Yushan is higher than Japan’s Mount Fuji."
+      },
+      {
+        "e": "🏙️",
+        "fr": "La tour Taipei 101 a été la plus haute du monde de 2004 à 2010.",
+        "en": "The Taipei 101 tower was the tallest in the world from 2004 to 2010."
+      }
+    ]
+  },
+  "TZ": {
+    "capitale": {
+      "fr": "Dodoma",
+      "en": "Dodoma"
+    },
+    "faits": [
+      {
+        "e": "🏔️",
+        "fr": "Le Kilimandjaro est la plus haute montagne d’Afrique, avec de la neige au sommet.",
+        "en": "Kilimanjaro is the highest mountain in Africa, with snow at the top."
+      },
+      {
+        "e": "🦁",
+        "fr": "Au fond du cratère du Ngorongoro, un ancien volcan, vivent des milliers d’animaux.",
+        "en": "Thousands of animals live at the bottom of the Ngorongoro Crater, an old volcano."
+      },
+      {
+        "e": "🌶️",
+        "fr": "L’île de Zanzibar est célèbre pour ses épices, comme le clou de girofle.",
+        "en": "The island of Zanzibar is famous for its spices, like cloves."
       }
     ]
   },
@@ -1011,6 +4179,98 @@
       }
     ]
   },
+  "UG": {
+    "capitale": {
+      "fr": "Kampala",
+      "en": "Kampala"
+    },
+    "faits": [
+      {
+        "e": "🌊",
+        "fr": "À Jinja, le Nil commence son long voyage en sortant du lac Victoria.",
+        "en": "In Jinja, the Nile begins its long journey as it leaves Lake Victoria."
+      },
+      {
+        "e": "🦁",
+        "fr": "À Ishasha, des lions font la sieste perchés dans les arbres !",
+        "en": "In Ishasha, lions take naps up in the trees!"
+      },
+      {
+        "e": "🌍",
+        "fr": "L’équateur traverse le pays : on peut y mettre un pied dans chaque moitié du monde.",
+        "en": "The equator crosses the country: you can stand with one foot in each half of the world."
+      }
+    ]
+  },
+  "US": {
+    "capitale": {
+      "fr": "Washington",
+      "en": "Washington, D.C."
+    },
+    "faits": [
+      {
+        "e": "🗽",
+        "fr": "La statue de la Liberté, à New York, a été offerte par la France.",
+        "en": "The Statue of Liberty, in New York, was a gift from France."
+      },
+      {
+        "e": "🧩",
+        "fr": "Le pays compte 50 États, dont l’Alaska, tout au nord, et Hawaï, des îles du Pacifique.",
+        "en": "The country has 50 states, including Alaska, far to the north, and Hawaii, islands in the Pacific."
+      },
+      {
+        "e": "🚀",
+        "fr": "En 1969, des astronautes américains ont été les premiers à marcher sur la Lune.",
+        "en": "In 1969, American astronauts were the first people to walk on the Moon."
+      }
+    ]
+  },
+  "UY": {
+    "capitale": {
+      "fr": "Montevideo",
+      "en": "Montevideo"
+    },
+    "faits": [
+      {
+        "e": "⚽",
+        "fr": "En 1930, il a organisé et gagné la toute première Coupe du monde de football.",
+        "en": "In 1930, it hosted and won the very first football World Cup."
+      },
+      {
+        "e": "🧉",
+        "fr": "On y boit le maté, une boisson chaude, dans une calebasse avec une paille en métal.",
+        "en": "People drink mate there, a hot drink, from a gourd with a metal straw."
+      },
+      {
+        "e": "🐄",
+        "fr": "Il y a bien plus de vaches que d’habitants dans le pays !",
+        "en": "There are far more cows than people in the country!"
+      }
+    ]
+  },
+  "UZ": {
+    "capitale": {
+      "fr": "Tachkent",
+      "en": "Tashkent"
+    },
+    "faits": [
+      {
+        "e": "🕌",
+        "fr": "Samarcande est célèbre pour ses monuments couverts de carreaux bleus.",
+        "en": "Samarkand is famous for its monuments covered in blue tiles."
+      },
+      {
+        "e": "🍚",
+        "fr": "Le plov est un plat de riz, de carottes et de viande cuit dans une grande marmite.",
+        "en": "Plov is a dish of rice, carrots and meat cooked in a big pot."
+      },
+      {
+        "e": "🗺️",
+        "fr": "Pour atteindre la mer, il faut traverser au moins deux autres pays.",
+        "en": "To reach the sea, you have to cross at least two other countries."
+      }
+    ]
+  },
   "VA": {
     "capitale": {
       "fr": "Cité du Vatican",
@@ -1034,6 +4294,121 @@
       }
     ]
   },
+  "VC": {
+    "capitale": {
+      "fr": "Kingstown",
+      "en": "Kingstown"
+    },
+    "faits": [
+      {
+        "e": "🏝️",
+        "fr": "Le pays réunit l’île de Saint-Vincent et une chaîne de petites îles : les Grenadines.",
+        "en": "The country joins the island of Saint Vincent and a chain of small islands: the Grenadines."
+      },
+      {
+        "e": "🎬",
+        "fr": "Des scènes du film Pirates des Caraïbes y ont été tournées, dans une jolie baie.",
+        "en": "Scenes from the film Pirates of the Caribbean were shot there, in a pretty bay."
+      },
+      {
+        "e": "🌳",
+        "fr": "Son jardin botanique, créé en 1765, est l’un des plus anciens des Amériques.",
+        "en": "Its botanical garden, created in 1765, is one of the oldest in the Americas."
+      }
+    ]
+  },
+  "VE": {
+    "capitale": {
+      "fr": "Caracas",
+      "en": "Caracas"
+    },
+    "faits": [
+      {
+        "e": "🏞️",
+        "fr": "Le Salto Ángel est la plus haute chute d’eau du monde.",
+        "en": "Angel Falls is the highest waterfall in the world."
+      },
+      {
+        "e": "⚡",
+        "fr": "Au-dessus du lac de Maracaibo, le ciel s’illumine d’éclairs presque toutes les nuits.",
+        "en": "Above Lake Maracaibo, the sky lights up with lightning almost every night."
+      },
+      {
+        "e": "🥙",
+        "fr": "On y mange des arepas, des galettes de maïs rondes que l’on garnit.",
+        "en": "People eat arepas there, round corn cakes with a filling."
+      }
+    ]
+  },
+  "VN": {
+    "capitale": {
+      "fr": "Hanoï",
+      "en": "Hanoi"
+    },
+    "faits": [
+      {
+        "e": "🗺️",
+        "fr": "Sur la carte, le pays est long et fin, en forme de S.",
+        "en": "On the map, the country is long and thin, shaped like an S."
+      },
+      {
+        "e": "🍜",
+        "fr": "Le phở est une soupe de nouilles de riz qu’on mange même au petit-déjeuner.",
+        "en": "Phở is a rice noodle soup that people eat even for breakfast."
+      },
+      {
+        "e": "🌊",
+        "fr": "Dans la baie d’Ha Long, des milliers de rochers géants sortent de la mer.",
+        "en": "In Ha Long Bay, thousands of giant rocks rise out of the sea."
+      }
+    ]
+  },
+  "VU": {
+    "capitale": {
+      "fr": "Port-Vila",
+      "en": "Port Vila"
+    },
+    "faits": [
+      {
+        "e": "🗣️",
+        "fr": "On y parle le bichelamar, l’anglais et le français.",
+        "en": "People there speak Bislama, English and French."
+      },
+      {
+        "e": "📮",
+        "fr": "Il y a une poste sous la mer : on y envoie des cartes postales en plongeant !",
+        "en": "There is a post office under the sea: you send postcards there by diving!"
+      },
+      {
+        "e": "🌋",
+        "fr": "Sur l’île de Tanna, on peut s’approcher du volcan Yasur et voir briller la lave.",
+        "en": "On the island of Tanna, you can go near the Yasur volcano and see the lava glow."
+      }
+    ]
+  },
+  "WS": {
+    "capitale": {
+      "fr": "Apia",
+      "en": "Apia"
+    },
+    "faits": [
+      {
+        "e": "📅",
+        "fr": "En 2011, le pays a sauté un jour entier : le 30 décembre n’a pas existé !",
+        "en": "In 2011, the country skipped a whole day: 30 December never happened!"
+      },
+      {
+        "e": "🏊",
+        "fr": "On peut s’y baigner dans une piscine naturelle au fond d’un grand trou dans la roche.",
+        "en": "You can swim there in a natural pool at the bottom of a big hole in the rock."
+      },
+      {
+        "e": "🔥",
+        "fr": "Des danseurs y font tournoyer des bâtons enflammés : c’est la danse du feu.",
+        "en": "Dancers there spin flaming sticks: it is the fire dance."
+      }
+    ]
+  },
   "XK": {
     "capitale": {
       "fr": "Pristina",
@@ -1054,6 +4429,98 @@
         "e": "📚",
         "fr": "Sa grande bibliothèque est couverte de dômes et d’un filet de métal.",
         "en": "Its big library is covered in domes and a metal net."
+      }
+    ]
+  },
+  "YE": {
+    "capitale": {
+      "fr": "Sanaa",
+      "en": "Sanaa"
+    },
+    "faits": [
+      {
+        "e": "☕",
+        "fr": "Le café moka porte le nom du port de Moka, d’où il partait autrefois.",
+        "en": "Mocha coffee is named after the port of Mocha, where it was shipped from long ago."
+      },
+      {
+        "e": "🌳",
+        "fr": "Sur l’île de Socotra poussent les dragonniers, des arbres en forme de parapluie.",
+        "en": "Dragon’s blood trees, shaped like umbrellas, grow on the island of Socotra."
+      },
+      {
+        "e": "🏢",
+        "fr": "Shibam a de hautes maisons en terre : on l’appelle la Manhattan du désert.",
+        "en": "Shibam has tall mud houses: it is called the Manhattan of the desert."
+      }
+    ]
+  },
+  "ZA": {
+    "capitale": {
+      "fr": "Pretoria",
+      "en": "Pretoria"
+    },
+    "faits": [
+      {
+        "e": "🏙️",
+        "fr": "Il a trois capitales : Pretoria, Le Cap et Bloemfontein.",
+        "en": "It has three capitals: Pretoria, Cape Town and Bloemfontein."
+      },
+      {
+        "e": "🐧",
+        "fr": "Près du Cap, des manchots vivent sur une plage, au milieu des baigneurs.",
+        "en": "Near Cape Town, penguins live on a beach, among the swimmers."
+      },
+      {
+        "e": "🗣️",
+        "fr": "Le pays a 12 langues officielles, dont la langue des signes.",
+        "en": "The country has 12 official languages, including sign language."
+      }
+    ]
+  },
+  "ZM": {
+    "capitale": {
+      "fr": "Lusaka",
+      "en": "Lusaka"
+    },
+    "faits": [
+      {
+        "e": "🦇",
+        "fr": "Chaque année, à Kasanka, des millions de chauves-souris mangeuses de fruits se retrouvent.",
+        "en": "Every year in Kasanka, millions of fruit bats gather together."
+      },
+      {
+        "e": "🧭",
+        "fr": "Il n’a pas de mer et touche huit pays voisins.",
+        "en": "It has no sea and borders eight neighbouring countries."
+      },
+      {
+        "e": "🥾",
+        "fr": "Au parc de South Luangwa, on peut faire un safari à pied, avec un guide.",
+        "en": "In South Luangwa National Park, you can go on a walking safari with a guide."
+      }
+    ]
+  },
+  "ZW": {
+    "capitale": {
+      "fr": "Harare",
+      "en": "Harare"
+    },
+    "faits": [
+      {
+        "e": "💧",
+        "fr": "Les chutes Victoria font tant de bruit et d’embruns qu’on les appelle « la fumée qui gronde ».",
+        "en": "Victoria Falls make so much noise and spray that they are called \"the smoke that thunders\"."
+      },
+      {
+        "e": "🏰",
+        "fr": "Le pays porte le nom du Grand Zimbabwe, une ancienne ville en pierres posées sans ciment.",
+        "en": "The country is named after Great Zimbabwe, an ancient city of stones laid without cement."
+      },
+      {
+        "e": "⚖️",
+        "fr": "Près de Harare, d’énormes rochers tiennent en équilibre les uns sur les autres.",
+        "en": "Near Harare, enormous rocks balance on top of each other."
       }
     ]
   }

@@ -1,5 +1,5 @@
 // Découvrir : pas de question ni de chrono. On touche un pays, il se colorie et son nom s'écrit.
-// Là où on a des savoirs (l'Europe pour l'instant), une fiche à côté de la carte : la capitale et trois petits secrets.
+// Là où on a des savoirs (tous les continents), une fiche à côté de la carte : la capitale et trois petits secrets.
 import { creerCarte } from '../carte.js';
 import { zoneParId } from '../zones.js';
 import { t } from '../textes.js';
@@ -65,7 +65,7 @@ export function decouvrir(app, zoneId) {
   function remplirFiche(code) {
     const f = app.fiche(code);
     if (!f) { panneau.innerHTML = `<p class="fiche-vide">${t('pasDeSavoir')}</p>`; return; }
-    panneau.innerHTML = `<div class="fiche-tete"><p class="capitale craie"><span aria-hidden="true">⭐</span> ${CAPITALE[app.langue]}${f.capitale}</p>
+    panneau.innerHTML = `<div class="fiche-tete"><p class="capitale craie">${f.capitale ? `<span aria-hidden="true">⭐</span> ${CAPITALE[app.langue]}${f.capitale}` : ''}</p>
         ${avecVoix ? `<button class="bouton-rond petit" data-action="ecouter-fiche" aria-label="${t('ecouterFiche')}" title="${t('ecouterFiche')}">${ICONES.voix}</button>` : ''}</div>
       <ul>${f.faits.map(x => `<li class="fait"><span class="emoji" aria-hidden="true">${x.e}</span><span>${x.texte}</span></li>`).join('')}</ul>`;
     panneau.classList.remove('pose'); void panneau.offsetWidth; panneau.classList.add('pose');
@@ -79,7 +79,7 @@ export function decouvrir(app, zoneId) {
     else if (b.dataset.action === 'retour') app.aller('accueil');
     else if (b.dataset.action === 'ecouter-fiche') {
       const code = panneau.dataset.code, f = app.fiche(code);
-      if (f) dire([app.nom(code), CAPITALE[app.langue] + f.capitale, ...f.faits.map(x => x.texte)].join('. '), app.langue);
+      if (f) dire([app.nom(code), ...(f.capitale ? [CAPITALE[app.langue] + f.capitale] : []), ...f.faits.map(x => x.texte)].join('. '), app.langue);
     }
   });
 

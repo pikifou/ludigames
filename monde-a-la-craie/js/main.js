@@ -1,7 +1,8 @@
 // Le Monde à la craie : chargement, progression, passage d'un écran à l'autre.
 import { chargerMonde } from './carte.js';
 import { fiche, prochainSavoir } from './savoirs.js';
-import { charger, sauver } from './progres.js';
+import { charger, sauver, cleRecord } from './progres.js';
+import { dansNiveau, niveauValide } from './niveaux.js';
 import { langue, choisirLangue } from './textes.js';
 import { sonActif } from './sons.js';
 import { t } from './textes.js';
@@ -54,7 +55,7 @@ const app = {
     if (nom === 'question') Ludi.skill('geographie.pays', proprietes.get(d.code).fr, d.premierCoup);
     if (nom === 'fin') {
       Ludi.progress('zone-' + d.zone, Math.round(d.pourcentage * 100));
-      Ludi.score('chrono-' + d.zone, Math.round(d.secondes * 10) / 10, { better: 'lower' });
+      Ludi.score('chrono-' + cleRecord(d.zone, d.niveau), Math.round(d.secondes * 10) / 10, { better: 'lower' });
       Ludi.checkpoint('fin-de-manche');
     }
   },
@@ -67,10 +68,12 @@ const app = {
   fiche(code) { return fiche(savoirs, code, langue); },
   savoir(code) { return prochainSavoir(savoirs, code, langue, savoirsVus); },
   zoneDe(code) { const p = proprietes.get(code); return p && p.zone; },
-  paysDeZone(id) {
-    return monde.filter(f => f.properties.quiz && (id === 'monde' || f.properties.zone === id))
+  // Les pays interrogés d'une zone : tous, ou seulement ceux d'un niveau.
+  paysDeZone(id, niveau = 'difficile') {
+    return monde.filter(f => f.properties.quiz && (id === 'monde' || f.properties.zone === id) && dansNiveau(f.properties.code, niveau))
       .map(f => ({ code: f.properties.code, rang: f.properties.rang }));
   },
+  niveau(zone) { return niveauValide(etat.niveaux[zone]); },
   sauver() { sauver(joueur, etat); },
 
   // Une carte neuve à chaque écran (ses gestes ne s'empilent pas sur ceux de l'écran d'avant).

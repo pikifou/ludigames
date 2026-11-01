@@ -2,7 +2,7 @@
 
 export const TAILLE_MANCHE = 12;
 export const REVISIONS = 3;           // pays déjà connus reposés dans une manche, pour réviser
-export const SEUIL_MONDE = 0.5;       // « Le monde entier » s'ouvre quand chaque zone est connue à 50 %
+export const SEUIL_MONDE = 0.5;       // un niveau du « monde entier » s'ouvre quand ce niveau est connu à 50 % sur chaque continent
 export const DUREE_ERREUR = 1500;     // ms pendant lesquelles le bon pays est montré après une erreur
 export const ZONES_IDS = ['europe', 'afrique', 'asie', 'amerique-nord', 'amerique-sud', 'oceanie'];
 
@@ -12,7 +12,7 @@ function melanger(liste, rand) {
   return l;
 }
 
-// pays : { code, rang }[] (rang 1 = le plus grand). Les grands pays pas encore connus d'abord, plus quelques révisions.
+// pays : { code, rang }[] (rang 1 = le plus grand), ceux du niveau choisi. Les grands pays pas encore connus d'abord, plus quelques révisions.
 export function choisirManche(pays, connus, rand = Math.random) {
   const nouveaux = pays.filter(p => !connus.has(p.code)).sort((a, b) => a.rang - b.rang).map(p => p.code);
   const revus = melanger(pays.filter(p => connus.has(p.code)).map(p => p.code), rand);
@@ -29,6 +29,7 @@ export function choisirManche(pays, connus, rand = Math.random) {
 export class Manche {
   constructor(codes) {
     this.file = codes.slice();
+    this.total = codes.length;     // 12, ou moins quand le niveau choisi a moins de pays
     this.rates = new Set();
     this.trouvesSet = new Set();
     this.resultats = new Map();   // code -> vrai si trouvé du premier coup

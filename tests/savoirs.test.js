@@ -21,13 +21,17 @@ test('les savoirs ne parlent que de pays interrogés', () => {
 
 test('une capitale et trois savoirs courts, en français et en anglais', () => {
   for (const [c, s] of Object.entries(savoirs)) {
-    assert.ok(s.capitale.fr && s.capitale.en, c + ' : capitale');
+    // Capitale disputée (Israël, Palestine) : pas de capitale plutôt qu'un choix politique.
+    if (c === 'IL' || c === 'PS') assert.equal(s.capitale, null, c);
+    else assert.ok(s.capitale.fr && s.capitale.en, c + ' : capitale');
     assert.equal(s.faits.length, 3, c);
     for (const f of s.faits) {
       assert.ok(f.e && f.fr && f.en, c);
       assert.ok(f.fr.length <= 110, `${c} : trop long pour un enfant (${f.fr.length}) ${f.fr}`);
       assert.ok(!/[—–]/.test(f.fr + f.en), c + ' : pas de tiret long');
       assert.ok(!/ [!?:;»]/.test(f.fr), c + ' : espace insécable avant la ponctuation haute ' + f.fr);
+      assert.ok(!/'/.test(f.fr), c + ' : apostrophe typographique ' + f.fr);
+      assert.ok(!/\p{Regional_Indicator}/u.test(f.e), c + ' : pas de drapeau (illisible sous Windows)');
     }
   }
 });
@@ -37,6 +41,8 @@ test('fiche : la capitale et les savoirs dans la langue demandée', () => {
   assert.deepEqual(fiche(s, 'FR', 'en'), { capitale: 'Paris', faits: [{ e: '🗼', texte: 'Tower' }, { e: 'a', texte: 'A' }, { e: 'b', texte: 'B' }] });
   assert.equal(fiche(s, 'GL', 'fr'), null);
   assert.equal(fiche(s, null, 'fr'), null);
+  const sansCapitale = { IL: { capitale: null, faits: s.FR.faits } };
+  assert.equal(fiche(sansCapitale, 'IL', 'fr').capitale, null);
 });
 
 test('prochainSavoir : les savoirs l\'un après l\'autre, puis la capitale, puis on recommence', () => {
@@ -47,4 +53,10 @@ test('prochainSavoir : les savoirs l\'un après l\'autre, puis la capitale, puis
   assert.equal(suite[3].e, '⭐');
   assert.equal(prochainSavoir(s, 'IT', 'en', new Map([['IT', 3]])).texte, 'Capital: Rome');
   assert.equal(prochainSavoir(s, 'ES', 'fr', vus), null);
+});
+
+test('prochainSavoir : sans capitale, les trois savoirs tournent seuls', () => {
+  const s = { PS: { capitale: null, faits: [{ e: '1', fr: 'un', en: 'one' }, { e: '2', fr: 'deux', en: 'two' }, { e: '3', fr: 'trois', en: 'three' }] } };
+  const vus = new Map();
+  assert.deepEqual(Array.from({ length: 4 }, () => prochainSavoir(s, 'PS', 'fr', vus).texte), ['un', 'deux', 'trois', 'un']);
 });

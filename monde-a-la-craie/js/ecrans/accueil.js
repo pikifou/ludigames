@@ -2,6 +2,7 @@
 import { creerCarte } from '../carte.js';
 import { MONDE, ZONES } from '../zones.js';
 import { pourcentage, mondeDebloque } from '../regles.js';
+import { NIVEAUX } from '../niveaux.js';
 import { t, choisirLangue } from '../textes.js';
 import { ICONES } from '../icones.js';
 import { sonActif } from '../sons.js';
@@ -16,8 +17,12 @@ const ETIQUETTES = {
 
 export function accueil(app) {
   const { hud, etat } = app;
-  const pct = Object.fromEntries(ZONES.map(z => [z.id, pourcentage(app.paysDeZone(z.id).map(p => p.code), etat.connus)]));
-  const mondeOuvert = mondeDebloque(pct);
+  const connu = (id, niveau) => pourcentage(app.paysDeZone(id, niveau).map(p => p.code), etat.connus);
+  const pct = Object.fromEntries(ZONES.map(z => [z.id, connu(z.id)]));
+  // Chaque niveau du monde entier s'ouvre quand ce niveau est connu à moitié sur chaque continent.
+  const mondeNiveaux = Object.fromEntries(NIVEAUX.map(n => [n, mondeDebloque(Object.fromEntries(ZONES.map(z => [z.id, connu(z.id, n)])))]));
+  const mondeOuvert = mondeNiveaux.facile;
+  const niveauOuvert = (id, n) => id !== 'monde' || mondeNiveaux[n];
   hud.innerHTML = `
     <header class="haut haut-accueil"><h1 class="titre craie">${t('titre')}</h1></header>
     <div class="etiquettes"></div>
@@ -72,8 +77,18 @@ export function accueil(app) {
       return;
     }
     const nom = id === 'monde' ? t('monde') : ZONES.find(z => z.id === id)[app.langue];
-    const n = app.paysDeZone(id).length;
-    ouvrir(`<p class="grand craie">${nom}</p><p>${t('nbPays', { n })}${id === 'monde' ? '' : ' · ' + t('connus', { p: Math.round(pct[id] * 100) })}</p>
+    let choisi = app.niveau(id);
+    if (!niveauOuvert(id, choisi)) choisi = 'facile';
+    // Un, deux ou trois traits de craie : le niveau se lit aussi sans les couleurs.
+    const niveaux = NIVEAUX.map((n, i) => {
+      const ouvert = niveauOuvert(id, n);
+      return `<button class="niveau${ouvert ? '' : ' ferme'}" data-niveau="${n}" aria-pressed="${n === choisi}"${ouvert ? '' : ' aria-disabled="true"'}>
+        <span class="traits" aria-hidden="true">${ouvert ? '|'.repeat(i + 1) : ICONES.cadenas}</span><span class="craie">${t(n)}</span>
+        <small>${t('niveauPays', { n: app.paysDeZone(id, n).length, p: Math.round(connu(id, n) * 100) })}</small></button>`;
+    }).join('');
+    ouvrir(`<p class="grand craie">${nom}</p>
+      <div class="niveaux" role="group" aria-label="${t('niveau')}">${niveaux}</div>
+      <p class="niveau-ferme" hidden>${t('niveauFerme')}</p>
       <div class="boutons">
         <button class="bouton-craie plein" data-action="jouer" data-cible="${id}">${t('jouer')}</button>
         <button class="bouton-craie" data-action="decouvrir" data-cible="${id}">${t('decouvrir')}</button>
@@ -94,6 +109,15 @@ export function accueil(app) {
     app.evenement('reglages', voile.querySelector('.reglages-appli'));
   }
 
+  function choisirNiveau(b) {
+    const ferme = b.getAttribute('aria-disabled') === 'true';
+    voile.querySelector('.niveau-ferme').hidden = !ferme;
+    if (ferme) return;
+    for (const x of voile.querySelectorAll('.niveau')) x.setAttribute('aria-pressed', x === b);
+    const id = voile.querySelector('[data-action="jouer"]').dataset.cible;
+    etat.niveaux[id] = b.dataset.niveau; app.sauver();
+  }
+
   function ouvrir(html) { voile.innerHTML = `<div class="note-tableau">${html}</div>`; voile.hidden = false; }
 
   carte.surToucher(code => { const z = code && app.zoneDe(code); if (z && app.paysDeZone(z).some(p => p.code === code)) choisir(z); });
@@ -102,7 +126,12 @@ export function accueil(app) {
     const b = e.target.closest('button');
     if (!b) return;
     if (b.dataset.zone) choisir(b.dataset.zone);
-    else if (b.dataset.action === 'jouer') app.aller('partie', b.dataset.cible);
+    else if (b.dataset.niveau) choisirNiveau(b);
+    else if (b.dataset.action === 'jouer') {
+      const n = voile.querySelector('.niveau[aria-pressed="true"]');
+      if (n) { etat.niveaux[b.dataset.cible] = n.dataset.niveau; app.sauver(); }
+      app.aller('partie', b.dataset.cible);
+    }
     else if (b.dataset.action === 'decouvrir') app.aller('decouvrir', b.dataset.cible);
     else if (b.dataset.action === 'reglages') reglages();
     else if (b.dataset.action === 'fermer') voile.hidden = true;

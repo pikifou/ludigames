@@ -1,7 +1,7 @@
 // Progression gardée sur l'appareil : node --test tests/progres.test.js
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { cle, charger, enregistrerManche, sauver } from '../monde-a-la-craie/js/progres.js';
+import { cle, cleRecord, charger, enregistrerManche, sauver } from '../monde-a-la-craie/js/progres.js';
 
 function memoire() { const m = new Map(); return { getItem: k => (m.has(k) ? m.get(k) : null), setItem: (k, v) => m.set(k, String(v)) }; }
 const casse = { getItem() { throw new Error('bloqué'); }, setItem() { throw new Error('bloqué'); } };
@@ -65,4 +65,24 @@ test("la langue choisie est gardée (sinon : celle de l'appareil)", () => {
   assert.equal(charger(null, s).langue, 'en');
   s.setItem(cle(null), JSON.stringify({ langue: 'klingon' }));
   assert.equal(charger(null, s).langue, null);
+});
+
+test('un meilleur temps par niveau ; les anciens temps (sans niveau) sont ceux du Difficile', () => {
+  assert.equal(cleRecord('europe', 'difficile'), 'europe');
+  assert.equal(cleRecord('europe', 'facile'), 'europe-facile');
+  const s = memoire();
+  s.setItem('monde-a-la-craie.v1', JSON.stringify({ connus: [], meilleurs: { europe: 50 } }));
+  const e = charger(null, s);
+  assert.equal(enregistrerManche(e, 'europe', new Map(), 60, 'facile').record, true);
+  assert.equal(enregistrerManche(e, 'europe', new Map(), 60, 'difficile').record, false);
+  assert.deepEqual(e.meilleurs, { europe: 50, 'europe-facile': 60 });
+});
+
+test('le niveau choisi est gardé pour chaque continent', () => {
+  const s = memoire();
+  const e = charger('Léa', s);
+  assert.deepEqual(e.niveaux, {});
+  e.niveaux.europe = 'difficile'; e.niveaux.afrique = 'expert';
+  sauver('Léa', e, s);
+  assert.deepEqual(charger('Léa', s).niveaux, { europe: 'difficile' });
 });

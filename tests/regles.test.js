@@ -110,6 +110,12 @@ test('pourcentage', () => {
   assert.equal(pourcentage([], new Set()), 0);
 });
 
+test('choisirManche : moins de 12 pays au niveau choisi, la manche les prend tous', () => {
+  const m = choisirManche(zone.slice(0, 4), new Set(), hasard());
+  assert.equal(m.length, 4);
+  assert.equal(new Manche(m).total, 4);
+});
+
 test('mondeDebloque', () => {
   const z = { europe: 0.6, afrique: 0.6, asie: 0.6, 'amerique-nord': 0.6, 'amerique-sud': 0.6, oceanie: 0.49 };
   assert.equal(mondeDebloque(z), false);

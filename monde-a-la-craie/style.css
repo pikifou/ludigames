@@ -25,6 +25,9 @@ svg.carte .c3 { fill: var(--craie-rose); }
 svg.carte .c4 { fill: var(--craie-orange); }
 svg.carte .pays.erreur { fill: rgba(255, 138, 122, .18); }
 svg.carte .pays.montre { fill: rgba(243, 241, 232, .35); animation: clignote .5s steps(2) 3; }
+svg.carte .pays.estompe { fill: transparent; stroke-opacity: .25; }
+/* Facile et Moyen : les pays qu'on peut demander ressortent un peu plus. */
+svg.carte:has(.pays.estompe) .pays:not(.estompe):not(.trouve):not(.erreur):not(.montre) { fill: rgba(243, 241, 232, .16); }
 svg.carte .rond { fill: rgba(243, 241, 232, .12); stroke: var(--color-craie); stroke-width: 1.4; vector-effect: non-scaling-stroke; }
 svg.carte .rond.territoire { stroke-dasharray: 2 2; }
 svg.carte .rond.trouve { fill-opacity: .92; }
@@ -127,6 +130,7 @@ button { font: inherit; color: inherit; }
 .monde-entier { position: absolute; bottom: clamp(8px, 1.6vmin, 16px); left: 50%; transform: translateX(-50%) rotate(-1deg);
   display: inline-flex; align-items: center; gap: 8px; white-space: nowrap; }
 .monde-entier.ferme { border-style: dashed; opacity: .75; }
+.monde-entier:active { transform: translateX(-50%) scale(.96) rotate(-1deg); }
 .monde-entier svg { width: 20px; height: 20px; }
 
 /* ---------- panneaux écrits au tableau (choix, pause, fin, réglages) ---------- */
@@ -140,6 +144,20 @@ button { font: inherit; color: inherit; }
 @keyframes poser { from { opacity: 0; transform: translateY(10px) rotate(-1deg); } }
 .note-tableau p { margin: .3em 0; font-size: clamp(16px, 2.2vw, 19px); }
 .note-tableau .grand { font-size: clamp(26px, 4.4vw, 40px); margin-bottom: .2em; }
+.note-tableau .niveaux { display: flex; justify-content: center; align-items: flex-end; gap: clamp(8px, 2vw, 14px); margin: .6em 0 .2em; }
+.niveau { flex: 1 1 0; max-width: 150px; min-height: 48px; display: grid; justify-items: center; gap: 1px; padding: .35em .3em .45em; cursor: pointer;
+  background: transparent; color: var(--color-craie); border: 2.5px dashed rgba(243, 241, 232, .45);
+  border-radius: 52% 48% 46% 54% / 46% 54% 46% 54%; font-family: var(--font-craie); font-weight: 800; font-size: clamp(17px, 2.3vw, 21px); }
+.niveau:nth-child(2) { transform: rotate(1deg); } .niveau:nth-child(3) { transform: rotate(-1.5deg); }
+.niveau .traits { font-size: 1.15em; line-height: .9; letter-spacing: .12em; height: 1em; }
+.niveau .traits svg { width: 18px; height: 18px; }
+.niveau small { font-family: var(--font-texte, inherit); font-weight: 600; font-size: .62em; opacity: .85; line-height: 1.2; }
+/* Le niveau choisi : trait plein, en jaune, et souligné (la forme change, pas seulement la couleur). */
+.niveau[aria-pressed="true"] { border: 3px solid var(--craie-jaune); color: var(--craie-jaune); background: rgba(255, 226, 122, .1); }
+.niveau[aria-pressed="true"] .craie { color: var(--craie-jaune); text-decoration: underline wavy; text-underline-offset: 4px; }
+.niveau.ferme { opacity: .55; }
+.niveau:focus-visible { outline: 3px dashed var(--craie-jaune); outline-offset: 3px; }
+.note-tableau .niveau-ferme { font-size: clamp(14px, 1.9vw, 16px); opacity: .9; }
 .note-tableau .record { color: var(--craie-jaune); font-size: clamp(19px, 2.8vw, 26px); }
 .boutons { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin: 18px 0 6px; }
 .interrupteur { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 10px 6px;

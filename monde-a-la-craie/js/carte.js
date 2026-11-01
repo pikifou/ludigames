@@ -44,10 +44,12 @@ const FILTRE = `<filter id="craie" x="-5%" y="-5%" width="110%" height="110%">
 // marges : place laissée autour de la carte (le nom à trouver en haut, les boutons en bas), en px.
 // Un objet, ou une fonction qui le rend (relue à chaque recadrage : la hauteur du titre change avec l'écran).
 // options.ronds(proprietes) : les tout petits pays qui ont leur rond de craie (et qu'on peut toucher sans viser).
+// options.estompe(proprietes) : les pays qu'on ne demande pas à ce niveau, dessinés plus pâles.
 // options.zoom === false : carte fixe (l'accueil, où les continents sont écrits par-dessus).
 export function creerCarte(svg, monde, zone, marges = {}, options = {}) {
   const zoomable = options.zoom !== false;
   const avecRond = options.ronds || (() => true);
+  const estompe = options.estompe || (() => false);
   const lireMarges = () => ({ haut: 12, bas: 12, gauche: 12, droite: 12, ...(typeof marges === 'function' ? marges() : marges) });
   svg.innerHTML = '';
   el('defs', {}, svg).innerHTML = FILTRE;
@@ -166,6 +168,7 @@ export function creerCarte(svg, monde, zone, marges = {}, options = {}) {
       if (d && d.etat === 'trouve') classes.push('trouve', 'c' + d.couleur);
       if (d && d.etat === 'erreur') classes.push('erreur');
       if (d && d.etat === 'montre') classes.push('montre');
+      if ((!d || d.etat === 'vide') && estompe(p.f.properties)) classes.push('estompe');
       if (p.path) p.path.setAttribute('class', classes.join(' '));
       const rond = ronds.querySelector(`[data-code="${p.code}"]`);
       if (rond) rond.setAttribute('class', 'rond' + (d && d.etat === 'trouve' ? ' trouve c' + d.couleur : '') + (p.f.properties.quiz ? '' : ' territoire'));
