@@ -44,7 +44,7 @@ choisirLangue(etat.langue || langue);
 
 let quitter = () => {};
 const app = {
-  monde, etat, joueur, rand,
+  monde, savoirs, etat, joueur, rand, dansLudi,
   get langue() { return langue; },
   ecran: document.getElementById('ecran'),
   hud: document.getElementById('hud'),

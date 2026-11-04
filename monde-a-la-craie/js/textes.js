@@ -18,7 +18,11 @@ const TEXTES = {
     ecouter: 'Écouter le nom', vueEntiere: 'Toute la carte',
     toucheUnPays: 'Touche un pays pour lire son nom',
     ficheConsigne: `Touche un pays${NB}: ses petits secrets s’écrivent ici.`, pasDeSavoir: 'Pas encore de petits secrets sur celui-là.',
-    savaisTu: `Le savais-tu${NB}?`, toucheContinuer: 'Touche pour continuer', credit: `Image${NB}: {a} · {l}`, domainePublic: 'domaine public', ecouterFiche: 'Écouter',
+    savaisTu: `Le savais-tu${NB}?`, toucheContinuer: 'Touche pour continuer', credit: `Image${NB}: {a} · {l}`, domainePublic: 'domaine public', auteurInconnu: 'Auteur inconnu', ecouterFiche: 'Écouter',
+    credits: 'Crédits', voirImage: 'Voir l’image', creditFichier: 'Wikimedia Commons, {f}',
+    creditCarte: `Carte${NB}: {c} (domaine public)`, creditPolices: `Polices${NB}: Baloo 2 et Lexend ({l})`, creditBiblio: `Bibliothèques${NB}: d3-geo, d3-array, topojson-client ({l})`,
+    creditImages: 'Les {n} images viennent de Wikimedia Commons. Elles ont été réduites pour le jeu et gardent leur licence d’origine.',
+    creditSeul: `Les liens vers chaque image et sa licence sont dans le jeu ouvert seul${NB}: {u}`,
     pleinEcran: 'Plein écran', installer: 'Installer le jeu',
     secondes: '{s}{NB}s', minutes: '{m}{NB}min{NB}{s}',
   },
@@ -38,7 +42,11 @@ const TEXTES = {
     ecouter: 'Hear the name', vueEntiere: 'Whole map',
     toucheUnPays: 'Tap a country to read its name',
     ficheConsigne: 'Tap a country: its little secrets appear here.', pasDeSavoir: 'No little secrets about this one yet.',
-    savaisTu: 'Did you know?', toucheContinuer: 'Tap to carry on', credit: 'Image: {a} · {l}', domainePublic: 'public domain', ecouterFiche: 'Listen',
+    savaisTu: 'Did you know?', toucheContinuer: 'Tap to carry on', credit: 'Image: {a} · {l}', domainePublic: 'public domain', auteurInconnu: 'Unknown author', ecouterFiche: 'Listen',
+    credits: 'Credits', voirImage: 'See the image', creditFichier: 'Wikimedia Commons, {f}',
+    creditCarte: 'Map: {c} (public domain)', creditPolices: 'Fonts: Baloo 2 and Lexend ({l})', creditBiblio: 'Libraries: d3-geo, d3-array, topojson-client ({l})',
+    creditImages: 'All {n} images come from Wikimedia Commons. They were made smaller for the game and keep their original licence.',
+    creditSeul: 'Links to each image and its licence are in the game opened on its own: {u}',
     pleinEcran: 'Full screen', installer: 'Install the game',
     secondes: '{s} s', minutes: '{m} min {s}',
   },
@@ -53,6 +61,10 @@ export function t(cle, vars = {}) {
   for (const [k, v] of Object.entries({ NB, ...vars })) s = s.replaceAll('{' + k + '}', v);
   return s;
 }
+
+// L'auteur et la licence d'une image, dans la langue du jeu (les données les écrivent en français).
+export const auteurImage = img => img.auteur === 'Auteur inconnu' ? t('auteurInconnu') : img.auteur;
+export const licenceImage = img => img.licence === 'Domaine public' ? t('domainePublic') : img.licence;
 
 // 43,2 s ; 1 min 05
 export function duree(secondes) {

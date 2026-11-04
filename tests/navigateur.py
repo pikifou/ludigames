@@ -1,4 +1,4 @@
-"""Tests dans le navigateur (Playwright) : python tests/navigateur.py [carte|ecrans|appli|corrections|savoirs]
+"""Tests dans le navigateur (Playwright) : python tests/navigateur.py [carte|ecrans|appli|corrections|savoirs|niveaux|credits]
 
 Lance un petit serveur sur le port 7360 à la racine de ludigames (jamais 8000).
 """
@@ -558,6 +558,20 @@ def test_corrections(nav):
     page.close()
 
 
+# La bande « Le savais-tu ? » et la forme de son image.
+CADRE_AJUSTE = """() => { const f = document.querySelector('.savoir .photo'), i = f.querySelector('img');
+  return f.offsetWidth - i.offsetWidth <= 14 || f.offsetWidth <= 98; }"""
+BANDE_ENTIERE = """() => { const b = document.querySelector('.savoir'); return b.scrollHeight <= b.clientHeight + 1 && b.scrollWidth <= b.clientWidth + 1; }"""
+MESURE_BANDE = """() => { const b = document.querySelector('.savoir'), f = b.querySelector('.photo'), i = f.querySelector('img');
+  return { bande: [b.offsetWidth, b.offsetHeight], defile: [b.scrollWidth, b.scrollHeight], cadre: [f.offsetWidth, f.offsetHeight], img: [i.offsetWidth, i.offsetHeight] }; }"""
+FORCER_BANDE = """ratio => { const b = document.querySelector('.savoir'), t = b.querySelector('.fait span:last-child');
+  b.dataset.texte = b.dataset.texte || t.textContent; t.textContent = 'Un savoir aussi long que le plus long de tous les savoirs du jeu, soit quatre-vingt-dix-huit signes.';
+  b.style.setProperty('--ratio', ratio); }"""
+RETABLIR_BANDE = """() => { const b = document.querySelector('.savoir'), i = b.querySelector('.photo img');
+  b.querySelector('.fait span:last-child').textContent = b.dataset.texte; delete b.dataset.texte;
+  b.style.setProperty('--ratio', i.naturalWidth / i.naturalHeight); }"""
+
+
 def test_savoirs(nav):
     print('savoirs')
     CAPTURES.mkdir(exist_ok=True)
@@ -658,6 +672,21 @@ def test_savoirs(nav):
             verifier(photo.count() == 1 and page.evaluate("document.querySelector('.savoir .photo img').naturalWidth") > 0,
                      f'{nom} : une image illustre le savoir')
             verifier(re.search(r'(domaine public|CC0|CC BY)', page.inner_text('.savoir .credit'), re.I) is not None, f'{nom} : le crédit de l’image ({page.inner_text(".savoir .credit")!r})')
+            verifier(page.evaluate(CADRE_AJUSTE), f'{nom} : le cadre épouse l’image, sans bandes blanches ({page.evaluate(MESURE_BANDE)})')
+            verifier(page.evaluate(BANDE_ENTIERE), f'{nom} : rien n’est coupé dans la bande ({page.evaluate(MESURE_BANDE)})')
+            # Toutes les formes d'image, avec le texte le plus long : l'image reste entière, la bande reste lisible et sur le côté.
+            for ratio in (0.45, 0.7, 1, 1.5, 2.2):
+                page.evaluate(FORCER_BANDE, ratio)
+                m = page.evaluate(MESURE_BANDE)
+                verifier(page.evaluate(CADRE_AJUSTE), f'{nom} : cadre ajusté, ratio {ratio} ({m})')
+                verifier(page.evaluate(BANDE_ENTIERE), f'{nom} : rien de coupé, ratio {ratio} ({m})')
+                verifier(abs(m['img'][0] / m['img'][1] - ratio) < 0.03, f'{nom} : image non déformée, ratio {ratio} ({m})')
+                verifier(min(m['img']) >= 50, f'{nom} : image assez grande, ratio {ratio} ({m})')
+                if w > h:
+                    verifier(m['bande'][0] <= w * 0.45, f'{nom} : bande pas trop large, ratio {ratio} ({m})')
+                if vus == 0:
+                    page.screenshot(path=str(CAPTURES / f'savoirs-ratio-{nom}-{ratio}.png'))
+            page.evaluate(RETABLIR_BANDE)
             b = bande.bounding_box()
             if w > h:
                 verifier(b['x'] <= 20 or b['x'] + b['width'] >= w - 20, f'{nom} : la bande est sur le côté ({b})')
@@ -671,6 +700,22 @@ def test_savoirs(nav):
         verifier(vus == 2, f'{nom} : deux bandes vues ({vus})')
         verifier(not erreurs, f'{nom} : aucune erreur ({erreurs[:2]})')
         page.close()
+
+    # Hors ligne, une image jamais vue n'arrive pas : la bande s'ouvre sans cadre vide.
+    page, erreurs = ouvrir_jeu(nav, 1280, 800)
+    lancer(page, 'europe')
+    for _ in range(40):
+        q = page.evaluate('jeu.manche.question')
+        if q in AVEC_IMAGES:
+            break
+        repondre(page, q)
+    toucher(page, q)
+    page.wait_for_timeout(500)
+    page.evaluate("document.querySelector('.savoir .photo img').src = 'img/savoirs/absente.webp'")
+    page.wait_for_timeout(300)
+    verifier(page.locator('.savoir').is_visible(), 'image absente : la bande s’ouvre quand même')
+    verifier(not page.locator('.savoir .photo').is_visible(), 'image absente : pas de cadre vide')
+    page.close()
 
     # Sans le fichier des savoirs : après une erreur, on continue tout seul, comme avant.
     page = nav.new_page(viewport={'width': 1280, 'height': 800}, locale='fr-FR')
@@ -780,7 +825,94 @@ def test_niveaux(nav):
     page.close()
 
 
-SECTIONS = {'carte': test_carte, 'ecrans': test_ecrans, 'appli': test_appli, 'corrections': test_corrections, 'savoirs': test_savoirs, 'niveaux': test_niveaux}
+def test_credits(nav):
+    print('crédits')
+    donnees = json.loads((RACINE / 'monde-a-la-craie' / 'data' / 'savoirs.json').read_text(encoding='utf-8'))
+    total = sum(1 for p in donnees.values() for f in p['faits'] if f.get('img'))
+    DEBORDE = "(() => { const c = document.querySelector('.credits-corps'); return c.scrollWidth > c.clientWidth + 1; })()"
+
+    # Ouvert seul : une ligne par image, avec les liens vers l'image et sa licence.
+    for w, h in ((1280, 800), (390, 780), (800, 360)):
+        page = nav.new_page(viewport={'width': w, 'height': h}, locale='fr-FR')
+        erreurs = []
+        page.on('pageerror', lambda e: erreurs.append(str(e)))
+        page.goto(JEU)
+        page.wait_for_function('window.jeu && jeu.pret', timeout=15000)
+        page.click('[data-action="reglages"]')
+        page.click('[data-action="credits"]')
+        verifier(page.locator('.credit-image').count() == total, f'{w}x{h} : une ligne par image ({total})')
+        verifier(not page.evaluate(DEBORDE), f'{w}x{h} : rien ne dépasse en largeur')
+        page.locator('.credits-corps').evaluate('c => c.scrollTop = c.scrollHeight')
+        retour = page.locator('.credits-tete [data-action="reglages"]').bounding_box()
+        verifier(0 <= retour['y'] and retour['y'] + retour['height'] <= h, f'{w}x{h} : Retour reste visible en bas de la liste')
+        derniere = page.locator('.credit-image').last.bounding_box()
+        verifier(derniere['y'] + derniere['height'] <= h, f'{w}x{h} : la dernière ligne se lit')
+        page.screenshot(path=str(CAPTURES / f'credits-{w}x{h}.png'))
+        page.locator('.credits-corps').evaluate('c => c.scrollTop = 0')
+        page.wait_for_timeout(50)
+        page.screenshot(path=str(CAPTURES / f'credits-haut-{w}x{h}.png'))
+        if w == 1280:
+            sources = page.locator('.credit-image a[href^="https://commons.wikimedia.org/wiki/File:"]')
+            verifier(sources.count() == total, f'seul : un lien vers chaque image ({sources.count()})')
+            licences = page.locator('.credit-image a[href^="https://creativecommons.org/"]').count()
+            libres = sum(1 for p in donnees.values() for f in p['faits'] if f.get('img') and f['img']['licence'] != 'Domaine public')
+            verifier(licences == libres, f'seul : un lien vers chaque licence ({licences})')
+            sans_cible = page.evaluate("[...document.querySelectorAll('.page-credits a')].filter(a => a.target !== '_blank' || !a.rel.includes('noopener')).length")
+            verifier(sans_cible == 0, 'seul : les liens ouvrent un autre onglet')
+            jeu = page.inner_text('.credits-jeu')
+            verifier('Natural Earth' in jeu and 'Baloo 2' in jeu and 'd3-geo' in jeu, 'seul : la carte, les polices et les bibliothèques sont créditées')
+            page.click('.credits-tete [data-action="reglages"]')
+            verifier(page.locator('[data-reglage="son"]').count() == 1, 'Retour ramène aux réglages')
+        verifier(not erreurs, f'{w}x{h} : aucune erreur ({erreurs[:2]})')
+        page.close()
+
+    # Au doigt : la liste défile dans son cadre.
+    ctx = nav.new_context(viewport={'width': 390, 'height': 780}, has_touch=True, is_mobile=True, locale='fr-FR')
+    page = ctx.new_page()
+    page.goto(JEU)
+    page.wait_for_function('window.jeu && jeu.pret', timeout=15000)
+    page.tap('[data-action="reglages"]')
+    page.tap('[data-action="credits"]')
+    cdp = ctx.new_cdp_session(page)
+    cdp.send('Input.dispatchTouchEvent', {'type': 'touchStart', 'touchPoints': [{'x': 195, 'y': 600}]})
+    for y in range(580, 200, -20):
+        cdp.send('Input.dispatchTouchEvent', {'type': 'touchMove', 'touchPoints': [{'x': 195, 'y': y}]})
+        page.wait_for_timeout(16)
+    cdp.send('Input.dispatchTouchEvent', {'type': 'touchEnd', 'touchPoints': []})
+    page.wait_for_timeout(300)
+    verifier(page.locator('.credits-corps').evaluate('c => c.scrollTop') > 100, 'au doigt : la liste défile')
+    ctx.close()
+
+    # En anglais : les textes suivent, y compris ce que les données écrivent en français.
+    page = nav.new_page(viewport={'width': 1280, 'height': 800}, locale='en-GB')
+    page.goto(JEU)
+    page.wait_for_function('window.jeu && jeu.pret', timeout=15000)
+    page.click('[data-action="reglages"]')
+    page.click('[data-action="credits"]')
+    texte = page.inner_text('.page-credits')
+    verifier('Auteur inconnu' not in texte and 'omaine public' not in texte, 'en anglais : rien ne reste en français')
+    verifier('Unknown author' in texte and 'public domain' in texte, 'en anglais : auteur inconnu et domaine public traduits')
+    page.close()
+
+    # Dans Ludiworld : les crédits, sans aucun lien vers un autre site (spec/kit.md) ; le coin du bouton retour reste libre.
+    for w, h in ((1280, 800), (800, 360)):
+        page = nav.new_page(viewport={'width': w, 'height': h}, locale='fr-FR')
+        page.goto(f'{BASE}/tests/lanceur.html')
+        page.wait_for_function("document.getElementById('jeu').contentWindow.jeu?.pret", timeout=15000)
+        cadre = page.frames[1]
+        cadre.click('[data-action="reglages"]')
+        cadre.click('[data-action="credits"]')
+        verifier(cadre.locator('.credit-image').count() == total, f'dans Ludiworld {w}x{h} : une ligne par image')
+        verifier(cadre.locator('.page-credits a').count() == 0, f'dans Ludiworld {w}x{h} : aucun lien')
+        verifier('Wikimedia Commons' in cadre.locator('.credit-image').first.inner_text(), f'dans Ludiworld {w}x{h} : la source reste écrite')
+        occupe = cadre.evaluate("""() => [...document.querySelectorAll('.credits-tete *')].filter(e => {
+            const r = e.getBoundingClientRect(); return r.width && r.left < 120 && r.top < 44; }).map(e => e.className || e.tagName)""")
+        verifier(not occupe, f'dans Ludiworld {w}x{h} : le coin en haut à gauche reste libre {occupe}')
+        page.screenshot(path=str(CAPTURES / f'credits-ludi-{w}x{h}.png'))
+        page.close()
+
+
+SECTIONS = {'carte': test_carte, 'ecrans': test_ecrans, 'appli': test_appli, 'corrections': test_corrections, 'savoirs': test_savoirs, 'niveaux': test_niveaux, 'credits': test_credits}
 
 if __name__ == '__main__':
     voulues = sys.argv[1:] or list(SECTIONS)

@@ -3,7 +3,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, statSync } from 'node:fs';
 import { monde } from './geo.js';
-import { fiche, prochainSavoir } from '../monde-a-la-craie/js/savoirs.js';
+import { fiche, prochainSavoir, lienLicence, creditsImages } from '../monde-a-la-craie/js/savoirs.js';
 
 const { pays } = monde();
 const savoirs = JSON.parse(readFileSync(new URL('../monde-a-la-craie/data/savoirs.json', import.meta.url), 'utf8'));
@@ -74,6 +74,16 @@ test('les premiers pays faciles d\'Europe ont une image pour chaque savoir', () 
   for (const c of ['FR', 'ES', 'IT', 'DE', 'GB']) for (const f of savoirs[c].faits) assert.ok(f.img, `${c} : ${f.fr}`);
 });
 
+test('chaque pays interrogé a au moins une image, et une image ne sert jamais deux fois', () => {
+  const vues = new Set();
+  for (const c of interroges.keys()) assert.ok(savoirs[c].faits.some(f => f.img), c + ' sans image');
+  for (const [c, s] of Object.entries(savoirs)) for (const f of s.faits) {
+    if (!f.img) continue;
+    assert.ok(!vues.has(f.img.source), `${c} : ${f.img.source} déjà utilisée`);
+    vues.add(f.img.source);
+  }
+});
+
 test('chaque image de savoir existe, avec son auteur, une licence libre et sa source', () => {
   for (const [c, s] of Object.entries(savoirs)) for (const f of s.faits) {
     if (!f.img) continue;
@@ -81,6 +91,7 @@ test('chaque image de savoir existe, avec son auteur, une licence libre et sa so
     assert.ok(f.img.auteur, `${c} : auteur`);
     assert.match(f.img.licence, LIBRES, `${c} : licence ${f.img.licence}`);
     assert.match(f.img.source, /^https:\/\/commons\.wikimedia\.org\/wiki\/File:/, `${c} : source`);
+    assert.ok(f.img.l > 0 && f.img.h > 0, `${c} : ${f.img.src} sans dimensions`);
   }
 });
 
@@ -90,4 +101,53 @@ test('la fiche et le savoir suivant transmettent l\'image', () => {
   assert.deepEqual(fiche(s, 'FR', 'fr').faits[0], { e: '🗼', texte: 'Tour', img });
   assert.equal(fiche(s, 'FR', 'fr').faits[1].img, undefined);
   assert.deepEqual(prochainSavoir(s, 'FR', 'fr', new Map()).img, img);
+});
+
+test('prochainSavoir : les savoirs avec une image passent devant les autres', () => {
+  const img = { src: 'x.webp' };
+  const s = { IT: { capitale: { fr: 'Rome', en: 'Rome' }, faits: [{ e: 'a', fr: 'un', en: 'one' }, { e: 'b', fr: 'deux', en: 'two', img }, { e: 'c', fr: 'trois', en: 'three' }] } };
+  const vus = new Map();
+  assert.deepEqual(Array.from({ length: 3 }, () => prochainSavoir(s, 'IT', 'fr', vus).texte), ['deux', 'un', 'trois']);
+});
+
+test('chaque auteur d\'image est un vrai nom : ni coupé, ni une phrase, ni du HTML', () => {
+  const louche = /…$|machine-readable|uploaded|free to use|this photo|camera location|\.jpe?g|\bviews\b|\d photos|^©|\( \S+ \)|\[\d+\]|אין מידע/i;
+  for (const [c, s] of Object.entries(savoirs)) for (const f of s.faits) {
+    if (!f.img) continue;
+    assert.doesNotMatch(f.img.auteur, louche, `${c} : ${f.img.auteur}`);
+    assert.doesNotMatch(f.img.auteur, /[<>&"]/, `${c} : ${f.img.auteur}`);
+    assert.doesNotMatch(f.img.source, /[<>"\s]/, `${c} : ${f.img.source}`);
+  }
+});
+
+test('lienLicence : le texte de chaque licence Creative Commons, rien pour le domaine public', () => {
+  assert.equal(lienLicence('CC BY 2.0'), 'https://creativecommons.org/licenses/by/2.0/');
+  assert.equal(lienLicence('CC BY-SA 4.0'), 'https://creativecommons.org/licenses/by-sa/4.0/');
+  assert.equal(lienLicence('CC0'), 'https://creativecommons.org/publicdomain/zero/1.0/');
+  assert.equal(lienLicence('Domaine public'), null);
+  for (const [c, s] of Object.entries(savoirs)) for (const f of s.faits) {
+    if (f.img && f.img.licence !== 'Domaine public') assert.ok(lienLicence(f.img.licence), `${c} : ${f.img.licence}`);
+  }
+});
+
+test('creditsImages : les pays avec images, dans l\'ordre alphabétique de la langue, sans les savoirs sans image', () => {
+  const img = n => ({ auteur: 'A', licence: 'CC0', source: `https://commons.wikimedia.org/wiki/File:Une_image_%C3%A0_${n}.jpg` });
+  const s = {
+    IT: { faits: [{ e: 'a', fr: 'Pizza', en: 'Pizza', img: img(1) }, { e: 'b', fr: 'Rien', en: 'Nothing' }] },
+    AL: { faits: [{ e: 'c', fr: 'Aigle', en: 'Eagle', img: img(2) }] },
+    EG: { faits: [{ e: 'd', fr: 'Rien', en: 'Nothing' }] },
+  };
+  const noms = { IT: 'Italie', AL: 'Albanie', EG: 'Égypte' };
+  const liste = creditsImages(s, c => noms[c], 'fr');
+  assert.deepEqual(liste.map(p => p.nom), ['Albanie', 'Italie']);
+  assert.deepEqual(liste[1].images.map(i => i.texte), ['Pizza']);
+  assert.equal(liste[1].images[0].fichier, 'Une image à 1.jpg');
+  assert.equal(creditsImages(s, c => noms[c], 'en')[0].images[0].texte, 'Eagle');
+});
+
+test('creditsImages : toutes les images du jeu, avec un nom de fichier lisible', () => {
+  const total = Object.values(savoirs).flatMap(s => s.faits).filter(f => f.img).length;
+  const images = creditsImages(savoirs, c => c, 'fr').flatMap(p => p.images);
+  assert.equal(images.length, total);
+  for (const i of images) assert.ok(i.fichier && !/%[0-9A-F]{2}/i.test(i.fichier) && !i.fichier.includes('_'), i.fichier);
 });

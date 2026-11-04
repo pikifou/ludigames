@@ -7,6 +7,7 @@ import { t, choisirLangue } from '../textes.js';
 import { ICONES } from '../icones.js';
 import { sonActif } from '../sons.js';
 import { voixDisponible } from '../voix.js';
+import { pageCredits } from './credits.js';
 
 // Où écrire le nom de chaque continent sur la carte du monde [longitude, latitude], et sa craie.
 const ETIQUETTES = {
@@ -105,7 +106,8 @@ export function accueil(app) {
       <label class="interrupteur"><span>${t('langue')}</span>
         <select data-reglage="langue"><option value="fr" ${app.langue === 'fr' ? 'selected' : ''}>Français</option><option value="en" ${app.langue === 'en' ? 'selected' : ''}>English</option></select></label>
       <div class="reglages-appli"></div>
-      <div class="boutons"><button class="bouton-craie" data-action="fermer">${t('retour')}</button></div>`);
+      <div class="boutons"><button class="bouton-craie" data-action="fermer">${t('retour')}</button></div>
+      <button class="lien-craie" data-action="credits">${t('credits')}</button>`);
     app.evenement('reglages', voile.querySelector('.reglages-appli'));
   }
 
@@ -118,7 +120,7 @@ export function accueil(app) {
     etat.niveaux[id] = b.dataset.niveau; app.sauver();
   }
 
-  function ouvrir(html) { voile.innerHTML = `<div class="note-tableau">${html}</div>`; voile.hidden = false; }
+  function ouvrir(html, classe = '') { voile.innerHTML = `<div class="note-tableau ${classe}">${html}</div>`; voile.hidden = false; }
 
   carte.surToucher(code => { const z = code && app.zoneDe(code); if (z && app.paysDeZone(z).some(p => p.code === code)) choisir(z); });
 
@@ -134,6 +136,7 @@ export function accueil(app) {
     }
     else if (b.dataset.action === 'decouvrir') app.aller('decouvrir', b.dataset.cible);
     else if (b.dataset.action === 'reglages') reglages();
+    else if (b.dataset.action === 'credits') ouvrir(pageCredits(app), 'page-credits');
     else if (b.dataset.action === 'fermer') voile.hidden = true;
   });
   hud.addEventListener('change', e => {

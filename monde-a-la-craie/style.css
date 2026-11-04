@@ -177,6 +177,22 @@ button { font: inherit; color: inherit; }
 .niveau:focus-visible { outline: 3px dashed var(--craie-jaune); outline-offset: 3px; }
 .note-tableau .niveau-ferme { font-size: clamp(14px, 1.9vw, 16px); opacity: .9; }
 .note-tableau .record { color: var(--craie-jaune); font-size: clamp(19px, 2.8vw, 26px); }
+/* Les crédits : une longue liste écrite petit, pour les grands. Le titre et Retour restent en place, seule la liste défile. */
+.note-tableau.page-credits { width: min(760px, 100%); height: 100%; padding: 0; overflow: hidden; display: flex; flex-direction: column; text-align: left; }
+.credits-tete { flex: none; display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  padding: 6px clamp(14px, 3vmin, 26px); border-bottom: 2px dashed var(--color-craie-douce); }
+.note-tableau .credits-tete .grand { margin: 0; font-size: clamp(22px, 3.6vw, 32px); }
+.dans-ludi .credits-tete { padding-left: 112px; }   /* le coin du bouton retour de Ludiworld */
+.credits-corps { flex: 1; min-height: 0; overflow: auto; overscroll-behavior: contain; padding: 10px clamp(14px, 3vmin, 26px) 24px; font-family: var(--font-texte); overflow-wrap: anywhere; }
+.credits-corps:focus-visible { outline: 3px dashed var(--craie-jaune); outline-offset: -4px; }
+.note-tableau .credits-corps p { margin: 0; font-size: 14px; line-height: 1.35; }
+.credits-corps a { color: var(--craie-jaune); text-underline-offset: 3px; }
+.note-tableau .credits-corps .credits-images, .note-tableau .credits-corps .credits-seul { margin-top: 10px; }
+.credits-corps h3 { margin: 18px 0 4px; font-family: var(--font-craie); font-weight: 800; font-size: 20px; color: var(--craie-jaune); }
+.credits-corps ul { list-style: none; margin: 0; padding: 0; }
+.credit-image { display: grid; grid-template-columns: 1.6em 1fr; gap: 2px 6px; padding: 5px 0; border-top: 1px dashed rgba(243, 241, 232, .22); }
+.note-tableau .credit-image .qui { font-size: 12.5px; color: var(--color-craie-douce); }
+.credit-image .qui a { display: inline-block; padding: 3px 0; }
 /* Fin de manche : les boutons arrivent en une seconde (ils ne répondent pas avant, voir GARDE_FIN dans partie.js). */
 .note-tableau.fin .boutons { animation: boutons-fin 1s ease-out both; }
 @keyframes boutons-fin { 0%, 55% { opacity: 0; transform: translateY(6px); } 100% { opacity: 1; transform: none; } }
@@ -214,12 +230,15 @@ button { font: inherit; color: inherit; }
   .fiche-tete { margin-bottom: .4em; padding-bottom: .3em; }
 }
 /* La bande « Le savais-tu ? » : un papier collé qui entre par le côté, avec le drapeau, un ruban à ses couleurs et une image. */
-.savoir { position: absolute; top: var(--haut, 80px); z-index: 2; width: clamp(240px, 28vw, 320px); max-height: calc(100% - var(--haut, 80px) - 70px);
+/* --ratio : la forme de l'image. Sa largeur en découle, puis celle de la bande : ni marges blanches autour d'une photo en hauteur, ni petite image dans une large bande. */
+.savoir { --ratio: 1.5; --photo-h: clamp(120px, 32vh, 250px); --photo-l: clamp(210px, 28vw, 340px); --photo-larg: min(var(--photo-l), calc(var(--photo-h) * var(--ratio)));
+  position: absolute; top: var(--haut, 80px); z-index: 2; width: clamp(240px, 26vw, 300px); max-height: calc(100% - var(--haut, 80px) - 70px);
   overflow: hidden; display: flex; flex-direction: column; gap: 9px; padding: 20px 16px 10px; border: 0; cursor: pointer; text-align: left;
   color: var(--color-ardoise-ombre); font-size: clamp(14px, 1.55vw, 17px);
   background: linear-gradient(100deg, rgba(255, 255, 255, .35), transparent 40%), repeating-linear-gradient(92deg, rgba(0, 0, 0, .02) 0 2px, transparent 2px 7px), #f3eddc;
   box-shadow: 0 10px 28px rgba(0, 0, 0, .45), 0 2px 0 rgba(0, 0, 0, .25); }
 .savoir::before { content: ""; position: absolute; left: 0; top: 0; width: 100%; height: 11px; background: var(--drapeau) center / 100% 100% no-repeat; }
+.savoir.avec-photo { width: max(clamp(240px, 26vw, 300px), calc(var(--photo-larg) + 44px)); }
 .savoir[hidden] { display: none !important; }   /* plus fort que la grille de la bande en hauteur */
 .savoir.gauche { left: 0; border-radius: 0 8px 8px 0; animation: bande-gauche .35s cubic-bezier(.2, .9, .3, 1.05) both; }
 .savoir.droite { right: 0; border-radius: 8px 0 0 8px; animation: bande-droite .35s cubic-bezier(.2, .9, .3, 1.05) both; }
@@ -230,23 +249,23 @@ button { font: inherit; color: inherit; }
 .savoir-titre { display: grid; line-height: 1.1; }
 .savoir-titre small { font-family: var(--font-craie); font-weight: 700; font-size: .85em; color: #9a5b14; }
 .savoir-titre .craie { font-size: 1.35em; color: var(--color-ardoise-ombre); filter: none; }
-.savoir .photo { display: grid; justify-items: center; gap: 3px; padding: 6px 6px 3px; background: #fff; box-shadow: 0 2px 6px rgba(0, 0, 0, .25); transform: rotate(1.2deg); }
-.savoir .photo img { display: block; width: 100%; height: clamp(90px, 22vh, 190px); object-fit: contain; }   /* l'image entière : la tour Eiffel garde son sommet */
-.savoir .credit { font-family: var(--font-texte); font-size: 10px; line-height: 1.2; color: #6d6a62; text-align: center; }
+.savoir .photo { flex: none; align-self: center; display: grid; justify-items: center; gap: 3px; width: fit-content; min-width: 96px; padding: 6px 6px 3px; background: #fff; box-shadow: 0 2px 6px rgba(0, 0, 0, .25); transform: rotate(1.2deg); }
+.savoir .photo[hidden] { display: none; }
+.savoir .photo img { display: block; width: var(--photo-larg); height: auto; aspect-ratio: var(--ratio); object-fit: contain; }   /* l'image entière : la tour Eiffel garde son sommet */
+.savoir .credit { width: 0; min-width: 100%; font-family: var(--font-texte); font-size: 10px; line-height: 1.2; color: #6d6a62; text-align: center; }
 .savoir .fait { display: grid; }
 .savoir .astuce { align-self: flex-end; font-family: var(--font-texte); font-size: .78em; opacity: .65; }
 /* Écran en hauteur : la bande en bas (ou en haut), l'image à gauche du texte. */
-.savoir.bas, .savoir.haut { left: 0; right: 0; width: auto; max-height: 46%; display: grid; grid-template-columns: 1fr; align-content: start;
+.savoir.bas, .savoir.haut { --photo-h: clamp(90px, 17vh, 150px); --photo-l: 46vw; left: 0; right: 0; width: auto; max-height: 46%; display: grid; grid-template-columns: 1fr; align-content: start;
   border-radius: 0; animation: bande-gauche .35s cubic-bezier(.2, .9, .3, 1.05) both; }
 .savoir.bas { top: auto; bottom: 64px; }
-.savoir.avec-photo.bas, .savoir.avec-photo.haut { grid-template-columns: 42% 1fr; grid-template-areas: "tete tete" "photo fait" "photo astuce"; }
+.savoir.avec-photo.bas, .savoir.avec-photo.haut { width: auto; grid-template-columns: auto 1fr; grid-template-areas: "tete tete" "photo fait" "photo astuce"; }
 .savoir.avec-photo .savoir-tete { grid-area: tete; } .savoir.avec-photo .photo { grid-area: photo; } .savoir.avec-photo .fait { grid-area: fait; }
 .savoir.avec-photo .astuce { grid-area: astuce; align-self: end; justify-self: end; }
-.savoir.bas .photo img, .savoir.haut .photo img { height: clamp(80px, 16vh, 150px); }
-/* Écran bas (téléphone en largeur) : une image plus petite, pas d'astuce. */
+/* Écran bas (téléphone en largeur) : l'image à côté du texte, pas d'astuce. */
 @media (orientation: landscape) and (max-height: 440px) {
-  .savoir { gap: 6px; padding: 15px 12px 8px; font-size: 13px; }
-  .savoir .photo img { height: 72px; }
+  .savoir { --photo-h: 112px; --photo-l: 150px; gap: 6px; padding: 15px 12px 8px; font-size: 13px; }
+  .savoir.avec-photo { width: calc(var(--photo-larg) + 196px); max-width: 45vw; display: grid; grid-template-columns: auto 1fr; grid-template-areas: "tete tete" "photo fait"; align-items: start; }
   .savoir .drapeau { width: 42px; height: 31px; }
   .savoir .astuce { display: none; }
 }

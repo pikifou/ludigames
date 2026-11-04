@@ -5,7 +5,7 @@ import { zoneParId } from '../zones.js';
 import { DUREE_ERREUR, choisirManche, Manche, pourcentage } from '../regles.js';
 import { enregistrerManche, cleRecord } from '../progres.js';
 import { dansNiveau } from '../niveaux.js';
-import { t, duree } from '../textes.js';
+import { t, duree, auteurImage, licenceImage } from '../textes.js';
 import { son } from '../sons.js';
 import { dire, voixDisponible } from '../voix.js';
 import { ICONES } from '../icones.js';
@@ -125,10 +125,15 @@ export function partie(app, zoneId) {
     const drapeau = `img/drapeaux/${code.toLowerCase()}.svg`, img = savoir.img;
     note.innerHTML = `<span class="savoir-tete"><img class="drapeau" src="${drapeau}" alt="">
         <span class="savoir-titre"><small>${t('savaisTu')}</small><span class="craie">${app.nom(code)}</span></span></span>
-      ${img ? `<span class="photo"><img src="${img.src}" alt=""><span class="credit">${t('credit', { a: img.auteur, l: img.licence === 'Domaine public' ? t('domainePublic') : img.licence })}</span></span>` : ''}
+      ${img ? `<span class="photo"><img src="${img.src}" alt=""><span class="credit">${t('credit', { a: auteurImage(img), l: licenceImage(img) })}</span></span>` : ''}
       <span class="fait"><span class="emoji" aria-hidden="true">${savoir.e}</span><span>${savoir.texte}</span></span>
       <small class="astuce">${t('toucheContinuer')}</small>`;
     note.style.setProperty('--drapeau', `url("${drapeau}")`);
+    if (img) {
+      note.style.setProperty('--ratio', img.l / img.h);
+      const photo = note.querySelector('.photo');
+      photo.firstElementChild.onerror = () => { photo.hidden = true; };   // hors ligne, une image jamais vue n'arrive pas
+    }
     note.style.setProperty('--haut', hud.querySelector('.haut').offsetHeight + 6 + 'px');
     note.hidden = false;
     placerBande(img, [code, touche]);
