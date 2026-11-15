@@ -7,6 +7,7 @@ Les jeux de Julien pour [Ludiworld](https://pikifou.github.io/ludiworld/), réun
 | Jeu | Dossier | Adresse |
 |---|---|---|
 | Le Monde à la craie : trouver les pays du monde sur une carte au tableau noir | `monde-a-la-craie/` | https://pikifou.github.io/ludigames/monde-a-la-craie/ |
+| Le Chemin du Roi : apprendre les échecs avec un vieux sage et ses amis | `chemin-du-roi/` | https://pikifou.github.io/ludigames/chemin-du-roi/ (pas encore publié) |
 
 ## Ajouter un jeu
 
@@ -19,8 +20,15 @@ GitHub Pages publie la racine de `main` : un jeu est en ligne à `https://pikifo
 ## Le Monde à la craie
 
 - `node tools/carte.js` : prépare la carte (`monde-a-la-craie/data/monde.json`) à partir de Natural Earth, avec les corrections de `tools/pays.json` (zones, noms, territoires).
-- `node tools/version.js` : à lancer après chaque modification du jeu, pour que l'appli installée se mette à jour.
+- `node tools/version.js` : à lancer après chaque modification du jeu (`node tools/version.js chemin-du-roi` pour l'autre jeu), pour que l'appli installée se mette à jour.
 - `npm test` : tests de la logique et des données. `python tests/navigateur.py` : tests dans le navigateur (port 7360).
 - Conception et plan : `specs/`.
 
 Carte : [Natural Earth](https://www.naturalearthdata.com) (domaine public), via `world-atlas`. Bibliothèques : d3-geo, d3-array, topojson-client (licence ISC). Polices : Baloo 2 et Lexend (SIL Open Font License).
+
+## Le Chemin du Roi
+
+- `js/echecs.js` : les règles (coups légaux, échec, mat, pat, roque, prise en passant, promotion) et les adversaires (recherche alpha-bêta peu profonde, avec une part de hasard selon l'ami). `js/exercice.js` : les buts des exercices et leur note en étoiles. `js/lecons.js` : l'histoire, les leçons et les positions. Rien de tout ça ne touche à la page.
+- `node tools/version.js chemin-du-roi` après chaque modification. `node --test` : règles (perft), validité et solution de chaque exercice. `python tests/chemin-navigateur.py` : tout le chemin joué depuis une sauvegarde vide, une vraie partie, six formats d'écran, hors ligne (port 7362).
+- Pour tester : `?tout` ouvre toutes les leçons, `?lecon=<id>` ouvre une leçon, `?amis` les parties.
+- Images : Higgsfield (Nano Banana 2), détourées par `factory/direction-artistique/tour22-echecs/preparer.py`.

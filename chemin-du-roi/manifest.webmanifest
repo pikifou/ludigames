@@ -1,0 +1,17 @@
+{
+  "name": "Le Chemin du Roi",
+  "short_name": "Chemin du Roi",
+  "description": "Apprends les échecs pas à pas avec Gaspard le vieux sage et ses amis.",
+  "lang": "fr",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#f4e7cd",
+  "theme_color": "#d9a441",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

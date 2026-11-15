@@ -1,0 +1,73 @@
+{
+  "ludi": 1,
+  "id": "chemin-du-roi",
+  "status": "draft",
+  "title": {
+    "fr": "Le Chemin du Roi",
+    "en": "The King's Path"
+  },
+  "pitch": {
+    "fr": "Léo a trouvé un vieux jeu d'échecs au grenier. Barnabé, le vieux voisin, lui apprend comment bouge chaque pièce, en ramassant des étoiles sur le plateau. Puis ses amis prennent le relais, chacun avec un secret : la course des pions, prendre les pièces, éviter les pièges, l'échec, l'échec et mat, le roque. Au bout du chemin, de vraies parties contre les amis, et enfin contre Barnabé.",
+    "en": "Leo found an old chess set in the attic. Barnabé, the old neighbour, teaches him how each piece moves, by collecting stars on the board. Then his friends take over, each with a secret: the pawn race, capturing, avoiding traps, check, checkmate, castling. At the end of the path, real games against the friends, and finally against Barnabé."
+  },
+  "url": "https://pikifou.github.io/ludigames/chemin-du-roi/",
+  "icon": "https://pikifou.github.io/ludigames/chemin-du-roi/icons/icon-512.png",
+  "color": "#d9a441",
+  "author": {
+    "name": "Julien",
+    "url": "https://github.com/pikifou/ludigames"
+  },
+  "languages": [
+    "fr"
+  ],
+  "age": {
+    "min": 6,
+    "max": 10
+  },
+  "reading": "some",
+  "learning": {
+    "level": "core",
+    "domains": [
+      "logique.puzzle",
+      "strategie.choix"
+    ],
+    "what": {
+      "fr": "Les premières étapes des échecs : la marche de chaque pièce, prendre, la valeur des pièces, les cases dangereuses, l'échec et les trois façons d'y répondre, l'échec et mat, le pat, la promotion, la prise en passant et le roque. Assez pour jouer une vraie partie.",
+      "en": "The first steps of chess: how each piece moves, capturing, piece values, dangerous squares, check and the three ways to answer it, checkmate, stalemate, promotion, en passant and castling. Enough to play a real game."
+    },
+    "how": {
+      "fr": "Sept lieux sur un chemin, vingt-trois leçons courtes. Chaque leçon alterne quelques phrases d'un personnage et de petits exercices sur un vrai plateau : ramasser des étoiles avec une pièce seule, prendre toutes les pièces noires, mettre une pièce à l'abri, faire échec, trouver le mat en un coup. On touche une pièce pour voir où elle peut aller, ou on la fait glisser. Une erreur est montrée puis annulée, avec une phrase qui dit pourquoi, et on réessaie. Chaque exercice donne de une à trois étoiles (moins de coups, moins d'erreurs, sans indice). Les règles sont toujours celles des vrais échecs : un coup interdit ne se joue pas. Trois mini-parties (course de pions, festin sans roi) puis de vraies parties contre six amis de force croissante, avec un bouton pour annuler son coup et un autre pour voir les cases dangereuses.",
+      "en": "Seven places along a path, twenty-three short lessons. Each lesson alternates a few lines from a character with small exercises on a real board: collect stars with a single piece, capture all the black pieces, move a piece to safety, give check, find mate in one. Tap a piece to see where it can go, or drag it. A mistake is shown then undone, with a sentence saying why, and the child tries again. Each exercise gives one to three stars (fewer moves, fewer mistakes, no hint). The rules are always real chess rules: an illegal move cannot be played. Three mini-games (pawn race, a feast with no kings) then real games against six friends of increasing strength, with a button to take back a move and another to show dangerous squares."
+    }
+  },
+  "session": {
+    "minutes": [
+      5,
+      20
+    ],
+    "natural_end": true
+  },
+  "content": {
+    "fr": "Des personnages enfants et un vieil homme, un village peint, un plateau d'échecs. Pas de violence : on « prend » ou on « mange » les pièces. Les textes sont à lire ; une voix de l'appareil peut les lire, si on l'allume (le jeu démarre en silence). Le jeu n'existe qu'en français pour l'instant.",
+    "en": "Child characters and an old man, a painted village, a chessboard. No violence: pieces are \"taken\" or \"eaten\". Texts must be read; the device's own voice can read them if switched on (the game starts silent). The game is in French only for now."
+  },
+  "devices": [
+    "tablet",
+    "phone",
+    "computer"
+  ],
+  "offline": true,
+  "healthy": {
+    "no_ads": true,
+    "no_purchases": true,
+    "no_subscription": true,
+    "no_loot_boxes": true,
+    "no_daily_pressure": true,
+    "no_notifications": true,
+    "no_strangers": true,
+    "no_tracking": true,
+    "natural_stops": true
+  },
+  "third_parties": [],
+  "kit": true
+}
