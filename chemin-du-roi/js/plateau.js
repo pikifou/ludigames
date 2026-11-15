@@ -1,7 +1,8 @@
-// Le plateau : cases, pièces en bois qui sautent d'une case à l'autre, étoiles, toucher ou glisser pour jouer.
+// Le plateau : cases, pièces en bois qui sautent d'une case à l'autre, pommes à ramasser, toucher ou glisser pour jouer.
 import { COLONNES, couleur, type, attaquee, roiDe, enEchec, coupsBruts } from './echecs.js';
 
-const ETOILE = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.6l2.8 6 6.5.7-4.9 4.4 1.4 6.4L12 16.9 6.2 20.1l1.4-6.4L2.7 9.3l6.5-.7z"/></svg>';
+// Ce qu'on ramasse sur le plateau : les pommes du pommier de Barnabé.
+const POMME = '<img src="img/pomme.webp" alt="">';
 const CROIX = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>';
 
 const x = sq => sq & 7, y = sq => 7 - (sq >> 3);
@@ -105,7 +106,7 @@ export class Plateau {
     });
   }
 
-  // De petites particules sur une case (poussière à l'atterrissage, éclats d'une prise, étoiles).
+  // De petites particules sur une case (poussière à l'atterrissage, éclats d'une prise, pommes).
   eclat(sq, classe, n = 6) {
     const z = document.createElement('div');
     z.className = 'eclats ' + classe;
@@ -115,7 +116,6 @@ export class Plateau {
       const a = (Math.PI * 2 * i) / n + Math.random() * .5, d = 40 + Math.random() * 45;
       s.style.setProperty('--dx', `${Math.cos(a) * d}%`); s.style.setProperty('--dy', `${Math.sin(a) * d}%`);
       s.style.animationDelay = `${Math.random() * 60}ms`;
-      if (classe === 'etoiles-eclat') s.innerHTML = ETOILE;
       z.appendChild(s);
     }
     this.effets.appendChild(z);
@@ -134,7 +134,7 @@ export class Plateau {
   // Le roi mat se couche.
   renverser(sq) { this.elems.get(sq)?.classList.add((sq & 7) >= 4 ? 'renverse-g' : 'renverse-d'); this.racine.classList.add('mat'); this.racine.classList.remove('secoue'); void this.racine.offsetWidth; this.racine.classList.add('secoue'); }
 
-  // Étoiles, dangers, échec, dernier coup, sélection.
+  // Pommes, dangers, échec, dernier coup, sélection.
   marques() {
     const pos = this.pos;
     const cibles = this.choix != null ? this.coupsPossibles(this.choix) : [];
@@ -154,21 +154,21 @@ export class Plateau {
       const etoile = this.etoiles?.includes(sq);
       const danger = this.dangers && pos && !p && attaquee(pos, sq, 'b');
       let deco = c.querySelector('.deco');
-      const voulu = etoile ? 'etoile' : danger ? 'danger' : '';
+      const voulu = etoile ? 'pomme' : danger ? 'danger' : '';
       if ((deco?.dataset.k || '') !== voulu) {
         deco?.remove();
-        if (voulu) c.insertAdjacentHTML('beforeend', `<span class="deco ${voulu}" data-k="${voulu}">${etoile ? ETOILE : CROIX}</span>`);
+        if (voulu) c.insertAdjacentHTML('beforeend', `<span class="deco ${voulu}" data-k="${voulu}">${etoile ? POMME : CROIX}</span>`);
       }
     }
     this.elems.forEach((el, sq) => { el.classList.toggle('echec', sq === roiEnEchec); el.classList.toggle('levee', sq === this.choix); });
   }
 
-  // L'étoile s'envole au-dessus de la pièce. Renvoie la position de l'étoile à l'écran (pour la faire voler plus loin).
+  // La pomme est ramassée. Renvoie la position de la pomme à l'écran (pour la faire voler plus loin).
   ramasser(sq) {
-    const d = this.caseEl(sq).querySelector('.deco.etoile');
+    const d = this.caseEl(sq).querySelector('.deco.pomme');
     const r = this.caseEl(sq).getBoundingClientRect();
     if (d) { d.dataset.k = 'x'; d.remove(); }
-    this.eclat(sq, 'etoiles-eclat', 7);
+    this.eclat(sq, 'pomme-eclat', 9);
     return r;
   }
 

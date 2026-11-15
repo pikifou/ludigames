@@ -115,7 +115,8 @@ body.ludiworld .haut { padding-left: 130px; }
 .chemin { background: #ead9b4 url(img/fond-paysage.webp) center / cover; }
 .chemin::before { content: ''; position: absolute; inset: 0; background: rgba(240, 225, 190, .45); backdrop-filter: blur(3px); }
 .total { display: inline-flex; align-items: center; gap: .25em; background: var(--color-surface); padding: .1em .7em; border-radius: 999px; box-shadow: var(--ombre); font-size: 1.15rem; }
-.total svg, .etiquette small svg { width: 1em; height: 1em; fill: var(--color-or); stroke: #a67400; stroke-width: 1; }
+.totaux { display: inline-flex; gap: 6px; flex-wrap: wrap; justify-content: center; }
+.ico { width: 1.15em; height: 1.15em; object-fit: contain; vertical-align: -.2em; filter: drop-shadow(0 1px 1px rgba(90, 60, 0, .3)); }
 .medailles-btn img { width: 34px; height: 34px; object-fit: contain; }
 .medailles-btn b { position: absolute; right: -4px; bottom: -4px; min-width: 22px; height: 22px; border-radius: 11px; background: var(--color-primary); color: #fff; font: 800 .8rem/22px var(--font-display); }
 .carte-cadre { position: relative; flex: 1; display: grid; place-items: center; min-height: 0; container-type: size; padding-bottom: 6px; }
@@ -192,10 +193,11 @@ body.ludiworld .haut { padding-left: 130px; }
 @keyframes entre { from { transform: translateY(20px) scale(.9); opacity: 0; } }
 
 .etoiles { display: inline-flex; gap: 1px; vertical-align: -3px; }
+/* Les étoiles de note : sculptées, dorées ou en terre nue. */
+.etoiles i, .grosses-etoiles i { background: url(img/etoile-vide.webp) center / contain no-repeat; }
+.etoiles i.pleine, .grosses-etoiles i.pleine { background-image: url(img/etoile.webp); filter: drop-shadow(0 2px 2px rgba(110, 70, 0, .35)); }
 .etoiles i { width: 22px; height: 22px; }
-.etoiles svg { width: 100%; height: 100%; fill: #e3d5b6; }
-.etoiles i.pleine svg { fill: var(--color-or); stroke: #a67400; stroke-width: 1; }
-.bulle .etoiles i { width: 28px; height: 28px; }
+.bulle .etoiles i { width: 34px; height: 34px; }
 .bulle .etoiles i.pleine { animation: pop .45s var(--rebond) backwards; }
 .bulle .etoiles i:nth-child(2) { animation-delay: .15s; }
 .bulle .etoiles i:nth-child(3) { animation-delay: .3s; }
@@ -241,8 +243,8 @@ body.ludiworld .haut { padding-left: 130px; }
 .objectif:empty { background: transparent; box-shadow: none; }
 .objectif .pot { display: flex; gap: 3px; }
 .objectif .pot i { width: 30px; height: 30px; }
-.objectif .pot svg { width: 100%; height: 100%; fill: rgba(43, 47, 82, .12); stroke: rgba(43, 47, 82, .25); stroke-width: 1; }
-.objectif .pot i.pleine svg { fill: var(--color-or); stroke: #a67400; }
+.objectif .pot i { background: url(img/pomme.webp) center / contain no-repeat; filter: grayscale(1) brightness(1.1) opacity(.28); transition: filter .3s; }
+.objectif .pot i.pleine { filter: drop-shadow(0 2px 2px rgba(70, 40, 10, .3)); }
 .objectif .pot i.arrive { animation: pop .45s var(--rebond); }
 .objectif .coups, .objectif .but { font: 700 1rem var(--font-display); color: var(--color-encre-douce); text-align: right; }
 .objectif .coups small { font-size: .8rem; display: block; line-height: 1; }
@@ -303,9 +305,9 @@ body.ludiworld .haut { padding-left: 130px; }
 @keyframes refus { 0% { transform: scale(.4); opacity: 0; } 20% { transform: scale(1.15); opacity: 1; } 75% { opacity: 1; } 100% { opacity: 0; } }
 .deco { position: absolute; inset: 0; display: grid; place-items: center; pointer-events: none; z-index: 2; }
 .deco svg { width: 74%; height: 74%; }
-.deco.etoile svg { fill: var(--color-or); stroke: #a67400; stroke-width: 1; filter: drop-shadow(0 2px 1px rgba(90, 60, 0, .35)); animation: brille 1.6s ease-in-out infinite; }
+.deco.pomme img { width: 76%; height: 76%; object-fit: contain; filter: drop-shadow(0 3px 2px rgba(70, 40, 10, .35)); animation: balance 2.2s ease-in-out infinite; transform-origin: 50% 90%; }
 .deco.danger svg { width: 46%; height: 46%; fill: none; stroke: var(--color-danger); stroke-width: 3.5; stroke-linecap: round; opacity: .8; }
-@keyframes brille { 50% { transform: scale(1.12) rotate(8deg); } }
+@keyframes balance { 25% { transform: rotate(-6deg); } 75% { transform: rotate(6deg) scale(1.05); } }
 
 .pieces, .effets { position: absolute; inset: 3.6%; pointer-events: none; }
 .effets { z-index: 70; }
@@ -338,11 +340,11 @@ body.ludiworld .haut { padding-left: 130px; }
 .poussiere i { background: rgba(220, 195, 150, .9); }
 .eclat-prise i { background: var(--color-ocre); width: 12%; height: 18%; border-radius: 2px; top: 50%; }
 .eclat-prise i:nth-child(odd) { background: var(--color-primary); }
-.etoiles-eclat i { width: 26%; height: 26%; top: 40%; border-radius: 0; animation-duration: .7s; }
-.etoiles-eclat i svg { width: 100%; height: 100%; fill: var(--color-or); }
+.pomme-eclat i { width: 16%; height: 10%; top: 45%; border-radius: 0 70% 0 70%; background: #6f9a3c; animation-duration: .7s; }
+.pomme-eclat i:nth-child(3n) { background: #e8c25a; border-radius: 50%; width: 10%; height: 10%; }
 @keyframes eclat { from { transform: translate(-50%, -50%) scale(1); opacity: 1; } to { transform: translate(calc(-50% + var(--dx) * 2.4), calc(-50% + var(--dy) * 2.4)) scale(.3); opacity: 0; } }
-.etoile-vol { position: fixed; left: 0; top: 0; width: 34px; height: 34px; z-index: 100; pointer-events: none; }
-.etoile-vol svg { width: 100%; height: 100%; fill: var(--color-or); stroke: #a67400; filter: drop-shadow(0 0 6px rgba(255, 210, 80, .9)); }
+.pomme-vol { position: fixed; left: 0; top: 0; width: 38px; height: 38px; z-index: 100; pointer-events: none; }
+.pomme-vol img { width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 4px 4px rgba(70, 40, 10, .4)); }
 
 /* Confettis de papier. */
 .confettis { position: absolute; inset: 0; overflow: hidden; pointer-events: none; z-index: 80; }
@@ -368,8 +370,7 @@ body.ludiworld .haut { padding-left: 130px; }
 .grosses-etoiles { display: flex; justify-content: center; gap: 6px; margin: 10px 0 0; }
 .grosses-etoiles i { width: 64px; height: 64px; }
 .grosses-etoiles i:nth-child(2) { width: 78px; height: 78px; margin-top: -12px; }
-.grosses-etoiles svg { width: 100%; height: 100%; fill: #e6d8b9; stroke: #cbb68c; stroke-width: 1; }
-.grosses-etoiles i.pleine svg { fill: var(--color-or); stroke: #a67400; filter: drop-shadow(0 0 10px rgba(255, 210, 80, .8)); }
+.grosses-etoiles i.pleine { filter: drop-shadow(0 0 12px rgba(255, 210, 80, .75)) drop-shadow(0 3px 3px rgba(110, 70, 0, .35)); }
 .grosses-etoiles i.pleine { animation: pop .5s var(--rebond); }
 .grosses-etoiles i.vide { animation: triste .4s; }
 .score { margin: 2px 0 6px; font: 800 1.5rem var(--font-display); color: var(--color-encre-douce); }

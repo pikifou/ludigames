@@ -48,10 +48,12 @@ const MEDAILLES = [
 // ---------- Outils d'affichage ----------
 const app = document.getElementById('app');
 const h = html => { const t = document.createElement('template'); t.innerHTML = html.trim(); return t.content.firstElementChild; };
-const ETOILE = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.6l2.8 6 6.5.7-4.9 4.4 1.4 6.4L12 16.9 6.2 20.1l1.4-6.4L2.7 9.3l6.5-.7z"/></svg>';
+// Les étoiles ne servent qu'à la note (sculptées, en image). Sur le plateau, on ramasse les pommes de Barnabé.
+const ETOILE = '<img class="ico" src="img/etoile.webp" alt="">';
+const POMME = '<img class="ico" src="img/pomme.webp" alt="">';
 const CADENAS = '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3" fill="none" stroke="currentColor" stroke-width="2.4"/></svg>';
 const visage = qui => `<span class="visage" style="background-image:url(${PERSONNAGES[qui].image})"></span>`;
-const etoiles = (n, max = 3) => `<span class="etoiles" aria-label="${n} étoiles sur ${max}">${Array.from({ length: max }, (_, i) => `<i class="${i < n ? 'pleine' : ''}">${ETOILE}</i>`).join('')}</span>`;
+const etoiles = (n, max = 3) => `<span class="etoiles" aria-label="${n} étoiles sur ${max}">${Array.from({ length: max }, (_, i) => `<i class="${i < n ? 'pleine' : ''}"></i>`).join('')}</span>`;
 const imageJoie = qui => `img/${qui}-joie.webp`;
 const voixOk = () => etat.voix && voixDisponible('fr');
 const parler = texte => { if (voixOk()) dire(texte, 'fr'); };
@@ -105,16 +107,16 @@ function confettis(dans, n = 46) {
   setTimeout(() => z.remove(), 3200);
 }
 
-// Fait voler une petite étoile d'un rectangle de l'écran à un autre.
-function envolerEtoile(de, vers, fini) {
-  const s = h(`<span class="etoile-vol">${ETOILE}</span>`);
+// Fait voler une pomme ramassée de la case jusqu'au panier.
+function envolerPomme(de, vers, fini) {
+  const s = h(`<span class="pomme-vol">${POMME}</span>`);
   document.body.appendChild(s);
   const x0 = de.left + de.width / 2, y0 = de.top + de.height / 2, x1 = vers.left + vers.width / 2, y1 = vers.top + vers.height / 2;
   if (!s.animate) { s.remove(); fini?.(); return; }
   const a = s.animate([
     { transform: `translate(${x0}px, ${y0}px) translate(-50%, -50%) scale(1)` },
-    { transform: `translate(${(x0 + x1) / 2}px, ${Math.min(y0, y1) - 60}px) translate(-50%, -50%) scale(1.6) rotate(140deg)`, offset: .45 },
-    { transform: `translate(${x1}px, ${y1}px) translate(-50%, -50%) scale(.9) rotate(300deg)` },
+    { transform: `translate(${(x0 + x1) / 2}px, ${Math.min(y0, y1) - 60}px) translate(-50%, -50%) scale(1.6) rotate(-20deg)`, offset: .45 },
+    { transform: `translate(${x1}px, ${y1}px) translate(-50%, -50%) scale(.9) rotate(0deg)` },
   ], { duration: 650, easing: 'cubic-bezier(.4, 0, .3, 1)' });
   a.onfinish = () => { s.remove(); fini?.(); };
 }
@@ -149,6 +151,7 @@ const INTRO = [
 const FIN = [
   { image: 'img/histoire-fin.webp', texte: "Léo a battu Barnabé ! Tous ses amis sont montés jusqu'à la tour pour le féliciter." },
   { image: 'img/histoire-fin.webp', qui: 'sage', texte: "Tu es devenu un vrai joueur d'échecs, Léo. Maintenant, c'est toi qui vas apprendre à tes amis !" },
+  { image: 'img/histoire-fin.webp', qui: 'enfant', texte: "Et avec toutes les pommes de mon panier, on va faire une énorme tarte pour tout le monde !" },
 ];
 
 function ecranHistoire(pages, fini) {
@@ -182,11 +185,13 @@ function ecranHistoire(pages, fini) {
 // ---------- Le chemin ----------
 function ecranCarte(ouvrir) {
   const total = LECONS.reduce((s, l) => s + etoilesDe(l), 0), max = LECONS.reduce((s, l) => s + etoilesMax(l), 0);
+  // Le panier de Léo : toutes les pommes ramassées depuis le début.
+  const pommes = LECONS.flatMap(exercicesDe).filter(x => x.type === 'etoiles' && etat.notes[x.id]).reduce((s, x) => s + x.etoiles.length, 0);
   const actuel = indexActuel();
   const depart = Math.min(etat.place || 0, actuel);
   const nbMedailles = Object.keys(etat.medailles).length;
   const e = ecran('chemin', `
-    ${boutonsHaut('titre', `<span class="total">${ETOILE} ${total} / ${max}</span>`,
+    ${boutonsHaut('titre', `<span class="totaux"><span class="total">${ETOILE} ${total} / ${max}</span>${pommes ? `<span class="total panier" aria-label="${pommes} pommes ramassées">${POMME} ${pommes}</span>` : ''}</span>`,
       `<button class="rond medailles-btn" data-act="medailles" aria-label="Mes médailles"><img src="img/medaille-1.webp" alt=""><b>${nbMedailles}</b></button>`)}
     <div class="carte-cadre"><div class="carte">
       ${CHAPITRES.map((c, i) => `
@@ -367,7 +372,7 @@ const RAISONS = {
 
 const BRAVO = ['Bravo !', 'Super !', 'Génial !', 'Bien joué !', 'Excellent !', 'Magnifique !'];
 
-// L'objectif sous la bulle : étoiles à ramasser, pièces à prendre, ou pièces prises dans une partie.
+// L'objectif sous la bulle : pommes à ramasser, pièces à prendre, ou pièces prises dans une partie.
 function objectif(e, html) { e.querySelector('.objectif').innerHTML = html; }
 
 function lancerLecon(lecon) {
@@ -420,7 +425,7 @@ function lancerLecon(lecon) {
     const d = ex.def;
     if (d.type === 'etoiles') {
       const pris = d.etoiles.length - ex.etoiles.length;
-      objectif(e, `<span class="pot">${d.etoiles.map((_, k) => `<i class="${k < pris ? 'pleine' : ''}">${ETOILE}</i>`).join('')}</span><span class="coups">${ex.coups} coup${ex.coups > 1 ? 's' : ''}${ex.minimum ? ` <small>(le mieux : ${ex.minimum})</small>` : ''}</span>`);
+      objectif(e, `<span class="pot">${d.etoiles.map((_, k) => `<i class="${k < pris ? 'pleine' : ''}"></i>`).join('')}</span><span class="coups">${ex.coups} coup${ex.coups > 1 ? 's' : ''}${ex.minimum ? ` <small>(le mieux : ${ex.minimum})</small>` : ''}</span>`);
     } else if (d.type === 'prendre') {
       const depart = depuisFen(d.fen).b.filter(p => p && couleur(p) === 'b');
       const restent = ex.pos.b.filter(p => p && couleur(p) === 'b').length;
@@ -490,7 +495,7 @@ function lancerLecon(lecon) {
       son('etoile');
       const pris = ex.def.etoiles.length - ex.etoiles.length;
       const cible = e.querySelectorAll('.objectif .pot i')[pris - 1];
-      if (cible) envolerEtoile(de, cible.getBoundingClientRect(), () => { majObjectif(); e.querySelectorAll('.objectif .pot i')[pris - 1]?.classList.add('arrive'); });
+      if (cible) envolerPomme(de, cible.getBoundingClientRect(), () => { majObjectif(); e.querySelectorAll('.objectif .pot i')[pris - 1]?.classList.add('arrive'); });
       else majObjectif();
     } else majObjectif();
     if (!r.fini) { plateau.interactif = true; return; }
@@ -566,7 +571,7 @@ async function feter(e, { titre, qui, n, max, medaille, boutons, texte }) {
       </div>
       <h3>${titre}</h3>
       ${texte ? `<p class="fete-texte">${texte}</p>` : ''}
-      ${max ? `<div class="grosses-etoiles">${[0, 1, 2].map(() => `<i>${ETOILE}</i>`).join('')}</div><p class="score"><b>0</b> / ${max}</p>` : ''}
+      ${max ? `<div class="grosses-etoiles">${[0, 1, 2].map(() => '<i></i>').join('')}</div><p class="score"><b>0</b> / ${max}</p>` : ''}
       <div class="medaille-gagnee" hidden><img alt=""><span></span></div>
       <div class="actions"></div>
     </div></div>`);

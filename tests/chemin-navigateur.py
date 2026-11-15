@@ -166,8 +166,9 @@ def chemin_complet(nav):
     medailles = page.evaluate("Object.keys(window.__chemin.etat.medailles).length")
     # Les médailles de Lina et Malo demandent de gagner leur partie : le robot joue au hasard et peut les perdre.
     verifier(4 <= medailles <= 6, f'au moins les quatre médailles sans partie ({medailles})')
-    total = page.locator('.total').inner_text()
+    total = page.locator('.total:not(.panier)').inner_text()
     print('   étoiles :', total)
+    verifier(page.locator('.panier').count() == 1, 'le panier de pommes est sur le chemin : ' + page.locator('.panier').inner_text().strip())
     page.screenshot(path=str(CAPTURES / 'chemin-fini.png'))
     verifier(not erreurs, f'aucune erreur dans la console ({erreurs[:3]})')
     page.close()
