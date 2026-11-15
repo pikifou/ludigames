@@ -96,15 +96,6 @@ export const CHAPITRES = [
         ],
       },
       {
-        id: 'en-passant', titre: 'Le coup secret', piece: 'wp',
-        etapes: [
-          dit("Je connais un coup secret : la prise en passant.", 'lina'),
-          dit("Le pion noir vient d'avancer de deux cases pour passer à côté de ton pion. Ton pion peut le prendre quand même, comme s'il n'avait avancé que d'une case !", 'lina'),
-          dit("Mais attention : c'est seulement tout de suite, juste après son coup.", 'lina'),
-          { ex: { id: 'passant-1', type: 'coup', fen: '8/8/8/3pP3/8/8/8/8 w - d6', coups: ['e5d6'], dit: "Prends le pion noir en passant : va derrière lui, en diagonale." } },
-        ],
-      },
-      {
         id: 'course', titre: 'La course contre Lina', piece: 'bp', partie: true,
         etapes: [
           dit("On fait la course ? Seulement des pions. Le premier qui amène un pion tout au bout a gagné !", 'lina'),
@@ -244,6 +235,15 @@ export const CHAPITRES = [
           dit("Le roi va de deux cases vers sa tour, et la tour saute de l'autre côté du roi. Comme ça, le roi est à l'abri dans un coin."),
           dit("On peut roquer seulement si le roi et la tour n'ont jamais bougé, s'il n'y a rien entre eux, et si le roi n'est pas en échec."),
           { ex: { id: 'roque-1', type: 'coup', fen: 'r3k2r/pppppppp/8/8/8/8/PPPPPPPP/R3K2R w KQkq -', coups: ['e1g1', 'e1c1'], dit: "Roque ! Touche ton roi et fais-le glisser de deux cases vers une tour." } },
+        ],
+      },
+      {
+        id: 'en-passant', titre: 'Le coup secret', piece: 'wp',
+        etapes: [
+          dit("Il me reste un tout dernier secret, le plus rare : la prise en passant."),
+          dit("Quand un pion noir avance de deux cases d'un coup et arrive juste à côté de ton pion, ton pion peut le prendre quand même, comme s'il n'avait avancé que d'une case !"),
+          dit("Mais attention : c'est seulement tout de suite, juste après son coup."),
+          { ex: { id: 'passant-1', type: 'coup', fen: '8/8/8/3pP3/8/8/8/8 w - d6', coups: ['e5d6'], dit: "Le pion noir vient d'avancer de deux cases. Prends-le en passant : va en biais, juste derrière lui." } },
           dit("Au début d'une partie, sors tes cavaliers et tes fous, prends le centre, et roque tôt. Tu es prêt, Léo ! Mes amis t'attendent pour de vraies parties. Et à la fin… c'est contre moi !"),
         ],
       },

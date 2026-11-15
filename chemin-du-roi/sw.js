@@ -1,6 +1,6 @@
 // Service worker du Chemin du Roi : tout le jeu est gardé à l'installation, il se joue hors ligne.
 // VERSION est l'empreinte des fichiers du jeu : node tools/version.js chemin-du-roi la met à jour.
-const VERSION = 'chemin-du-roi-e394b1aadd';
+const VERSION = 'chemin-du-roi-9e532d6022';
 const PERSOS = ['sage', 'enfant', 'lina', 'malo', 'ines', 'sacha', 'yuna'];
 const IMAGES = ['titre', 'carte', 'fond-portrait', 'fond-paysage', 'histoire-1', 'histoire-2', 'histoire-fin', 'enfant-marche', 'enfant-pense', 'etoile', 'etoile-vide', 'pomme',
   ...PERSOS, ...PERSOS.map(p => p + '-joie'), ...[1, 2, 3, 4, 5, 6, 7, 8].map(n => 'medaille-' + n),

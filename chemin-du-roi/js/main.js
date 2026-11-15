@@ -329,10 +329,13 @@ function bulle(e, qui, texte, boutons = [], { joie = false, aide = '', pense = f
   b.onclick = ev => { if (!ev.target.closest('button')) parler(texte + (aide ? ' ' + aide : '')); };
   const zone = b.querySelector('.actions');
   zone.innerHTML = '';
+  e.querySelector('.suite')?.remove();
   for (const bt of boutons) {
-    const n = h(`<button class="${bt.classe || 'petit'}">${bt.texte}</button>`);
-    n.onclick = ev => { ev.stopPropagation(); bt.act(); };
-    zone.appendChild(n);
+    // « Suivant » (et « Continuer ») ne reste pas dans la bulle : un gros bouton monte du bas de l'écran.
+    const grand = bt.classe === 'suivant';
+    const n = h(grand ? `<button class="suivant suite">${bt.texte}<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>` : `<button class="${bt.classe || 'petit'}">${bt.texte}</button>`);
+    n.onclick = ev => { ev.stopPropagation(); n.disabled = true; bt.act(); };
+    (grand ? e : zone).appendChild(n);
   }
   if (!pense) parler(texte + (aide ? ' ' + aide : ''));
 }
@@ -613,6 +616,27 @@ async function feter(e, { titre, qui, n, max, medaille, boutons, texte }) {
   }
 }
 
+// ---------- La prise en passant, expliquée la première fois qu'on la croise ----------
+// m : le coup en passant. qui : l'ami. subi : c'est l'ami qui vient de la faire.
+function expliquerPassant(e, plateau, qui, m, subi) {
+  etat.passantVu = true; sauver();
+  const p = PERSONNAGES[qui];
+  const texte = subi
+    ? "Ton pion avait sauté deux cases et s'était posé à côté du mien. Mon pion a pu le prendre quand même, en biais, juste derrière lui. C'est un coup secret, permis seulement tout de suite. Toi aussi, tu pourras le faire !"
+    : "Mon pion a sauté deux cases et s'est posé à côté du tien. Ton pion peut le prendre quand même : il va en biais, juste derrière lui, sur le rond jaune. C'est un coup secret, permis seulement maintenant. Tu peux le faire, ou jouer autre chose.";
+  if (!subi) plateau.montrerIndice(m);
+  const f = h(`<div class="explication" role="dialog" aria-label="La prise en passant"><div class="explication-carte">
+      <img src="${imageJoie(qui)}" alt="${p.nom}">
+      <div><h3>La prise en passant</h3>
+      <p>${texte}</p></div>
+      <button class="suivant">J'ai compris</button>
+    </div></div>`);
+  e.appendChild(f);
+  son('debloque');
+  parler(texte);
+  return new Promise(ok => { f.querySelector('button').onclick = () => { son('clic'); f.remove(); globalThis.speechSynthesis?.cancel(); ok(); }; });
+}
+
 // ---------- Une partie contre un ami ----------
 // fini(resultat) : 'gagne', 'perdu' ou 'nul'.
 function demarrerPartie(e, plateau, def, qui, fini, options = {}) {
@@ -686,6 +710,7 @@ function demarrerPartie(e, plateau, def, qui, fini, options = {}) {
   async function surCoup(m) {
     if (termine || reflechit) return;
     plateau.interactif = false; tour('ami');
+    plateau.oublierIndice();
     historique.push({ pos, toi: prisesToi.length, ami: prisesAmi.length });
     pos = jouer(pos, m);
     son(m.prise ? 'prise' : 'pose');
@@ -710,6 +735,11 @@ function demarrerPartie(e, plateau, def, qui, fini, options = {}) {
     reflechit = false;
     r = finDePartie(pos, fin);
     if (r) return terminer(r);
+    // La première prise en passant (faite par l'ami, ou possible pour Léo) : on l'explique.
+    if (!etat.passantVu && !etat.lecons['en-passant'] && plateau.racine.isConnected) {
+      const possible = coupsLegaux(pos).find(x => x.enPassant);
+      if (c.enPassant || possible) await expliquerPassant(e, plateau, qui, c.enPassant ? c : possible, !!c.enPassant);
+    }
     if (enEchec(pos)) { son('echec'); dire2('Échec ! Sauve ton roi.'); }
     else if (c.prise) dire2(type(c.prise) === 'p' ? `Je t'ai pris ${sa(c.prise)}. À toi !` : `Je t'ai pris ${sa(c.prise)} ! Regarde bien les dangers.`, type(c.prise) !== 'p');
     else dire2(auHasard(['À toi !', 'À toi de jouer.', 'Hmm… à toi !']));

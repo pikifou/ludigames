@@ -423,3 +423,26 @@ body.ludiworld .haut { padding-left: 130px; }
 .voile-pause img { height: 160px; width: auto; display: block; margin: 0 auto; filter: drop-shadow(0 8px 8px rgba(0, 0, 0, .4)); }
 .voile-pause p { margin: 8px 0 0; font: 800 2.4rem var(--font-display); }
 .voile-pause small { font-size: 1.1rem; }
+
+/* Le gros bouton « Suivant » : il monte du bas de l'écran après un petit temps pour lire, puis respire. */
+.suite { position: absolute; right: max(16px, env(safe-area-inset-right, 0px)); bottom: calc(16px + env(safe-area-inset-bottom, 0px)); z-index: 60;
+  display: inline-flex; align-items: center; gap: .3em; font-size: 1.45rem; padding: .45em 1em .45em 1.3em;
+  box-shadow: 0 5px 0 var(--color-primary-fonce), 0 14px 28px rgba(80, 40, 10, .35);
+  animation: monte-suite .7s 1.3s var(--rebond) both, respire 2s 2.2s ease-in-out infinite; }
+.suite svg { width: 1.1em; height: 1.1em; fill: none; stroke: currentColor; stroke-width: 3.2; stroke-linecap: round; stroke-linejoin: round; }
+@keyframes monte-suite { from { transform: translateY(calc(100% + 40px)); opacity: 0; } }
+@keyframes respire { 50% { transform: scale(1.05); } }
+.jeu.fete-en-cours .suite { display: none; }
+
+/* La prise en passant, expliquée la première fois : en haut (à droite en paysage), le plateau reste visible. */
+.explication { position: absolute; inset: 0; z-index: 90; display: grid; align-items: start; justify-items: center; padding: 58px 10px 10px; animation: fondu .3s; }
+.explication-carte { position: relative; width: min(100%, 560px); display: grid; grid-template-columns: auto 1fr; align-items: start; gap: 4px 10px; background: var(--color-surface); border-radius: 20px 24px 22px 18px; padding: 12px 14px 12px 8px; box-shadow: 0 0 0 4px var(--color-or), 0 14px 40px rgba(40, 25, 10, .4); animation: entre .45s var(--rebond); }
+.explication-carte img { height: 120px; width: auto; filter: drop-shadow(0 4px 3px rgba(60, 40, 20, .3)); }
+.explication-carte h3 { margin: 0 0 4px; font: 800 1.3rem/1.1 var(--font-display); color: var(--color-primary); }
+.explication-carte p { margin: 0; font-size: 1.02rem; line-height: 1.35; }
+.explication-carte button { grid-column: 1 / -1; justify-self: end; margin-top: 6px; }
+@media (orientation: landscape) and (min-aspect-ratio: 5/4) {
+  .explication { justify-items: end; align-items: center; padding: 58px 16px 12px; }
+  .explication-carte { width: min(40%, 440px); }
+}
+@media (prefers-reduced-motion: reduce) { .suite { animation: none; } }

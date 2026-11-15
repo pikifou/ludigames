@@ -35,7 +35,7 @@ for _ in range(50):
 try:
     with sync_playwright() as pw:
         nav = pw.chromium.launch(args=['--autoplay-policy=no-user-gesture-required'])
-        page = nav.new_page(viewport={'width': 390, 'height': 844})
+        page = nav.new_page(viewport={'width': 390, 'height': 844}, reduced_motion='reduce')
         page.goto(f'http://localhost:{PORT}/package.json')
         page.set_content(f'''<html><body style="margin:0"><script>window.messages=[];addEventListener('message',e=>messages.push(e.data));</script>
           <iframe id="jeu" style="width:390px;height:844px;border:0" src="{JEU}?lecon=en-passant"></iframe></body></html>''')
@@ -44,7 +44,7 @@ try:
         verifier(page.evaluate("messages.some(m => m.type === 'ludi:hello' && m.game === 'chemin-du-roi')"), 'le jeu dit bonjour au launcher')
         page.evaluate("document.getElementById('jeu').contentWindow.postMessage({type: 'ludi:wrapup', minutes: 0}, location.origin)")
         for _ in range(3):
-            cadre.locator('.bulle .suivant').click(force=True)
+            cadre.locator('.suite').click(force=True)
             page.wait_for_timeout(250)
         # Le coup secret : e5 prend d6 en passant.
         r = cadre.locator('.cases').bounding_box()
@@ -52,7 +52,9 @@ try:
         page.mouse.click(r['x'] + 4.5 * t, r['y'] + 3.5 * t)
         page.mouse.click(r['x'] + 3.5 * t, r['y'] + 2.5 * t)
         page.wait_for_timeout(1500)
-        cadre.locator('.bulle .suivant').click(force=True)
+        cadre.locator('.suite').click(force=True)  # bravo
+        page.wait_for_timeout(400)
+        cadre.locator('.suite').click(force=True)  # le dernier conseil de Barnabé
         cadre.locator('.fete .actions button').first.wait_for(timeout=15000)
         boutons = cadre.locator('.fete .actions button').all_inner_texts()
         verifier(boutons == ['Le chemin'], f'temps fini : la fête ne propose pas la leçon suivante ({boutons})')
@@ -68,7 +70,7 @@ try:
             if jeu.evaluate('__musique()'):
                 break
             page.wait_for_timeout(100)
-        verifier(jeu.evaluate('__musique()') == 'automne', "avec le son, la musique d'automne joue")
+        verifier(jeu.evaluate('__musique()') == 'ete', "avec le son, la musique de l'été joue (le coup secret est à la tour)")
         page.evaluate("document.getElementById('jeu').contentWindow.postMessage({type: 'ludi:pause'}, location.origin)")
         page.wait_for_timeout(300)
         verifier(jeu.evaluate('__musique()') is None, 'la pause de Ludiworld arrête la musique')

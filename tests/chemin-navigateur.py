@@ -62,8 +62,20 @@ def glisser(page, de, vers):
 
 
 def bouton(page, texte):
-    b = page.locator('.fete .actions button, .bulle .actions button', has_text=texte).filter(visible=True)
+    b = page.locator('.fete .actions button, .bulle .actions button, .jeu > .suite', has_text=texte).filter(visible=True)
     return b.first if b.count() else None
+
+
+PASSANT = []
+
+
+def attendre_tour(page):
+    """Attend que ce soit à Léo (ou la fin). La première prise en passant ouvre une explication : on la lit et on la ferme."""
+    page.wait_for_function("['toi', 'fin'].includes(document.querySelector('.plateau').dataset.tour) || !!document.querySelector('.explication')", timeout=30000)
+    if page.locator('.explication').count():
+        PASSANT.append(page.locator('.explication p').inner_text())
+        page.locator('.explication button').click(force=True)
+        page.wait_for_function("['toi', 'fin'].includes(document.querySelector('.plateau').dataset.tour)", timeout=30000)
 
 
 def jouer_partie(page, maxi=200):
@@ -71,7 +83,7 @@ def jouer_partie(page, maxi=200):
     for _ in range(maxi):
         if bouton(page, 'Continuer'):
             return True
-        page.wait_for_function("['toi', 'fin'].includes(document.querySelector('.plateau').dataset.tour)", timeout=30000)
+        attendre_tour(page)
         if bouton(page, 'Continuer'):
             return True
         # Une pièce blanche qui a des coups : on la touche, puis une case cible au hasard.
@@ -90,7 +102,7 @@ def jouer_partie(page, maxi=200):
         if not joue:
             page.wait_for_timeout(300)
             continue
-        page.wait_for_function("['toi', 'fin'].includes(document.querySelector('.plateau').dataset.tour)", timeout=30000)
+        attendre_tour(page)
         page.wait_for_timeout(250)
     return bool(bouton(page, 'Continuer'))
 
@@ -115,7 +127,7 @@ def faire_exercice(page, n):
 
 def chemin_complet(nav):
     print('Le chemin entier, depuis une sauvegarde vide (téléphone)')
-    page = nav.new_page(viewport={'width': 390, 'height': 844}, has_touch=True)
+    page = nav.new_page(viewport={'width': 390, 'height': 844}, has_touch=True, reduced_motion='reduce')  # le bouton Suivant apparaît sans attendre
     erreurs = []
     page.on('pageerror', lambda e: erreurs.append(str(e)))
     page.on('console', lambda m: erreurs.append(m.text) if m.type == 'error' else None)
@@ -170,13 +182,15 @@ def chemin_complet(nav):
     print('   étoiles :', total)
     verifier(page.locator('.panier').count() == 1, 'le panier de pommes est sur le chemin : ' + page.locator('.panier').inner_text().strip())
     page.screenshot(path=str(CAPTURES / 'chemin-fini.png'))
+    if PASSANT:
+        print('   la prise en passant a été expliquée pendant une partie :', PASSANT[0][:70], '…')
     verifier(not erreurs, f'aucune erreur dans la console ({erreurs[:3]})')
     page.close()
 
 
 def partie_ami(nav):
     print('Une vraie partie avec Lina (tablette), annuler, dangers')
-    page = nav.new_page(viewport={'width': 1180, 'height': 820}, has_touch=True)
+    page = nav.new_page(viewport={'width': 1180, 'height': 820}, has_touch=True, reduced_motion='reduce')
     erreurs = []
     page.on('pageerror', lambda e: erreurs.append(str(e)))
     page.goto(BASE + '?amis')
