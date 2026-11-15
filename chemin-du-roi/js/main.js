@@ -323,6 +323,7 @@ function bulle(e, qui, texte, boutons = [], { joie = false, aide = '', pense = f
   b.classList.remove('arrive'); void b.offsetWidth; b.classList.add('arrive');
   b.classList.toggle('pense', pense);
   b.classList.toggle('de-leo', qui === 'enfant');
+  b.querySelector('.note')?.remove();
   b.querySelector('.texte').textContent = texte;
   const a = b.querySelector('.aide');
   a.hidden = !aide; a.textContent = aide;
@@ -333,7 +334,7 @@ function bulle(e, qui, texte, boutons = [], { joie = false, aide = '', pense = f
   for (const bt of boutons) {
     // « Suivant » (et « Continuer ») ne reste pas dans la bulle : un gros bouton monte du bas de l'écran.
     const grand = bt.classe === 'suivant';
-    const n = h(grand ? `<button class="suivant suite">${bt.texte}<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>` : `<button class="${bt.classe || 'petit'}">${bt.texte}</button>`);
+    const n = h(grand ? `<button class="suivant suite" style="--attente: ${bt.attente ?? 1.3}s">${bt.texte}<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>` : `<button class="${bt.classe || 'petit'}">${bt.texte}</button>`);
     n.onclick = ev => { ev.stopPropagation(); n.disabled = true; bt.act(); };
     (grand ? e : zone).appendChild(n);
   }
@@ -388,7 +389,12 @@ function lancerLecon(lecon) {
   const plateau = new Plateau(e.querySelector('.plateau-el'), { surCoup: m => surCoup(m), surRefus: (de, vers, r) => surRefus(r) });
   const etapes = lecon.etapes;
   const prog = e.querySelector('.progression');
-  prog.innerHTML = etapes.map(s => `<i class="${s.ex ? 'ex' : ''}"></i>`).join('');
+  prog.innerHTML = etapes.map(s => (s.ex ? '<i class="ex"><b></b><b></b><b></b></i>' : '<i></i>')).join('');
+  const majProg = () => [...prog.children].forEach((d, k) => {
+    d.classList.toggle('fait', k < i); d.classList.toggle('la', k === i);
+    const x = etapes[k].ex;
+    if (x) d.dataset.n = etat.notes[x.id] || 0;
+  });
   let i = -1, ex = null, partie = null;
 
   const apercu = j => {
@@ -399,7 +405,7 @@ function lancerLecon(lecon) {
 
   function suivante() {
     i++;
-    [...prog.children].forEach((d, k) => { d.classList.toggle('fait', k < i); d.classList.toggle('la', k === i); });
+    majProg();
     if (i >= etapes.length) return finLecon();
     const s = etapes[i], qui = quiEtape();
     ex = null; partie = null;
@@ -527,11 +533,16 @@ function lancerLecon(lecon) {
     if (ex.aide) extra = ' Avec un indice, c\'est 2 étoiles au plus. Refais-le tout seul pour en avoir 3 !';
     else if (SEUL.includes(d.type) && n < 3 && ex.minimum) extra = ` On peut le faire en ${ex.minimum} coup${ex.minimum > 1 ? 's' : ''}. Tu veux réessayer ?`;
     else if (n < 3) extra = " Du premier coup, c'est 3 étoiles !";
-    bulle(e, qui, auHasard(BRAVO) + extra, [
-      ...(n < 3 ? [{ texte: 'Refaire', classe: 'petit', act: () => demarrerExercice(d) }] : []),
-      { texte: 'Suivant', classe: 'suivant', act: () => { son('pose'); suivante(); } },
-    ], { joie: true });
-    e.querySelector('.bulle .texte').insertAdjacentHTML('afterbegin', etoiles(n) + ' ');
+    const mot = n === 3 ? auHasard(BRAVO) : n === 2 ? 'Réussi !' : 'Ouf, réussi !';
+    bulle(e, qui, mot + extra, [
+      ...(n < 3 ? [{ texte: `Refaire pour avoir ${etoiles(3)}`, classe: 'refaire', act: () => demarrerExercice(d) }] : []),
+      { texte: 'Suivant', classe: 'suivant', attente: n < 3 ? 2.6 : 1.3, act: () => { son('pose'); suivante(); } },
+    ], { joie: n === 3 });
+    const note = h(`<div class="note n${n}" aria-label="${n} étoile${n > 1 ? 's' : ''} sur 3">${etoiles(n)}<b>${n === 3 ? '3 étoiles !' : `${n} étoile${n > 1 ? 's' : ''} sur 3`}</b></div>`);
+    const b = e.querySelector('.bulle');
+    b.insertBefore(note, b.firstChild);
+    if (n < 3) setTimeout(() => { if (note.isConnected) son('refus'); }, 300 + n * 220);
+    majProg();
   }
 
   function finLecon() {

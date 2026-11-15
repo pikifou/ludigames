@@ -446,3 +446,29 @@ body.ludiworld .haut { padding-left: 130px; }
   .explication-carte { width: min(40%, 440px); }
 }
 @media (prefers-reduced-motion: reduce) { .suite { animation: none; } }
+
+/* La note d'un exercice : trois grosses étoiles en tête de bulle. Une étoile qui manque est un creux sombre, bien différent. */
+.etoiles i:not(.pleine), .grosses-etoiles i:not(.pleine) { filter: grayscale(1) brightness(.38) opacity(.5); }
+.note { display: flex; align-items: center; gap: 10px; margin: -2px 0 8px; padding-bottom: 8px; border-bottom: 2px dashed rgba(43, 47, 82, .15); }
+.note .etoiles { gap: 4px; }
+.note .etoiles i { width: 42px; height: 42px; }
+.note .etoiles i.pleine { animation: pop .45s var(--rebond) backwards; }
+.note .etoiles i:nth-child(2) { animation-delay: .22s; }
+.note .etoiles i:nth-child(3) { animation-delay: .44s; }
+.note .etoiles i:not(.pleine) { animation: manque .5s .7s ease-in-out backwards; }
+@keyframes manque { 0% { transform: scale(.4); opacity: 0; } 40% { transform: scale(1.1) rotate(-10deg); } 70% { transform: rotate(8deg); } }
+.note b { white-space: nowrap; font: 800 1.08rem/1.1 var(--font-display); color: var(--color-encre-douce); }
+.note.n3 b { color: var(--color-primary); }
+/* « Refaire » quand il manque des étoiles : un vrai bouton doré, pas un petit bouton gris. */
+.refaire { display: inline-flex; align-items: center; gap: .35em; font: 800 1.05rem var(--font-display); padding: .35em 1em; border-radius: 999px 999px 999px 999px / 60% 60% 70% 70%;
+  background: #f6d27a; color: var(--color-encre); box-shadow: 0 4px 0 #c99a2e; animation: respire 1.8s 1.2s ease-in-out infinite; }
+.refaire .etoiles i { width: 22px; height: 22px; filter: none; }
+.refaire:active { transform: translateY(3px); box-shadow: 0 1px 0 #c99a2e; }
+.suite { animation-delay: var(--attente, 1.3s), calc(var(--attente, 1.3s) + .9s); }
+/* La barre du haut : chaque exercice montre les étoiles gagnées. */
+.progression i.ex { width: auto; height: auto; display: inline-flex; gap: 1px; padding: 2px 4px; border-radius: 8px; background: rgba(43, 47, 82, .1); }
+.progression i.ex b { width: 11px; height: 11px; background: url(img/etoile-vide.webp) center / contain no-repeat; filter: grayscale(1) brightness(.55) opacity(.4); }
+.progression i.ex[data-n="1"] b:nth-child(-n+1), .progression i.ex[data-n="2"] b:nth-child(-n+2), .progression i.ex[data-n="3"] b { background-image: url(img/etoile.webp); filter: none; }
+.progression i.ex.fait { background: rgba(47, 127, 122, .18); }
+.progression i.ex.la { background: rgba(200, 100, 59, .25); transform: scale(1.15); }
+@media (prefers-reduced-motion: reduce) { .note .etoiles i, .refaire { animation: none; } }
