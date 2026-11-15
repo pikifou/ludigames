@@ -1,7 +1,7 @@
 // Le Monde à la craie : chargement, progression, passage d'un écran à l'autre.
 import { chargerMonde } from './carte.js';
 import { fiche, prochainSavoir } from './savoirs.js';
-import { charger, sauver, cleRecord } from './progres.js';
+import { charger, sauver, cleRecord, versPartage, depuisPartage } from './progres.js';
 import { dansNiveau, niveauValide } from './niveaux.js';
 import { langue, choisirLangue } from './textes.js';
 import { sonActif } from './sons.js';
@@ -39,6 +39,12 @@ if (Ludi) {
 }
 const dansLudi = !!(Ludi && Ludi.inLauncher());
 const etat = charger(joueur);
+if (Ludi) {
+  // Une progression plus récente venue d'un autre appareil (par le compte du parent) remplace celle-ci, sauf les réglages de l'appareil.
+  Ludi.onRestore(d => { if (depuisPartage(etat, d)) sauver(joueur, etat); });
+  // Une progression d'avant ce changement : on la confie aussi à Ludiworld, sans écraser une plus récente venue d'ailleurs.
+  if (etat.connus.size || Object.keys(etat.meilleurs).length) Ludi.save(versPartage(etat), { existante: true });
+}
 sonActif(etat.son);
 choisirLangue(etat.langue || langue);
 
@@ -74,7 +80,7 @@ const app = {
       .map(f => ({ code: f.properties.code, rang: f.properties.rang }));
   },
   niveau(zone) { return niveauValide(etat.niveaux[zone]); },
-  sauver() { sauver(joueur, etat); },
+  sauver() { sauver(joueur, etat); if (Ludi) Ludi.save(versPartage(etat)); },
 
   // Une carte neuve à chaque écran (ses gestes ne s'empilent pas sur ceux de l'écran d'avant).
   nouvelleCarte() {

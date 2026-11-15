@@ -50,10 +50,29 @@ test('la fiche Ludiworld', () => {
   assert.ok(!/—/.test(JSON.stringify(f)), 'pas de tiret long');
 });
 
-test('le kit Ludiworld est la version 0.2.0', () => {
-  assert.match(lire('ludi.js'), /VERSION = '0\.2\.0'/);
+test('le kit Ludiworld est la version 0.3.0', () => {
+  assert.match(lire('ludi.js'), /VERSION = '0\.3\.0'/);
 });
 
 test("le service worker télécharge des fichiers frais à l'installation (pas le cache HTTP)", () => {
   assert.match(lire('sw.js'), /cache: 'reload'/);
+});
+
+test("la progression confiée à Ludiworld : sans les réglages de l'appareil, et reprise telle quelle ailleurs", async () => {
+  const { charger, sauver, versPartage, depuisPartage } = await import('../monde-a-la-craie/js/progres.js');
+  const memoire = () => { const m = new Map(); return { getItem: k => (m.has(k) ? m.get(k) : null), setItem: (k, v) => m.set(k, String(v)) }; };
+  const a = charger('Léo', memoire());
+  a.connus = new Set(['FR', 'DE', 'JP']); a.meilleurs = { europe: 61.5 }; a.niveaux = { europe: 'moyen' }; a.voix = true; a.son = false; a.langue = 'en';
+  const envoye = JSON.parse(JSON.stringify(versPartage(a)));
+  assert.deepEqual(Object.keys(envoye).sort(), ['connus', 'meilleurs', 'niveaux']);
+  const b = charger('Léo', memoire());
+  b.voix = false; b.son = true; b.langue = 'fr';
+  assert.equal(depuisPartage(b, envoye), true);
+  assert.deepEqual([...b.connus].sort(), ['DE', 'FR', 'JP']);
+  assert.deepEqual(b.meilleurs, { europe: 61.5 });
+  assert.deepEqual(b.niveaux, { europe: 'moyen' });
+  assert.deepEqual([b.voix, b.son, b.langue], [false, true, 'fr'], "les réglages de l'appareil ne bougent pas");
+  assert.equal(depuisPartage(b, { connus: 'n importe quoi' }), false);
+  assert.equal(depuisPartage(b, null), false);
+  assert.deepEqual(b.niveaux, { europe: 'moyen' }, 'une donnée refusée ne change rien');
 });

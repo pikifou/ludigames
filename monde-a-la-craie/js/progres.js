@@ -23,19 +23,37 @@ export function charger(joueur, stockage = stockageParDefaut()) {
   try {
     const brut = stockage && stockage.getItem(cle(joueur));
     if (!brut) return e;
-    const d = JSON.parse(brut);
-    if (Array.isArray(d.connus)) e.connus = new Set(d.connus.filter(c => typeof c === 'string'));
-    if (d.meilleurs && typeof d.meilleurs === 'object') {
-      for (const [z, t] of Object.entries(d.meilleurs)) if (typeof t === 'number' && t > 0) e.meilleurs[z] = t;
-    }
-    if (d.niveaux && typeof d.niveaux === 'object') {
-      for (const [z, n] of Object.entries(d.niveaux)) if (NIVEAUX.includes(n)) e.niveaux[z] = n;
-    }
-    if (typeof d.voix === 'boolean') e.voix = d.voix;
-    if (typeof d.son === 'boolean') e.son = d.son;
-    if (d.langue === 'fr' || d.langue === 'en') e.langue = d.langue;
+    appliquer(e, JSON.parse(brut));
   } catch { /* stockage illisible : progression vide */ }
   return e;
+}
+
+// Lit des données gardées (en les vérifiant) dans l'état. Ce qui manque ou est abîmé garde sa valeur.
+function appliquer(e, d) {
+  if (Array.isArray(d.connus)) e.connus = new Set(d.connus.filter(c => typeof c === 'string'));
+  if (d.meilleurs && typeof d.meilleurs === 'object') {
+    e.meilleurs = {};
+    for (const [z, t] of Object.entries(d.meilleurs)) if (typeof t === 'number' && t > 0) e.meilleurs[z] = t;
+  }
+  if (d.niveaux && typeof d.niveaux === 'object') {
+    e.niveaux = {};
+    for (const [z, n] of Object.entries(d.niveaux)) if (NIVEAUX.includes(n)) e.niveaux[z] = n;
+  }
+  if (typeof d.voix === 'boolean') e.voix = d.voix;
+  if (typeof d.son === 'boolean') e.son = d.son;
+  if (d.langue === 'fr' || d.langue === 'en') e.langue = d.langue;
+  return e;
+}
+
+// Ce que Ludiworld garde dans le compte du parent : la progression, pas les réglages de l'appareil (voix, son, langue).
+export function versPartage(etat) {
+  return { connus: [...etat.connus], meilleurs: etat.meilleurs, niveaux: etat.niveaux };
+}
+// Une progression venue d'un autre appareil remplace celle-ci, sauf les réglages de l'appareil.
+export function depuisPartage(etat, d) {
+  if (!d || typeof d !== 'object' || !Array.isArray(d.connus)) return false;
+  appliquer(etat, { connus: d.connus, meilleurs: d.meilleurs, niveaux: d.niveaux });
+  return true;
 }
 
 // Un meilleur temps par zone et par niveau. Les temps d'avant les niveaux (clé « europe ») sont ceux du Difficile.
