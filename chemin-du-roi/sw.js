@@ -1,13 +1,13 @@
 // Service worker du Chemin du Roi : tout le jeu est gardé à l'installation, il se joue hors ligne.
 // VERSION est l'empreinte des fichiers du jeu : node tools/version.js chemin-du-roi la met à jour.
-const VERSION = 'chemin-du-roi-7e78522ee4';
+const VERSION = 'chemin-du-roi-153fb9e776';
 const PERSOS = ['sage', 'enfant', 'lina', 'malo', 'ines', 'sacha', 'yuna'];
 const IMAGES = ['titre', 'carte', 'fond-portrait', 'fond-paysage', 'histoire-1', 'histoire-2', 'histoire-fin', 'enfant-marche', 'enfant-pense', 'etoile', 'etoile-vide', 'pomme',
   ...PERSOS, ...PERSOS.map(p => p + '-joie'), ...[1, 2, 3, 4, 5, 6, 7, 8].map(n => 'medaille-' + n),
   ...['w', 'b'].flatMap(c => ['k', 'q', 'r', 'b', 'n', 'p'].map(t => c + t))];
 const FICHIERS = [
   './', 'index.html', 'style.css', 'manifest.webmanifest', 'ludi.js',
-  'js/main.js', 'js/echecs.js', 'js/exercice.js', 'js/lecons.js', 'js/plateau.js', 'js/sons.js', 'js/voix.js',
+  'js/main.js', 'js/conseils.js', 'js/echecs.js', 'js/exercice.js', 'js/lecons.js', 'js/plateau.js', 'js/sons.js', 'js/voix.js',
   'fonts/baloo2-500.woff2', 'fonts/baloo2-700.woff2', 'fonts/baloo2-800.woff2', 'fonts/lexend.woff2',
   'icons/icon-192.png', 'icons/icon-512.png', 'icons/icon-maskable-512.png', 'icons/favicon-64.png',
   ...IMAGES.map(n => `img/${n}.webp`),

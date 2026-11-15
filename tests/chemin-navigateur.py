@@ -67,11 +67,20 @@ def bouton(page, texte):
 
 
 PASSANT = []
+CONSEILS = []
 
 
 def attendre_tour(page):
     """Attend que ce soit à Léo (ou la fin). La première prise en passant ouvre une explication : on la lit et on la ferme."""
-    page.wait_for_function("['toi', 'fin'].includes(document.querySelector('.plateau').dataset.tour) || !!document.querySelector('.explication')", timeout=30000)
+    page.wait_for_function("['toi', 'fin'].includes(document.querySelector('.plateau').dataset.tour) || !!document.querySelector('.explication, .bulle .refaire')", timeout=30000)
+    if page.locator('.bulle .refaire').count() and page.locator('.plateau').get_attribute('data-tour') == 'ami':
+        # Un conseil de l'ami (coup risqué ou occasion manquée) : une fois sur deux on reprend son coup.
+        CONSEILS.append(page.locator('.bulle .texte').inner_text())
+        if len(CONSEILS) % 2:
+            page.locator('.bulle .refaire').click(force=True)
+        else:
+            page.locator('.bulle .actions .petit').last.click(force=True)
+        return attendre_tour(page)
     if page.locator('.explication').count():
         PASSANT.append(page.locator('.explication p').inner_text())
         page.locator('.explication button').click(force=True)
@@ -182,6 +191,8 @@ def chemin_complet(nav):
     print('   étoiles :', total)
     verifier(page.locator('.panier').count() == 1, 'le panier de pommes est sur le chemin : ' + page.locator('.panier').inner_text().strip())
     page.screenshot(path=str(CAPTURES / 'chemin-fini.png'))
+    if CONSEILS:
+        print(f'   {len(CONSEILS)} conseil(s) des amis pendant les parties, par exemple :', CONSEILS[0][:80])
     if PASSANT:
         print('   la prise en passant a été expliquée pendant une partie :', PASSANT[0][:70], '…')
     verifier(not erreurs, f'aucune erreur dans la console ({erreurs[:3]})')

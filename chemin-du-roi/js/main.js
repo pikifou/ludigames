@@ -3,6 +3,7 @@ import { CHAPITRES, LECONS, PERSONNAGES, AMIS, DEPART, MEDAILLE_FINALE } from '.
 import { Exercice, SEUL, finDePartie } from './exercice.js';
 import { depuisFen, jouer, coupsLegaux, choisirCoup, enEchec, couleur, type, caseDe, roiDe } from './echecs.js';
 import { Plateau } from './plateau.js';
+import { erreur, occasionManquee } from './conseils.js';
 import { son, sonActif, musique, pauseMusique } from './sons.js';
 import { dire, voixDisponible } from './voix.js';
 
@@ -670,7 +671,9 @@ function demarrerPartie(e, plateau, def, qui, fini, options = {}) {
   majPrises();
 
   let texteBulle = def.dit || 'À toi de jouer, tu as les blancs.', joieBulle = false;
+  const rappels = {}; // les rappels des règles, une fois par partie
   const boutons = () => [
+    ...(options.conseils ? [{ texte: 'Un conseil', classe: 'petit', act: conseil }] : []),
     { texte: 'Annuler mon coup', classe: 'petit', act: annuler },
     { texte: plateau.dangers ? 'Cacher les dangers' : 'Voir les dangers', classe: 'petit', act: () => { plateau.dangers = !plateau.dangers; plateau.marques(); dire2(texteBulle, joieBulle); } },
   ];
@@ -685,6 +688,51 @@ function demarrerPartie(e, plateau, def, qui, fini, options = {}) {
     plateau.poser(pos, { apparaitre: true });
     majPrises();
     dire2('On reprend. À toi !');
+  }
+
+  // Un bon coup montré sur le plateau, quand Léo ne sait pas quoi jouer.
+  function conseil() {
+    if (termine || reflechit || pos.trait !== 'w') return;
+    const c = choisirCoup(pos, { prof: 2 });
+    if (!c) return;
+    plateau.montrerIndice(c);
+    dire2(`Un conseil : joue ${sa(c.piece)}, là où il y a le rond jaune.`);
+  }
+
+  // Les conseils de l'ami, juste après le coup de Léo : une étourderie qui coûte cher, ou un très bon coup laissé de côté.
+  // Renvoie true si Léo reprend son coup.
+  async function conseiller(avant, m) {
+    const err = erreur(avant, m);
+    const occ = err ? null : occasionManquee(avant, m);
+    if (!err && !occ) return false;
+    let texte, montre;
+    if (err) {
+      montre = err.m;
+      texte = err.mat ? 'Attention ! Si tu joues ça, je peux te faire échec et mat. Regarde la flèche dorée.'
+        : `Attention ! Si tu joues ça, je mange ${sa(err.m.prise)} avec ${ma(err.m.piece)}. Regarde !`;
+    } else {
+      montre = null;
+      texte = occ.mat ? 'Oh ! Tu avais un coup pour me faire échec et mat. Tu veux le chercher ?'
+        : `Oh ! Tu pouvais manger ${ma(occ.m.prise)} sans rien perdre. Tu veux le chercher ?`;
+    }
+    if (montre) plateau.montrerIndice(montre);
+    leo(e, 'pense');
+    const reponse = await new Promise(ok => bulle(e, qui, texte, [
+      { texte: err ? 'Je change mon coup' : 'Je rejoue', classe: 'refaire', act: () => ok(true) },
+      { texte: err ? 'Je le joue quand même' : 'Je continue', classe: 'petit', act: () => ok(false) },
+    ]));
+    plateau.oublierIndice();
+    if (!reponse || termine || !plateau.racine.isConnected) return false;
+    const h0 = historique.pop();
+    pos = h0.pos; prisesToi.length = h0.toi; prisesAmi.length = h0.ami;
+    plateau.dernier = null; plateau.choix = null;
+    plateau.poser(pos);
+    majPrises();
+    if (occ) plateau.montrerIndice(occ.m);
+    dire2(err ? (err.mat ? 'Cherche un coup qui protège ton roi.' : `Cherche un coup qui protège ${sa(err.m.prise)}.`)
+      : 'Regarde la pièce dorée et le rond jaune : à toi !');
+    plateau.interactif = true; tour('toi');
+    return true;
   }
 
   function terminer(r) {
@@ -722,6 +770,7 @@ function demarrerPartie(e, plateau, def, qui, fini, options = {}) {
     if (termine || reflechit) return;
     plateau.interactif = false; tour('ami');
     plateau.oublierIndice();
+    const avant = pos;
     historique.push({ pos, toi: prisesToi.length, ami: prisesAmi.length });
     pos = jouer(pos, m);
     son(m.prise ? 'prise' : 'pose');
@@ -730,6 +779,7 @@ function demarrerPartie(e, plateau, def, qui, fini, options = {}) {
     let r = finDePartie(pos, fin);
     if (!r && historique.length > 120) r = { gagnant: null, raison: 'long' };
     if (r) return terminer(r);
+    if (options.conseils && await conseiller(avant, m)) return;
     if (enEchec(pos)) son('echec');
     reflechit = true;
     // L'ami réfléchit : trois petits points dans sa bulle.
@@ -751,7 +801,10 @@ function demarrerPartie(e, plateau, def, qui, fini, options = {}) {
       const possible = coupsLegaux(pos).find(x => x.enPassant);
       if (c.enPassant || possible) await expliquerPassant(e, plateau, qui, c.enPassant ? c : possible, !!c.enPassant);
     }
-    if (enEchec(pos)) { son('echec'); dire2('Échec ! Sauve ton roi.'); }
+    const legaux = coupsLegaux(pos);
+    if (enEchec(pos)) { son('echec'); dire2('Échec ! Pour sauver ton roi : bouge-le, prends la pièce qui l\'attaque, ou mets une pièce devant.'); }
+    else if (options.conseils && !rappels.roque && legaux.some(x => x.roque)) { rappels.roque = true; dire2('Tu peux roquer maintenant : ton roi sera à l\'abri dans son coin.'); }
+    else if (options.conseils && !rappels.promo && legaux.some(x => x.promo)) { rappels.promo = true; dire2('Ton pion peut arriver tout au bout : il deviendra une dame !'); }
     else if (c.prise) dire2(type(c.prise) === 'p' ? `Je t'ai pris ${sa(c.prise)}. À toi !` : `Je t'ai pris ${sa(c.prise)} ! Regarde bien les dangers.`, type(c.prise) !== 'p');
     else dire2(auHasard(['À toi !', 'À toi de jouer.', 'Hmm… à toi !']));
     plateau.interactif = true; tour('toi');
@@ -797,7 +850,7 @@ function lancerPartie(ami) {
         feter(e2, { titre: 'Grand champion !', qui: 'sage', medaille: MEDAILLE_FINALE, texte: 'Léo a terminé le Chemin du Roi.', boutons: [{ texte: 'Continuer', classe: 'suivant', act: ecranAmis }] });
       });
     } else ecranAmis();
-  });
+  }, { conseils: true });
 }
 
 // Pour les tests : aller directement à une leçon (?lecon=tour), aux amis (?amis), au chemin (?chemin), à l'histoire (?histoire, ?fin).

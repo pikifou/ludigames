@@ -257,12 +257,14 @@ export const CHAPITRES = [
 
 // Les vraies parties, de la plus facile à la plus difficile.
 export const AMIS = [
+// Tous jouent doucement : le but est une première vraie victoire. Pendant la partie, l'ami prévient Léo
+// quand un coup lui ferait perdre une grosse pièce, et lui montre un très bon coup qu'il a laissé passer.
   { qui: 'lina', niveau: { prof: 1, hasard: 0.6, bruit: 200 }, mot: "Je débute aussi, on s'amuse !" },
-  { qui: 'malo', niveau: { prof: 1, hasard: 0.25, bruit: 120 }, mot: "Je vais tout manger !" },
-  { qui: 'ines', niveau: { prof: 2, hasard: 0.15, bruit: 90 }, mot: "Je regarde où sont les pièges." },
-  { qui: 'sacha', niveau: { prof: 2, hasard: 0.05, bruit: 50 }, mot: "Mes cavaliers vont te surprendre." },
-  { qui: 'yuna', niveau: { prof: 2, hasard: 0, bruit: 20 }, mot: "Je cherche toujours le mat." },
-  { qui: 'sage', niveau: { prof: 3, hasard: 0, bruit: 15 }, mot: "Montre-moi tout ce que tu as appris." },
+  { qui: 'malo', niveau: { prof: 1, hasard: 0.45, bruit: 160 }, mot: "Je vais tout manger !" },
+  { qui: 'ines', niveau: { prof: 1, hasard: 0.35, bruit: 130 }, mot: "Je regarde où sont les pièges." },
+  { qui: 'sacha', niveau: { prof: 1, hasard: 0.28, bruit: 110 }, mot: "Mes cavaliers vont te surprendre." },
+  { qui: 'yuna', niveau: { prof: 1, hasard: 0.2, bruit: 90 }, mot: "Je cherche toujours le mat." },
+  { qui: 'sage', niveau: { prof: 1, hasard: 0.2, bruit: 90 }, mot: "Je vais t'aider pendant la partie. Sors tes cavaliers et tes fous, prends le centre, et pense à roquer !" },
 ];
 
 // La médaille 8 : avoir battu Barnabé.
