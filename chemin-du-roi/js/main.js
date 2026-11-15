@@ -30,7 +30,21 @@ const toutOuvert = q.has('tout');
 // Le jeu démarre muet : la voix et les sons s'allument avec le haut-parleur.
 let etat = { notes: {}, lecons: {}, amis: {}, medailles: {}, voix: false, son: false, histoire: false, place: 0, fin: false };
 try { Object.assign(etat, JSON.parse(localStorage.getItem(CLE)) || {}); } catch { /* première fois */ }
-const sauver = () => { try { localStorage.setItem(CLE, JSON.stringify(etat)); } catch { /* navigation privée */ } };
+// Ce qui suit l'enfant dans son compte Ludiworld : tout sauf les réglages de son et de voix, propres à chaque appareil.
+const partage = () => { const { voix, son, ...reste } = etat; return reste; };
+const sauver = () => {
+  try { localStorage.setItem(CLE, JSON.stringify(etat)); } catch { /* navigation privée */ }
+  try { Ludi?.save(partage()); } catch { /* sans kit */ }
+};
+// Une progression plus récente venue d'un autre appareil : on la range comme la nôtre et on recharge.
+try {
+  Ludi?.onRestore(d => {
+    if (!d || typeof d !== 'object' || !d.notes || !d.lecons) return;
+    try { localStorage.setItem(CLE, JSON.stringify({ ...etat, ...d, voix: etat.voix, son: etat.son })); location.reload(); } catch { /* ignore */ }
+  });
+  // Une partie commencée avant ce changement : on la confie aussi à Ludiworld (sans écraser une plus récente venue d'ailleurs).
+  if (localStorage.getItem(CLE)) Ludi?.save(partage(), { existante: true });
+} catch { /* sans kit */ }
 sonActif(etat.son);
 
 const exercicesDe = l => l.etapes.filter(e => e.ex).map(e => e.ex);
