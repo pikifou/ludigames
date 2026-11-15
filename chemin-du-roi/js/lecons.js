@@ -15,7 +15,7 @@ const dit = (texte, qui) => ({ dit: texte, qui });
 
 export const CHAPITRES = [
   {
-    id: 'pieces', medaille: 1, qui: 'sage', titre: 'Les pièces', lieu: 'La maison de Barnabé', x: 34, y: 82, pied: [52, 88],
+    id: 'pieces', saison: 'automne', medaille: 1, qui: 'sage', titre: 'Les pièces', lieu: 'La maison de Barnabé', x: 34, y: 82, pied: [52, 88],
     lecons: [
       {
         id: 'tour', titre: 'La tour', piece: 'wr',
@@ -83,7 +83,7 @@ export const CHAPITRES = [
     ],
   },
   {
-    id: 'pions', medaille: 2, qui: 'lina', titre: 'La course des pions', lieu: 'Le potager de Lina', x: 30, y: 66, pied: [57, 73],
+    id: 'pions', saison: 'automne', medaille: 2, qui: 'lina', titre: 'La course des pions', lieu: 'Le potager de Lina', x: 30, y: 66, pied: [57, 73],
     lecons: [
       {
         id: 'promotion', titre: 'Le pion devient dame', piece: 'wq',
@@ -117,7 +117,7 @@ export const CHAPITRES = [
     ],
   },
   {
-    id: 'prises', medaille: 3, qui: 'malo', titre: 'Le croque-pièces', lieu: 'La boulangerie de Malo', x: 66, y: 54, pied: [53, 59],
+    id: 'prises', saison: 'hiver', medaille: 3, qui: 'malo', titre: 'Le croque-pièces', lieu: 'La boulangerie de Malo', x: 66, y: 54, pied: [53, 59],
     lecons: [
       {
         id: 'croquer', titre: 'Tout croquer', piece: 'wr',
@@ -151,7 +151,7 @@ export const CHAPITRES = [
     ],
   },
   {
-    id: 'pieges', medaille: 4, qui: 'ines', titre: 'Gare aux pièges', lieu: 'La bibliothèque d\'Inès', x: 32, y: 43, pied: [48, 47],
+    id: 'pieges', saison: 'hiver', medaille: 4, qui: 'ines', titre: 'Gare aux pièges', lieu: 'La bibliothèque d\'Inès', x: 32, y: 43, pied: [48, 47],
     lecons: [
       {
         id: 'danger', titre: 'Les cases dangereuses', piece: 'wr',
@@ -177,7 +177,7 @@ export const CHAPITRES = [
     ],
   },
   {
-    id: 'echec', medaille: 5, qui: 'sacha', titre: 'Échec au roi', lieu: 'La maison de Sacha', x: 68, y: 35, pied: [56, 40],
+    id: 'echec', saison: 'printemps', medaille: 5, qui: 'sacha', titre: 'Échec au roi', lieu: 'La maison de Sacha', x: 68, y: 35, pied: [56, 40],
     lecons: [
       {
         id: 'donner', titre: 'Faire échec', piece: 'wn',
@@ -207,7 +207,7 @@ export const CHAPITRES = [
     ],
   },
   {
-    id: 'mat', medaille: 6, qui: 'yuna', titre: 'Échec et mat', lieu: 'Le fort de Yuna', x: 32, y: 25, pied: [47, 30],
+    id: 'mat', saison: 'printemps', medaille: 6, qui: 'yuna', titre: 'Échec et mat', lieu: 'Le fort de Yuna', x: 32, y: 25, pied: [47, 30],
     lecons: [
       {
         id: 'mat-1', titre: 'Le premier mat', piece: 'bk',
@@ -234,7 +234,7 @@ export const CHAPITRES = [
     ],
   },
   {
-    id: 'tour-finale', medaille: 7, qui: 'sage', titre: 'La vraie partie', lieu: 'La tour du château', x: 50, y: 12, pied: [52, 19],
+    id: 'tour-finale', saison: 'ete', medaille: 7, qui: 'sage', titre: 'La vraie partie', lieu: 'La tour du château', x: 50, y: 12, pied: [52, 19],
     lecons: [
       {
         id: 'roque', titre: 'Le roque', piece: 'wk',

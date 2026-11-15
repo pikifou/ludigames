@@ -1,7 +1,7 @@
 // Petits sons fabriqués par le navigateur (pas de fichiers) : pièce posée, prise, étoile, raté, victoire.
 let ctx = null, actif = true;
 
-export function sonActif(oui) { actif = oui; }
+export function sonActif(oui) { actif = oui; majMusique(); }
 
 function audio() {
   if (!ctx) {
@@ -55,3 +55,72 @@ export function son(nom) {
     else if (nom === 'perdu') [392, 330, 262].forEach((f, i) => note(a, f, i * 0.16, 0.35, 0.08, 'sine'));
   } catch { /* pas de son, tant pis */ }
 }
+
+// ---------- La musique des saisons ----------
+// Une musique par saison (automne, hiver, printemps, été), qui suit le chemin de Léo.
+// Elle tourne en boucle sans couture : la fin du morceau se fond dans son début.
+// Elle se coupe avec le haut-parleur, quand le jeu est caché, et pendant la pause de Ludiworld.
+const VOLUME_MUSIQUE = 0.55, FONDU = 2.5, RACCORD = 4;
+let voulue = null, enPause = false, courante = null;
+const tampons = new Map();
+
+function charger(nom) {
+  if (!tampons.has(nom)) {
+    const a = audio();
+    tampons.set(nom, fetch(`musique/${nom}.mp3`).then(r => r.arrayBuffer()).then(b => a.decodeAudioData(b)).then(bouclable)
+      .catch(() => { tampons.delete(nom); return null; }));
+  }
+  return tampons.get(nom);
+}
+
+// Le morceau sans ses RACCORD premières secondes, et sa fin fondue avec elles : la boucle ne s'entend pas.
+function bouclable(buf) {
+  const a = audio(), x = Math.min(Math.floor(RACCORD * buf.sampleRate), Math.floor(buf.length / 4));
+  const n = buf.length - x, out = a.createBuffer(buf.numberOfChannels, n, buf.sampleRate);
+  for (let c = 0; c < buf.numberOfChannels; c++) {
+    const src = buf.getChannelData(c), dst = out.getChannelData(c);
+    dst.set(src.subarray(x));
+    for (let i = 0; i < x; i++) {
+      const t = i / x, k = n - x + i;
+      dst[k] = src[x + k] * Math.cos(t * Math.PI / 2) + src[i] * Math.sin(t * Math.PI / 2);
+    }
+  }
+  return out;
+}
+
+function eteindre(m) {
+  if (!m) return;
+  const a = audio(), t = a.currentTime;
+  m.gain.gain.cancelScheduledValues(t);
+  m.gain.gain.setValueAtTime(m.gain.gain.value, t);
+  m.gain.gain.linearRampToValueAtTime(0, t + FONDU);
+  setTimeout(() => { try { m.src.stop(); } catch { /* déjà arrêtée */ } }, FONDU * 1000 + 100);
+}
+
+function majMusique() {
+  const jouer = actif && !enPause && voulue && !globalThis.document?.hidden;
+  if (!jouer) { eteindre(courante); courante = null; return; }
+  if (courante?.nom === voulue) return;
+  const nom = voulue, a = audio();
+  if (!a) return;
+  charger(nom).then(buf => {
+    if (!buf || voulue !== nom || !actif || enPause || courante?.nom === nom) return;
+    eteindre(courante);
+    const src = a.createBufferSource(), gain = a.createGain();
+    src.buffer = buf; src.loop = true;
+    gain.gain.setValueAtTime(0, a.currentTime);
+    gain.gain.linearRampToValueAtTime(VOLUME_MUSIQUE, a.currentTime + FONDU);
+    src.connect(gain).connect(a.destination);
+    src.start();
+    courante = { nom, src, gain };
+  });
+}
+
+// La saison à entendre : 'automne', 'hiver', 'printemps' ou 'ete'.
+export function musique(nom) { voulue = nom; majMusique(); }
+export function pauseMusique(oui) { enPause = oui; majMusique(); }
+globalThis.document?.addEventListener('visibilitychange', majMusique);
+// Le navigateur n'autorise le son qu'après un geste : au premier toucher, on relance.
+globalThis.addEventListener?.('pointerdown', () => { if (actif && ctx?.state === 'suspended') ctx.resume(); });
+// Pour les tests : la saison qu'on entend en ce moment (ou null).
+globalThis.__musique = () => courante?.nom ?? null;

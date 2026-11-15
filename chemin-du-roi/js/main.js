@@ -3,7 +3,7 @@ import { CHAPITRES, LECONS, PERSONNAGES, AMIS, DEPART, MEDAILLE_FINALE } from '.
 import { Exercice, SEUL, finDePartie } from './exercice.js';
 import { depuisFen, jouer, coupsLegaux, choisirCoup, enEchec, couleur, type, caseDe, roiDe } from './echecs.js';
 import { Plateau } from './plateau.js';
-import { son, sonActif } from './sons.js';
+import { son, sonActif, musique, pauseMusique } from './sons.js';
 import { dire, voixDisponible } from './voix.js';
 
 const Ludi = globalThis.Ludi;
@@ -18,6 +18,7 @@ kit(L => L.onWrapUp(minutes => { if (minutes <= 0) tempsFini = true; }));
 kit(L => L.onPause(() => {
   if (document.querySelector('.voile-pause')) return;
   globalThis.speechSynthesis?.cancel();
+  pauseMusique(true);
   document.body.insertAdjacentHTML('beforeend', '<div class="voile-pause" role="dialog" aria-label="Pause"><div><img src="img/sage.webp" alt=""><p>Pause !</p><small>On reprendra plus tard.</small></div></div>');
 }));
 
@@ -123,6 +124,7 @@ function envolerPomme(de, vers, fini) {
 
 // ---------- L'écran titre ----------
 function ecranTitre() {
+  musique('automne');
   const commence = etat.histoire;
   const e = ecran('titre', `
     <div class="titre-image"></div>
@@ -188,6 +190,7 @@ function ecranCarte(ouvrir) {
   // Le panier de Léo : toutes les pommes ramassées depuis le début.
   const pommes = LECONS.flatMap(exercicesDe).filter(x => x.type === 'etoiles' && etat.notes[x.id]).reduce((s, x) => s + x.etoiles.length, 0);
   const actuel = indexActuel();
+  musique(etat.fin ? 'ete' : CHAPITRES[actuel].saison);
   const depart = Math.min(etat.place || 0, actuel);
   const nbMedailles = Object.keys(etat.medailles).length;
   const e = ecran('chemin', `
@@ -377,6 +380,7 @@ function objectif(e, html) { e.querySelector('.objectif').innerHTML = html; }
 
 function lancerLecon(lecon) {
   const chapitre = chapitreDe(lecon);
+  musique(chapitre.saison);
   const e = ecranJeu(lecon.titre, () => ecranCarte(chapitre));
   const plateau = new Plateau(e.querySelector('.plateau-el'), { surCoup: m => surCoup(m), surRefus: (de, vers, r) => surRefus(r) });
   const etapes = lecon.etapes;
@@ -717,6 +721,7 @@ function demarrerPartie(e, plateau, def, qui, fini, options = {}) {
 
 // ---------- Jouer avec les amis ----------
 function ecranAmis() {
+  musique('ete');
   const e = ecran('amis', `
     ${boutonsHaut('chemin', 'Jouer avec les amis')}
     <p class="intro">Une vraie partie, du début à la fin. Léo a les blancs : il commence. Les amis sont rangés du plus facile au plus fort.</p>

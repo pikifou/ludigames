@@ -1,6 +1,6 @@
 // Service worker du Chemin du Roi : tout le jeu est gardé à l'installation, il se joue hors ligne.
 // VERSION est l'empreinte des fichiers du jeu : node tools/version.js chemin-du-roi la met à jour.
-const VERSION = 'chemin-du-roi-551f47ea28';
+const VERSION = 'chemin-du-roi-e394b1aadd';
 const PERSOS = ['sage', 'enfant', 'lina', 'malo', 'ines', 'sacha', 'yuna'];
 const IMAGES = ['titre', 'carte', 'fond-portrait', 'fond-paysage', 'histoire-1', 'histoire-2', 'histoire-fin', 'enfant-marche', 'enfant-pense', 'etoile', 'etoile-vide', 'pomme',
   ...PERSOS, ...PERSOS.map(p => p + '-joie'), ...[1, 2, 3, 4, 5, 6, 7, 8].map(n => 'medaille-' + n),
@@ -11,6 +11,8 @@ const FICHIERS = [
   'fonts/baloo2-500.woff2', 'fonts/baloo2-700.woff2', 'fonts/baloo2-800.woff2', 'fonts/lexend.woff2',
   'icons/icon-192.png', 'icons/icon-512.png', 'icons/icon-maskable-512.png', 'icons/favicon-64.png',
   ...IMAGES.map(n => `img/${n}.webp`),
+  // La musique d'automne (le début du chemin) ; les autres saisons se gardent quand on les entend.
+  'musique/automne.mp3',
 ];
 
 self.addEventListener('install', e => {

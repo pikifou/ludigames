@@ -34,7 +34,7 @@ for _ in range(50):
         time.sleep(0.1)
 try:
     with sync_playwright() as pw:
-        nav = pw.chromium.launch()
+        nav = pw.chromium.launch(args=['--autoplay-policy=no-user-gesture-required'])
         page = nav.new_page(viewport={'width': 390, 'height': 844})
         page.goto(f'http://localhost:{PORT}/package.json')
         page.set_content(f'''<html><body style="margin:0"><script>window.messages=[];addEventListener('message',e=>messages.push(e.data));</script>
@@ -62,8 +62,16 @@ try:
         verifier(data.get('progress', {}).get('lecons', {}).get('value') == 1, 'progression : une leçon finie')
         verifier(any(e.get('kind') == 'skill' and e.get('domain') == 'logique.puzzle' for e in evts), 'une notion enregistrée (logique.puzzle)')
         verifier(page.evaluate("messages.some(m => m.type === 'ludi:event')"), 'les événements partent vers le launcher')
+        cadre.locator('[data-act=voix]').evaluate('b => b.click()')  # la fête couvre l'écran : on touche le bouton directement
+        jeu = page.frame(url=lambda u: 'chemin-du-roi' in u)
+        for _ in range(60):
+            if jeu.evaluate('__musique()'):
+                break
+            page.wait_for_timeout(100)
+        verifier(jeu.evaluate('__musique()') == 'automne', "avec le son, la musique d'automne joue")
         page.evaluate("document.getElementById('jeu').contentWindow.postMessage({type: 'ludi:pause'}, location.origin)")
         page.wait_for_timeout(300)
+        verifier(jeu.evaluate('__musique()') is None, 'la pause de Ludiworld arrête la musique')
         verifier(cadre.locator('.voile-pause').is_visible(), 'la pause de Ludiworld couvre le jeu')
         nav.close()
 finally:
