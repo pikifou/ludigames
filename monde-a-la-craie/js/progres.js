@@ -10,7 +10,18 @@ export function cle(joueur) {
 
 function etatVide() {
   // langue null : celle de l'appareil. niveaux : le dernier niveau choisi pour chaque zone.
-  return { connus: new Set(), meilleurs: {}, niveaux: {}, voix: false, son: true, langue: null };
+  // voyage : le tour du monde de Nina (étapes gagnées dans l'ordre, intro vue, tour fait). Rien ne s'y enlève.
+  return { connus: new Set(), meilleurs: {}, niveaux: {}, voix: false, son: true, langue: null, voyage: voyageVide() };
+}
+const voyageVide = () => ({ etapes: [], intro: false, fini: false });
+const ZONES_VOYAGE = ['europe', 'afrique', 'asie', 'amerique-nord', 'amerique-sud', 'oceanie'];
+
+// Ajoute un voyage gardé à celui-ci : les étapes s'additionnent, intro et fin ne s'effacent pas.
+function fusionnerVoyage(v, d) {
+  if (!d || typeof d !== 'object') return;
+  if (Array.isArray(d.etapes)) for (const z of d.etapes) if (ZONES_VOYAGE.includes(z) && !v.etapes.includes(z)) v.etapes.push(z);
+  if (d.intro === true) v.intro = true;
+  if (d.fini === true) v.fini = true;
 }
 
 function stockageParDefaut() {
@@ -42,17 +53,19 @@ function appliquer(e, d) {
   if (typeof d.voix === 'boolean') e.voix = d.voix;
   if (typeof d.son === 'boolean') e.son = d.son;
   if (d.langue === 'fr' || d.langue === 'en') e.langue = d.langue;
+  fusionnerVoyage(e.voyage, d.voyage);
   return e;
 }
 
 // Ce que Ludiworld garde dans le compte du parent : la progression, pas les réglages de l'appareil (voix, son, langue).
 export function versPartage(etat) {
-  return { connus: [...etat.connus], meilleurs: etat.meilleurs, niveaux: etat.niveaux };
+  return { connus: [...etat.connus], meilleurs: etat.meilleurs, niveaux: etat.niveaux, voyage: etat.voyage };
 }
 // Une progression venue d'un autre appareil remplace celle-ci, sauf les réglages de l'appareil.
+// Le voyage, lui, s'additionne : un tampon gagné ici ou là-bas reste gagné.
 export function depuisPartage(etat, d) {
   if (!d || typeof d !== 'object' || !Array.isArray(d.connus)) return false;
-  appliquer(etat, { connus: d.connus, meilleurs: d.meilleurs, niveaux: d.niveaux });
+  appliquer(etat, { connus: d.connus, meilleurs: d.meilleurs, niveaux: d.niveaux, voyage: d.voyage });
   return true;
 }
 
@@ -74,6 +87,7 @@ export function sauver(joueur, etat, stockage = stockageParDefaut()) {
   try {
     stockage && stockage.setItem(cle(joueur), JSON.stringify({
       connus: [...etat.connus], meilleurs: etat.meilleurs, niveaux: etat.niveaux, voix: etat.voix, son: etat.son, langue: etat.langue,
+      voyage: etat.voyage,
     }));
   } catch { /* stockage plein ou bloqué : tant pis, le jeu continue */ }
 }

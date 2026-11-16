@@ -8,6 +8,7 @@ import { ICONES } from '../icones.js';
 import { sonActif } from '../sons.js';
 import { voixDisponible } from '../voix.js';
 import { pageCredits } from './credits.js';
+import { carnet, pageCarnet, tampon, trajet } from '../voyage.js';
 
 // Où écrire le nom de chaque continent sur la carte du monde [longitude, latitude], et sa craie.
 const ETIQUETTES = {
@@ -18,6 +19,10 @@ const ETIQUETTES = {
 
 export function accueil(app) {
   const { hud, etat } = app;
+  // Le carnet de voyage : les tampons gagnés depuis la dernière fois (une progression d'avant le voyage les gagne ici).
+  const rattrapage = app.majVoyage();
+  const neufs = new Set([...app.tamponsNeufs, ...rattrapage.nouvelles]);
+  app.tamponsNeufs = [];
   const connu = (id, niveau) => pourcentage(app.paysDeZone(id, niveau).map(p => p.code), etat.connus);
   const pct = Object.fromEntries(ZONES.map(z => [z.id, connu(z.id)]));
   // Chaque niveau du monde entier s'ouvre quand ce niveau est connu à moitié sur chaque continent.
@@ -25,7 +30,9 @@ export function accueil(app) {
   const mondeOuvert = mondeNiveaux.facile;
   const niveauOuvert = (id, n) => id !== 'monde' || mondeNiveaux[n];
   hud.innerHTML = `
-    <header class="haut haut-accueil"><h1 class="titre craie">${t('titre')}</h1></header>
+    <header class="haut haut-accueil"><h1 class="titre craie">${t('titre')}</h1>${carnet(app)}</header>
+    <svg class="trajet" aria-hidden="true"></svg>
+    <img class="nina-carte" src="img/histoire/nina.webp" alt="" hidden>
     <div class="etiquettes"></div>
     <button class="bouton-craie monde-entier${mondeOuvert ? '' : ' ferme'}" data-zone="monde">
       ${mondeOuvert ? '' : ICONES.cadenas}<span>${t('monde')}</span></button>
@@ -43,7 +50,8 @@ export function accueil(app) {
       b.className = 'zone-nom craie c' + e.craie;
       b.dataset.zone = z.id;
       b.style.setProperty('--r', e.r + 'deg');
-      b.innerHTML = `${z[app.langue]}<small>${t('connus', { p: Math.round(pct[z.id] * 100) })}</small>`;
+      const gagne = etat.voyage.etapes.includes(z.id);
+      b.innerHTML = `${z[app.langue]}<small>${t('connus', { p: Math.round(pct[z.id] * 100) })}</small>${gagne ? tampon(app.monde, z, true, app.langue, 'sur-etiquette' + (neufs.has(z.id) ? ' neuf' : '')) : ''}`;
       etiquettes.appendChild(b);
     }
   }
@@ -59,13 +67,25 @@ export function accueil(app) {
   }
 
   // Écran en largeur : chaque continent écrit sur la carte, à sa place.
+  // Le trajet de Nina relie les continents tamponnés, dans l'ordre du voyage ; Nina se tient au dernier.
+  const svgTrajet = hud.querySelector('.trajet'), nina = hud.querySelector('.nina-carte');
   function placer() {
-    if (enListe()) return;
-    const r = app.ecran.getBoundingClientRect();
+    const r = app.ecran.getBoundingClientRect(), liste = enListe(), points = {};
     for (const b of etiquettes.children) {
       const [x, y] = carte.ecranDe(ETIQUETTES[b.dataset.zone].pos);
-      b.style.left = (x - r.left) + 'px'; b.style.top = (y - r.top) + 'px';
+      points[b.dataset.zone] = [x - r.left, y - r.top];
+      if (!liste) { b.style.left = (x - r.left) + 'px'; b.style.top = (y - r.top) + 'px'; }
     }
+    const etapes = etat.voyage.etapes;
+    trajet(svgTrajet, etapes, points);
+    nina.hidden = !etapes.length;
+    if (!etapes.length) return;
+    const dernier = etapes[etapes.length - 1];
+    let [x, y] = points[dernier];
+    // Sur la carte avec les étiquettes : Nina à gauche de l'étiquette du continent, pour ne pas la cacher.
+    const b = !liste && etiquettes.querySelector(`[data-zone="${dernier}"]`);
+    if (b) { const e = b.getBoundingClientRect(); x = e.left - r.left - 4; y = e.top - r.top + e.height / 2; }
+    nina.style.left = x + 'px'; nina.style.top = y + 'px';
   }
   placer();
   const surRedim = () => requestAnimationFrame(() => { ecrireEtiquettes(); carte.recadrer(); placer(); });
@@ -137,6 +157,9 @@ export function accueil(app) {
     else if (b.dataset.action === 'decouvrir') app.aller('decouvrir', b.dataset.cible);
     else if (b.dataset.action === 'reglages') reglages();
     else if (b.dataset.action === 'credits') ouvrir(pageCredits(app), 'page-credits');
+    else if (b.dataset.action === 'carnet') ouvrir(pageCarnet(app), 'page-carnet');
+    else if (b.dataset.action === 'revoir-intro') { voile.hidden = true; app.histoire('intro'); }
+    else if (b.dataset.action === 'revoir-fin') { voile.hidden = true; app.histoire('fin'); }
     else if (b.dataset.action === 'fermer') voile.hidden = true;
   });
   hud.addEventListener('change', e => {
@@ -147,6 +170,11 @@ export function accueil(app) {
     if (r === 'son') sonActif(etat.son);
     app.sauver();
   });
+
+  // L'histoire : le départ au tout premier lancement, le retour quand les six tampons viennent d'être réunis.
+  if (!app.histoireAuto) { /* tests */ }
+  else if (rattrapage.finiMaintenant) { etat.voyage.intro = true; app.sauver(); app.histoire('fin'); }
+  else if (!etat.voyage.intro) { etat.voyage.intro = true; app.sauver(); app.histoire('intro'); }
 
   return () => { window.removeEventListener('resize', surRedim); carte.detruire(); };
 }

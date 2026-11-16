@@ -270,6 +270,100 @@ button { font: inherit; color: inherit; }
   .savoir .astuce { display: none; }
 }
 
+/* ---------- le tour du monde de Nina ---------- */
+/* Un tampon : la vraie forme du continent dans un rond. Gagné : encre pleine, penché, une coche. Pas encore : pointillés pâles.
+   (La forme change, pas seulement la couleur.) --encre : sa couleur selon le papier sur lequel il est posé. */
+.tampon { --encre: #a8323a; --vide: rgba(29, 43, 38, .38); display: inline-block; width: 30px; height: 30px; flex: none; }
+.tampon svg { display: block; width: 100%; height: 100%; overflow: visible; }
+.tampon .bord { fill: none; stroke: var(--vide); stroke-width: 2; stroke-dasharray: 3.2 2.6; }
+.tampon .forme { fill: var(--vide); opacity: .55; }
+.tampon.gagne { transform: rotate(-12deg); }
+.tampon.gagne:nth-child(even) { transform: rotate(9deg); }
+.tampon.gagne .bord { stroke: var(--encre); stroke-width: 3; stroke-dasharray: none; fill: color-mix(in srgb, var(--encre) 12%, transparent); }
+.tampon.gagne .forme { fill: var(--encre); opacity: .9; }
+.tampon .coche { fill: none; stroke: var(--encre); stroke-width: 3.6; stroke-linecap: round; stroke-linejoin: round; }
+/* Le moment fort : le tampon qui tombe sur le papier. */
+.tampon.neuf { animation: tamponner .55s cubic-bezier(.3, 1.6, .5, 1) .25s both; }
+@keyframes tamponner { 0% { transform: scale(2.4) rotate(-30deg); opacity: 0; } 60% { opacity: 1; } 100% { transform: scale(1) rotate(-12deg); } }
+
+/* Le carnet, sous le titre (ou à côté, sur un écran large) : un petit papier collé avec Nina et ses six tampons. */
+.haut-accueil { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; column-gap: clamp(14px, 3vw, 34px); row-gap: 6px; }
+.carnet { display: flex; align-items: center; gap: 10px; padding: 6px 14px 6px 6px; cursor: pointer; border: 0; text-align: left;
+  color: var(--color-ardoise-ombre); border-radius: 30px 10px 12px 30px; transform: rotate(-1deg);
+  background: linear-gradient(100deg, rgba(255, 255, 255, .35), transparent 40%), repeating-linear-gradient(92deg, rgba(0, 0, 0, .02) 0 2px, transparent 2px 7px), #f3eddc;
+  box-shadow: 0 3px 0 rgba(15, 24, 20, .45), 0 6px 12px rgba(0, 0, 0, .25); transition: transform .12s; }
+.carnet:active { transform: rotate(-1deg) scale(.96); }
+.carnet:focus-visible { outline: 3px dashed var(--craie-jaune); outline-offset: 3px; }
+.carnet .nina { width: 48px; height: 48px; border-radius: 50%; flex: none; border: 2.5px solid #fff; box-shadow: 0 2px 4px rgba(0, 0, 0, .3); background: #f6e7c8; }
+.carnet-corps { display: grid; gap: 2px; }
+.tampons { display: flex; gap: 4px; }
+.carnet-etat { display: flex; align-items: center; gap: 10px; font-family: var(--font-craie); font-weight: 800; font-size: 15px; line-height: 1.1; }
+.carnet-etat .complet { font-weight: 700; opacity: .8; }
+/* « Fini » : une étiquette pleine avec une coche (forme + couleur). */
+.marque-fini { display: inline-flex; align-items: center; gap: 3px; padding: 1px 9px 1px 5px; border-radius: 4px 9px 5px 8px;
+  background: var(--color-ardoise); color: var(--craie-jaune); text-transform: uppercase; letter-spacing: .04em; font-size: 14px; }
+.marque-fini svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 3.4; stroke-linecap: round; stroke-linejoin: round; }
+
+/* Sur la carte : le fil du trajet entre les continents tamponnés, et Nina au dernier. */
+.hud > svg.trajet { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; overflow: visible; }
+.trajet path { fill: none; stroke: var(--craie-jaune); stroke-width: 3; stroke-linecap: round; stroke-dasharray: 2 9; opacity: .9; }
+.hud > .nina-carte { position: absolute; width: 46px; height: 46px; border-radius: 50%; transform: translate(-100%, -50%); pointer-events: none;
+  border: 3px solid var(--color-craie); box-shadow: 0 3px 8px rgba(0, 0, 0, .45); background: #f6e7c8; }
+.hud > .nina-carte[hidden] { display: none; }
+.hud:has(.etiquettes.liste) > .nina-carte { transform: translate(-50%, -50%); }
+/* Le tampon d'un continent, posé sur le coin de son étiquette. */
+.zone-nom .tampon.sur-etiquette { position: absolute; right: -16px; top: -14px; width: 36px; height: 36px; }
+@media (max-height: 500px), (max-width: 620px) { .zone-nom .tampon.sur-etiquette { right: -9px; top: -13px; width: 27px; height: 27px; } }
+@media (min-width: 900px) and (min-height: 600px) { .carnet .tampon { width: 36px; height: 36px; } .carnet-etat { font-size: 17px; } .carnet .nina { width: 56px; height: 56px; } }
+.zone-nom .tampon.sur-etiquette.neuf { animation-delay: .5s; }
+
+/* Le carnet ouvert. Sur l'ardoise, l'encre des tampons est claire. */
+.note-tableau .tampon { --encre: #ffb3a0; --vide: rgba(243, 241, 232, .45); }
+.note-tableau.page-carnet { width: min(560px, 100%); }
+.carnet-consigne { opacity: .9; }
+.carnet-liste { list-style: none; margin: 12px 0 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(126px, 1fr)); gap: 12px 8px; }
+.page-carnet .grand { line-height: 1.1; }
+.carnet-liste li { display: grid; justify-items: center; gap: 2px; }
+.carnet-liste .tampon.grand { width: 56px; height: 56px; margin-bottom: 2px; }
+.carnet-liste .craie { font-size: 19px; }
+.carnet-liste small { font-size: 13.5px; opacity: .85; }
+/* Fin de manche : le nouveau tampon. */
+.nouveau-tampon { display: flex; align-items: center; justify-content: center; gap: 12px; }
+.nouveau-tampon .tampon { width: 54px; height: 54px; }
+.nouveau-tampon .craie { font-size: clamp(19px, 2.8vw, 24px); color: #ffb3a0; }
+
+/* L'histoire : l'image (ou la petite vidéo) épinglée au tableau, le texte écrit à côté (écran large) ou dessous (en hauteur). */
+.cine { position: fixed; inset: 0; z-index: 50; display: grid; align-content: center; justify-content: center; align-items: center;
+  gap: clamp(14px, 3vmin, 34px);
+  padding: max(20px, env(safe-area-inset-top)) max(20px, env(safe-area-inset-right)) max(20px, env(safe-area-inset-bottom)) max(20px, env(safe-area-inset-left));
+  background: radial-gradient(ellipse 60% 50% at 30% 40%, rgba(255, 255, 255, .07), transparent 70%), linear-gradient(160deg, var(--color-ardoise-2), var(--color-ardoise));
+  box-shadow: inset 0 0 0 clamp(6px, 1.3vmin, 14px) var(--color-cadre); color: var(--color-craie); }
+@media (orientation: landscape) { .cine { grid-template-columns: min(60vw, calc((100vh - 72px) * 4 / 3)) minmax(220px, 30vw); } }
+@media (orientation: portrait) { .cine { grid-template-columns: min(calc(100vw - 40px), calc(56vh * 4 / 3)); } }
+.cine-image { position: relative; aspect-ratio: 4 / 3; background: #e9dcc0; border: clamp(5px, 1vmin, 10px) solid #f6f1e2;
+  box-shadow: 0 14px 34px rgba(0, 0, 0, .5); transform: rotate(-1.2deg); }
+.cine-image::after { content: ""; position: absolute; top: -14px; left: 50%; width: 22%; height: 26px; transform: translateX(-50%) rotate(-4deg);
+  background: rgba(255, 252, 240, .6); box-shadow: 0 1px 2px rgba(0, 0, 0, .15); }
+.cine-image img, .cine-image video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.cine.texte .cine-image video.fondu { opacity: 0; transition: opacity .8s; }
+.cine-image img { transition: opacity .8s; }
+.cine.cache-image:not(.texte) .cine-image img { opacity: 0; }
+.cine-texte { display: grid; justify-items: center; gap: .5em; text-align: center; opacity: 0; transform: translateY(14px); pointer-events: none;
+  transition: opacity .6s .2s, transform .6s .2s; }
+.cine.texte .cine-texte { opacity: 1; transform: none; pointer-events: auto; }
+.cine-texte p { margin: 0; }
+.cine-titre { font-size: clamp(28px, 4.6vw, 46px); color: var(--craie-jaune); line-height: 1.05; }
+.cine-l1 { font-size: clamp(21px, 2.9vw, 30px); line-height: 1.15; }
+.cine-l2 { font-size: clamp(16px, 1.9vw, 19px); line-height: 1.4; opacity: .92; max-width: 32em; }
+.cine-texte .bouton-craie { margin-top: .5em; font-size: clamp(19px, 2.5vw, 24px); }
+.cine-passer { position: absolute; top: max(18px, env(safe-area-inset-top)); right: max(22px, env(safe-area-inset-right)); color: var(--color-craie); }
+.cine.texte .cine-passer { display: none; }
+@media (orientation: landscape) and (max-height: 440px) {
+  .cine-l2 { font-size: 14px; } .cine-l1 { font-size: 18px; } .cine-titre { font-size: 24px; }
+  .cine-texte .bouton-craie { margin-top: .2em; }
+}
+@media (orientation: portrait) and (max-width: 420px) { .carnet-etat { font-size: 14px; } .carnet .tampon { width: 27px; height: 27px; } }
+
 /* ---------- tests et mouvement réduit ---------- */
 .vite *, .vite *::after { animation-duration: 0s !important; animation-delay: 0s !important; transition: none !important; }
 @media (prefers-reduced-motion: reduce) { *, *::after { animation-duration: .01s !important; transition: none !important; } }

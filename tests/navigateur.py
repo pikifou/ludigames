@@ -1,4 +1,4 @@
-"""Tests dans le navigateur (Playwright) : python tests/navigateur.py [carte|ecrans|appli|corrections|savoirs|niveaux|credits]
+"""Tests dans le navigateur (Playwright) : python tests/navigateur.py [carte|ecrans|appli|corrections|savoirs|niveaux|credits|histoire]
 
 Lance un petit serveur sur le port 7360 à la racine de ludigames (jamais 8000).
 """
@@ -198,7 +198,7 @@ def test_carte(nav):
     page.close()
 
 
-JEU = f'{BASE}/monde-a-la-craie/?graine=1&vite=1'
+JEU = f'{BASE}/monde-a-la-craie/?graine=1&vite=1&sanshistoire=1'   # l'histoire a sa propre section
 
 
 def ouvrir_jeu(nav, w=1280, h=800, init=None):
@@ -912,7 +912,95 @@ def test_credits(nav):
         page.close()
 
 
-SECTIONS = {'carte': test_carte, 'ecrans': test_ecrans, 'appli': test_appli, 'corrections': test_corrections, 'savoirs': test_savoirs, 'niveaux': test_niveaux, 'credits': test_credits}
+
+# ---------- l'histoire : le tour du monde de Nina ----------
+HISTOIRE = f'{BASE}/monde-a-la-craie/?graine=1&vite=1'   # ?vite : sans la vidéo (l'image et le texte tout de suite)
+
+
+def ouvrir_histoire(nav, w, h, etat=None):
+    page = nav.new_page(viewport={'width': w, 'height': h}, locale='fr-FR')
+    erreurs = []
+    page.on('pageerror', lambda e: erreurs.append(str(e)))
+    page.on('console', lambda m: erreurs.append(m.text) if m.type == 'error' else None)
+    if etat is not None:
+        page.add_init_script("if (!sessionStorage.getItem('deja')) { sessionStorage.setItem('deja', 1); localStorage.setItem('monde-a-la-craie.v1', %s); }" % json.dumps(json.dumps(etat)))
+    page.goto(HISTOIRE)
+    page.wait_for_function('window.jeu && window.jeu.pret', timeout=15000)
+    return page, erreurs
+
+
+def recharger(page):
+    page.reload()
+    page.wait_for_function('window.jeu && window.jeu.pret', timeout=15000)
+
+
+def kit(page):
+    return page.evaluate("JSON.parse(localStorage.getItem('ludi.v1.monde-a-la-craie') || '{}').etat || null")
+
+
+def test_histoire(nav):
+    print('histoire')
+    from_niveaux = (RACINE / 'monde-a-la-craie' / 'js' / 'niveaux.js').read_text(encoding='utf-8')
+    faciles = re.findall(r"'([A-Z]{2})'", from_niveaux.split('const FACILE = [')[1].split('];')[0])
+    cinq = ['europe', 'afrique', 'asie', 'amerique-nord', 'amerique-sud']
+    for (w, h) in [(1280, 800), (390, 780), (800, 380)]:
+        taille = f'{w}×{h}'
+        page, erreurs = ouvrir_histoire(nav, w, h)
+        verifier(page.evaluate('jeu.histoire') == 'intro', f'{taille} : le départ de Nina au premier lancement')
+        page.wait_for_selector('.cine.texte')
+        page.screenshot(path=str(CAPTURES / f'histoire-intro-{w}x{h}.png'))
+        page.click('.cine [data-action="go"]')
+        verifier(page.locator('.cine').count() == 0 and page.locator('.carnet').count() == 1, f'{taille} : En route mène à l’accueil, avec le carnet')
+        verifier(page.locator('.carnet .tampon').count() == 6 and page.locator('.carnet .tampon.gagne').count() == 0, f'{taille} : six tampons à gagner')
+        recharger(page)
+        verifier(page.evaluate('jeu.histoire') is None, f'{taille} : le départ ne revient pas')
+        page.click('.carnet')
+        verifier(page.locator('.carnet-liste li').count() == 6, f'{taille} : le carnet ouvert')
+        page.click('[data-action="revoir-intro"]')
+        verifier(page.evaluate('jeu.histoire') == 'intro', f'{taille} : on peut revoir le départ')
+        page.click('.cine [data-action="go"]')
+        verifier(not erreurs, f'{taille} : aucune erreur {erreurs[:2]}')
+        page.close()
+
+        # une progression d'avant le voyage qui a déjà tout : les tampons arrivent, la fin se joue, « Fini » reste
+        page, erreurs = ouvrir_histoire(nav, w, h, {'connus': faciles, 'voyage': {'etapes': cinq, 'intro': True}})
+        verifier(page.evaluate('jeu.histoire') == 'fin', f'{taille} : le retour de Nina quand les six tampons sont là')
+        page.wait_for_selector('.cine.texte')
+        page.screenshot(path=str(CAPTURES / f'histoire-fin-{w}x{h}.png'))
+        page.click('.cine [data-action="go"]')
+        verifier(page.locator('.marque-fini').count() == 1 and page.locator('.carnet .tampon.gagne').count() == 6, f'{taille} : « Fini » et six tampons sur l’accueil')
+        verifier(page.locator('.trajet path').count() == 1 and page.locator('.nina-carte:not([hidden])').count() == 1, f'{taille} : le trajet de Nina sur la carte')
+        page.screenshot(path=str(CAPTURES / f'histoire-fini-{w}x{h}.png'))
+        e = kit(page)
+        verifier(e and e.get('fini') is True and 0 < e.get('complet', 0) < 1, f'{taille} : le kit sait que c’est fini, et la part du monde connue {e}')
+        recharger(page)
+        verifier(page.evaluate('jeu.histoire') is None and page.locator('.marque-fini').count() == 1, f'{taille} : la fin ne revient pas, « Fini » reste')
+        verifier(not erreurs, f'{taille} : aucune erreur {erreurs[:2]}')
+        page.close()
+
+    # une vraie manche donne le dernier tampon : il s'annonce, puis Nina rentre
+    oceanie = ['AU', 'NZ', 'PG', 'FJ']
+    page, erreurs = ouvrir_histoire(nav, 1280, 800, {'connus': [c for c in faciles if c not in oceanie], 'niveaux': {'oceanie': 'facile'}, 'voyage': {'etapes': cinq, 'intro': True}})
+    verifier(page.locator('.carnet .tampon.gagne').count() == 5 and page.locator('.marque-fini').count() == 0, 'cinq tampons, pas encore fini')
+    page.evaluate("jeu.app.aller('partie', 'oceanie')")
+    while page.evaluate('jeu.manche && !jeu.manche.finie'):
+        toucher(page, page.evaluate('jeu.manche.question'))
+        if page.locator('.savoir:not([hidden])').count():
+            page.wait_for_timeout(850)
+            page.click('.savoir')
+    page.wait_for_selector('.nouveau-tampon')
+    verifier('Océanie' in page.locator('.nouveau-tampon').inner_text(), 'fin de manche : « Nouveau tampon : Océanie ! »')
+    page.screenshot(path=str(CAPTURES / 'histoire-dernier-tampon.png'))
+    page.wait_for_function("jeu.histoire === 'fin'", timeout=5000)
+    verifier(True, 'puis le retour de Nina se joue')
+    page.click('.cine [data-action="go"]')
+    page.wait_for_timeout(1100)
+    page.click('[data-action="changer"]')
+    verifier(page.locator('.marque-fini').count() == 1, 'de retour à l’accueil : « Fini »')
+    verifier(not erreurs, f'manche : aucune erreur {erreurs[:2]}')
+    page.close()
+
+SECTIONS = {'carte': test_carte, 'ecrans': test_ecrans, 'appli': test_appli, 'corrections': test_corrections, 'savoirs': test_savoirs, 'niveaux': test_niveaux, 'credits': test_credits, 'histoire': test_histoire}
 
 if __name__ == '__main__':
     voulues = sys.argv[1:] or list(SECTIONS)

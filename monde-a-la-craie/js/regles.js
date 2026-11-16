@@ -65,3 +65,24 @@ export function pourcentage(zonePays, connus) {
 export function mondeDebloque(pourcentages) {
   return ZONES_IDS.every(z => (pourcentages[z] || 0) >= SEUIL_MONDE);
 }
+
+// ---------- le tour du monde de Nina ----------
+// Une étape (un tampon dans le carnet) par continent : on la gagne quand on connaît les trois quarts des pays du niveau Facile
+// de ce continent (Europe 11 sur 14, Afrique et Asie 9 sur 12, les deux Amériques 5 sur 6, Océanie 3 sur 4).
+// Les six tampons : le tour du monde est fait (42 pays sur les 54 du Facile, environ 78 %). Un tampon gagné ne s'enlève jamais.
+export const SEUIL_ETAPE = 0.75;
+
+// Combien de pays connus il faut sur un continent, et combien il en manque. facilesDeZone : les codes Facile du continent.
+export function besoinEtape(facilesDeZone, connus) {
+  const besoin = Math.ceil(facilesDeZone.length * SEUIL_ETAPE);
+  const faits = facilesDeZone.filter(c => connus.has(c)).length;
+  return { besoin, faits, manque: Math.max(0, besoin - faits) };
+}
+
+// Les étapes gagnées maintenant, en plus de celles déjà dans le carnet (dans l'ordre des continents).
+// faciles : { zone: [codes Facile] }. etapes : les continents déjà tamponnés, dans l'ordre où ils l'ont été.
+export function nouvellesEtapes(faciles, connus, etapes) {
+  return ZONES_IDS.filter(z => !etapes.includes(z) && faciles[z] && faciles[z].length && besoinEtape(faciles[z], connus).manque === 0);
+}
+
+export function tourFait(etapes) { return ZONES_IDS.every(z => etapes.includes(z)); }

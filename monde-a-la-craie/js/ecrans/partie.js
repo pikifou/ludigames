@@ -1,7 +1,8 @@
 // Une manche : le nom s'écrit à la craie, on touche le pays. 12 pays (moins en Facile sur un petit continent), un chrono qui ne sert qu'à battre son temps.
 // Après chaque réponse, juste ou fausse, sur un pays dont on a des savoirs : une note « Le savais-tu ? », le chrono s'arrête, on touche pour continuer.
 import { creerCarte } from '../carte.js';
-import { zoneParId } from '../zones.js';
+import { zoneParId, ZONES } from '../zones.js';
+import { tampon } from '../voyage.js';
 import { DUREE_ERREUR, choisirManche, Manche, pourcentage } from '../regles.js';
 import { enregistrerManche, cleRecord } from '../progres.js';
 import { dansNiveau } from '../niveaux.js';
@@ -169,12 +170,18 @@ export function partie(app, zoneId) {
     const pct = pourcentage(app.paysDeZone(zoneId).map(p => p.code), etat.connus);   // toute la zone, pour Ludiworld
     son('fin');
     app.evenement('fin', { zone: zoneId, niveau, secondes, pourcentage: pct, record });
+    // Le carnet de Nina : un tampon gagné se montre ici, et l'accueil le tamponnera en arrivant.
+    const { nouvelles, finiMaintenant } = app.majVoyage();
+    app.tamponsNeufs.push(...nouvelles);
+    const tampons = nouvelles.map(id => { const z = ZONES.find(x => x.id === id);
+      return `<p class="nouveau-tampon">${tampon(app.monde, z, true, app.langue, 'neuf')}<span class="craie">${t('nouveauTampon', { z: z[app.langue] })}</span></p>`; }).join('');
     const encore = app.encoreUneManche ? app.encoreUneManche() : true;
     voile.classList.add('clair');
     voile.innerHTML = `<div class="note-tableau fin">
       <p class="grand craie">${t('trouves', { n: manche.trouves })}</p>
       <p>${t('premierCoup', { n: premiers })} · ${t('temps', { t: duree(secondes) })}</p>
       <p class="record craie">${record ? t('record') : t('meilleur', { t: duree(etat.meilleurs[cleRecord(zoneId, niveau)]) })}</p>
+      ${tampons}
       <div class="boutons">
         ${encore ? `<button class="bouton-craie plein" data-action="encore">${t('encore')}</button>` : `<p>${t('plusDeManche')}</p>`}
         <button class="bouton-craie" data-action="changer">${t('changer')}</button>
@@ -182,6 +189,9 @@ export function partie(app, zoneId) {
     voile.hidden = false;
     finVue = performance.now();
     nom.textContent = '';
+    // Les six tampons : Nina rentre à la maison. Le panneau de fin de manche reste dessous.
+    // (La scène se pose par-dessus tout l'écran : même si l'enfant a déjà quitté la manche, il la voit.)
+    if (finiMaintenant && app.histoireAuto) setTimeout(() => app.histoire('fin').then(() => { finVue = performance.now(); }), nouvelles.length ? 1600 : 400);
   }
 
   function pause() {
