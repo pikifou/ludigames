@@ -112,7 +112,7 @@ body.ludiworld .haut { padding-left: 130px; }
 }
 
 /* ---------- le chemin ---------- */
-.chemin { background: #ead9b4 url(img/fond-paysage.webp) center / cover; }
+.chemin { background: #ead9b4 url(img/fond-paysage-automne.webp) center / cover; }
 .chemin::before { content: ''; position: absolute; inset: 0; background: rgba(240, 225, 190, .45); backdrop-filter: blur(3px); }
 .total { display: inline-flex; align-items: center; gap: .25em; background: var(--color-surface); padding: .1em .7em; border-radius: 999px; box-shadow: var(--ombre); font-size: 1.15rem; }
 .totaux { display: inline-flex; gap: 6px; flex-wrap: wrap; justify-content: center; }
@@ -204,7 +204,7 @@ body.ludiworld .haut { padding-left: 130px; }
 @keyframes pop { from { transform: scale(0) rotate(-90deg); } 70% { transform: scale(1.35); } }
 
 /* ---------- une leçon ---------- */
-.jeu { background: #eadcb8 url(img/fond-portrait.webp) center / cover no-repeat; }
+.jeu { background: #eadcb8 url(img/fond-portrait-automne.webp) center / cover no-repeat; }
 .progression { display: flex; gap: 4px; padding: 2px 16px 0; justify-content: center; }
 .progression i { width: 8px; height: 8px; border-radius: 50%; background: rgba(43, 47, 82, .18); transition: background .3s, transform .3s; }
 .progression i.ex { width: 14px; border-radius: 5px; }
@@ -256,10 +256,11 @@ body.ludiworld .haut { padding-left: 130px; }
 .objectif .prises em { font-size: .85rem; color: var(--color-encre-douce); }
 .objectif .prises .visage { width: 28px; height: 28px; border-radius: 50%; background-color: var(--color-papier-2); background-size: auto 270%; background-position: 50% 3%; background-repeat: no-repeat; margin-right: 6px; flex: none; }
 .zone-plateau { position: relative; flex: 1; min-height: 0; display: grid; place-items: center; container-type: size; }
-.zone-plateau .plateau-el { width: min(100cqw, 100cqh); height: auto; aspect-ratio: 1; }
+/* Le cadre et la couche des pièces ont la même marge, mesurée sur le plateau lui-même (un padding en % se mesure sur la zone autour, plus large en tablette). */
+.zone-plateau .plateau-el { --bord: calc(min(100cqw, 100cqh) * .036); width: min(100cqw, 100cqh); height: auto; aspect-ratio: 1; padding: var(--bord); }
 
 @media (orientation: landscape) and (min-aspect-ratio: 5/4) {
-  .jeu { background-image: url(img/fond-paysage.webp); }
+  .jeu { background-image: url(img/fond-paysage-automne.webp); }
   .scene { flex-direction: row-reverse; align-items: stretch; padding: 4px 16px 12px; gap: 16px; }
   .cote { width: min(40%, 440px); justify-content: center; gap: 10px; }
   .bulle-zone { flex-direction: column; align-items: stretch; }
@@ -309,7 +310,7 @@ body.ludiworld .haut { padding-left: 130px; }
 .deco.danger svg { width: 46%; height: 46%; fill: none; stroke: var(--color-danger); stroke-width: 3.5; stroke-linecap: round; opacity: .8; }
 @keyframes balance { 25% { transform: rotate(-6deg); } 75% { transform: rotate(6deg) scale(1.05); } }
 
-.pieces, .effets { position: absolute; inset: 3.6%; pointer-events: none; }
+.pieces, .effets { position: absolute; inset: var(--bord, 3.6%); pointer-events: none; }
 .effets { z-index: 70; }
 .piece { position: absolute; left: 0; top: 0; width: 12.5%; height: 12.5%; transition: transform .26s cubic-bezier(.3, .8, .4, 1); }
 .piece img { position: absolute; left: 50%; bottom: 3%; height: 144%; width: auto; max-width: none; transform: translateX(-50%); transform-origin: 50% 95%;
@@ -385,7 +386,7 @@ body.ludiworld .haut { padding-left: 130px; }
 .fin-du-jeu { background: #2b2f52 url(img/histoire-fin.webp) center / cover; }
 
 /* ---------- les amis ---------- */
-.amis { background: #eadcb8 url(img/fond-portrait.webp) center / cover; overflow-y: auto; }
+.amis { background: #eadcb8 url(img/fond-portrait-ete.webp) center / cover; overflow-y: auto; }
 .amis .intro { margin: 4px auto 10px; max-width: 560px; text-align: center; background: var(--color-surface); border-radius: 16px; padding: 10px 16px; }
 .liste-amis { list-style: none; margin: 0 auto; padding: 0 14px 24px; display: grid; gap: 10px; width: min(560px, 100%); }
 .liste-amis li { animation: entre .4s var(--rebond) backwards; }
@@ -472,3 +473,140 @@ body.ludiworld .haut { padding-left: 130px; }
 .progression i.ex.fait { background: rgba(47, 127, 122, .18); }
 .progression i.ex.la { background: rgba(200, 100, 59, .25); transform: scale(1.15); }
 @media (prefers-reduced-motion: reduce) { .note .etoiles i, .refaire { animation: none; } }
+
+/* ==================== Tour 45 : la gouache d'album, les saisons, et plus de vie ==================== */
+/* Le décor suit la saison du lieu (et la musique). */
+.jeu[data-saison=hiver] { background-image: url(img/fond-portrait-hiver.webp); }
+.jeu[data-saison=printemps] { background-image: url(img/fond-portrait-printemps.webp); }
+.jeu[data-saison=ete] { background-image: url(img/fond-portrait-ete.webp); }
+@media (orientation: landscape) and (min-aspect-ratio: 5/4) {
+  .jeu[data-saison=hiver] { background-image: url(img/fond-paysage-hiver.webp); }
+  .jeu[data-saison=printemps] { background-image: url(img/fond-paysage-printemps.webp); }
+  .jeu[data-saison=ete] { background-image: url(img/fond-paysage-ete.webp); }
+}
+/* Ce qui vole dans l'air : feuilles, flocons, pétales, poussières de soleil. */
+.saison-fx { position: absolute; inset: 0; pointer-events: none; overflow: hidden; z-index: 0; }
+.jeu .scene, .jeu .progression { position: relative; z-index: 1; }
+.saison-fx i { position: absolute; top: -6%; left: var(--x, 50%); width: 16px; height: 10px; border-radius: 0 100% 0 100%; background: #c8643b; opacity: .85;
+  animation: fx-tombe var(--d, 11s) linear var(--t, 0s) infinite; }
+.saison-fx i:nth-child(1) { --x: 6%; --d: 12s; --t: -2s; }
+.saison-fx i:nth-child(2) { --x: 18%; --d: 15s; --t: -9s; background: #d9a441; }
+.saison-fx i:nth-child(3) { --x: 29%; --d: 10s; --t: -5s; }
+.saison-fx i:nth-child(4) { --x: 41%; --d: 14s; --t: -12s; background: #a8452a; }
+.saison-fx i:nth-child(5) { --x: 52%; --d: 11s; --t: -1s; background: #d9a441; }
+.saison-fx i:nth-child(6) { --x: 63%; --d: 16s; --t: -7s; }
+.saison-fx i:nth-child(7) { --x: 72%; --d: 12s; --t: -10s; background: #7c9a5a; }
+.saison-fx i:nth-child(8) { --x: 81%; --d: 13s; --t: -3s; }
+.saison-fx i:nth-child(9) { --x: 90%; --d: 10s; --t: -6s; background: #d9a441; }
+.saison-fx i:nth-child(10) { --x: 96%; --d: 17s; --t: -14s; }
+.saison-fx i:nth-child(11) { --x: 12%; --d: 18s; --t: -11s; background: #a8452a; }
+.saison-fx i:nth-child(12) { --x: 58%; --d: 19s; --t: -16s; }
+@keyframes fx-tombe { 0% { transform: translate(0, 0) rotate(0); } 25% { transform: translate(28px, 28vh) rotate(160deg); } 50% { transform: translate(-12px, 55vh) rotate(320deg); }
+  75% { transform: translate(24px, 82vh) rotate(480deg); } 100% { transform: translate(0, 112vh) rotate(640deg); } }
+.jeu[data-saison=hiver] .saison-fx i { width: 9px; height: 9px; border-radius: 50%; background: #fffdf6; opacity: .9; box-shadow: 0 0 4px rgba(255, 255, 255, .8); }
+.jeu[data-saison=hiver] .saison-fx i:nth-child(3n) { width: 6px; height: 6px; }
+.jeu[data-saison=printemps] .saison-fx i { width: 11px; height: 9px; border-radius: 60% 0 60% 0; background: #f4c6d2; }
+.jeu[data-saison=printemps] .saison-fx i:nth-child(odd) { background: #fff4f4; }
+.jeu[data-saison=ete] .saison-fx i { top: auto; bottom: -4%; width: 7px; height: 7px; border-radius: 50%; background: radial-gradient(circle, #fff6c8, rgba(255, 220, 120, .2) 70%); opacity: .8;
+  animation-name: fx-monte; animation-duration: calc(var(--d, 11s) * 1.4); }
+@keyframes fx-monte { 0% { transform: translate(0, 0); opacity: 0; } 15% { opacity: .9; } 50% { transform: translate(30px, -50vh); } 100% { transform: translate(-10px, -105vh); opacity: 0; } }
+
+/* L'en-tête : le titre de la leçon sur une étiquette. */
+.jeu .haut h2 { flex: 0 1 auto; margin: 0 auto; padding: .12em .9em .18em; background: var(--color-surface); border-radius: 999px 999px 999px 999px / 70% 70% 80% 80%;
+  box-shadow: var(--ombre); font-size: clamp(1.2rem, 4.4vw, 1.65rem); text-shadow: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 70vw; animation: tombe .6s var(--rebond) both; }
+
+/* La barre des étapes : de vraies pastilles, lisibles. */
+.progression { gap: 7px; padding: 8px 16px 2px; flex-wrap: wrap; align-items: center; }
+.progression i { width: 11px; height: 11px; background: rgba(255, 250, 240, .8); box-shadow: 0 1px 0 rgba(90, 55, 25, .35); }
+.progression i.fait { background: var(--color-sarcelle); }
+.progression i.la { background: var(--color-primary); transform: scale(1.45); }
+.progression i.ex { padding: 3px 7px; gap: 2px; border-radius: 11px; background: rgba(255, 250, 240, .92); box-shadow: 0 2px 0 rgba(90, 55, 25, .3); }
+.progression i.ex b { width: 17px; height: 17px; filter: grayscale(1) brightness(.4) opacity(.4); }
+.progression i.ex.fait { background: #dcefe9; }
+.progression i.ex.la { background: #fffaf0; box-shadow: 0 0 0 3px var(--color-primary), 0 2px 0 rgba(90, 55, 25, .3); transform: scale(1.12); }
+@media (min-width: 700px) { .progression i.ex b { width: 20px; height: 20px; } }
+
+/* Les personnages : l'ami à gauche, Léo à droite qui le regarde, les pieds sur la même ligne. */
+.bulle-zone { align-items: flex-end; gap: 6px; }
+.perso { width: auto; min-width: clamp(70px, 19vw, 120px); }
+.perso img { animation: souffle 3.4s ease-in-out infinite; }
+.perso:not([data-qui=sage]) img { height: clamp(94px, 17vh, 165px); }
+.perso::after, .bulle-zone .leo-mini::after { content: ''; position: absolute; left: 15%; right: 15%; bottom: 8px; height: 12px; border-radius: 50%;
+  background: radial-gradient(ellipse, rgba(50, 30, 10, .38), transparent 70%); z-index: -1; }
+.perso img.parle { animation: parle .45s ease-in-out 2; }
+@keyframes souffle { 50% { transform: scaleY(1.018) translateY(-.5%); } }
+@keyframes parle { 50% { transform: translateY(-4%) rotate(-2deg) scaleY(1.03); } }
+.bulle .mot { display: inline-block; animation: mot .34s calc(var(--k) * 40ms) var(--rebond) backwards; }
+@keyframes mot { from { opacity: 0; transform: translateY(.45em) scale(.85); } }
+.bulle-zone .leo-mini { position: relative; width: auto; min-width: clamp(56px, 15vw, 100px); height: auto; align-self: flex-end; flex: none; transform-origin: 50% 100%; }
+.bulle-zone .leo-mini img { height: clamp(84px, 15vh, 150px); transform: scaleX(-1); animation: souffle-leo 2.8s ease-in-out infinite; }
+@keyframes souffle-leo { 0%, 100% { transform: scaleX(-1); } 50% { transform: scaleX(-1) scaleY(1.025); } }
+.bulle-zone .leo-mini span { position: relative; bottom: auto; margin-top: -8px; z-index: 2; font: 800 .95rem/1 var(--font-display); padding: 3px 10px; box-shadow: var(--ombre); }
+.bulle-zone.leo-parle .leo-mini { display: none; }
+.statut { min-height: 0; padding: 0 2px; }
+.objectif:empty { display: none; }
+/* « Suivant » monte sous la bulle, à droite : jamais sur le plateau. */
+.statut .suite { position: relative; right: auto; bottom: auto; margin-left: auto; flex: none; font-size: clamp(1.2rem, 4vw, 1.45rem); }
+@media (orientation: landscape) and (min-aspect-ratio: 5/4) {
+  .bulle-zone { flex-direction: row; flex-wrap: wrap; justify-content: center; align-items: flex-end; }
+  .bulle-zone .bulle { order: -1; flex: 1 1 100%; }
+  .bulle::before { left: 22%; }
+  .perso img { height: clamp(110px, 30vh, 240px); }
+  .perso:not([data-qui=sage]) img { height: clamp(100px, 26vh, 210px); }
+  .bulle-zone .leo-mini img { height: clamp(96px, 25vh, 200px); }
+  .statut { justify-content: flex-end; }
+}
+
+/* Le plateau : un vrai plateau de bois, en volume. */
+.plateau { background: repeating-linear-gradient(97deg, rgba(255, 220, 170, .07) 0 3px, transparent 3px 11px), linear-gradient(150deg, #a26b3b, #77461f 55%, #5e3718);
+  border-radius: 18px 20px 18px 22px; box-shadow: inset 0 2px 0 rgba(255, 228, 185, .5), inset 0 -4px 0 rgba(0, 0, 0, .22), 0 7px 0 #4a2c14, 0 24px 36px rgba(50, 28, 10, .42);
+  animation: plateau-entre .6s var(--rebond) both; }
+@keyframes plateau-entre { from { transform: translateY(28px) scale(.95); opacity: 0; } }
+.cases { border-radius: 6px; box-shadow: 0 0 0 3px #4a2c14, 0 0 0 5px rgba(255, 220, 170, .25); }
+.case.claire { background: radial-gradient(circle at 28% 22%, #fdf0d2, #efd5a6 80%); }
+.case.foncee { background: radial-gradient(circle at 28% 22%, #cf9a64, #a8713d 80%); }
+.coord { font: 800 clamp(10px, 2.6cqmin, 15px)/1 var(--font-display); opacity: .85; }
+.case.cible::after { animation: point .25s var(--rebond), cible 1.5s .25s ease-in-out infinite; }
+@keyframes cible { 50% { transform: scale(1.2); } }
+.case.choisie::before { background: rgba(47, 127, 122, .5); box-shadow: inset 0 0 0 3px rgba(255, 255, 255, .55); }
+.piece img { filter: drop-shadow(0 0 1px rgba(60, 35, 15, .7)) drop-shadow(0 4px 3px rgba(50, 30, 10, .45)); }
+
+/* Une pomme ramassée : « +1 ». */
+.plus-un { position: fixed; z-index: 101; pointer-events: none; font: 800 1.7rem/1 var(--font-display); color: #fff8ec;
+  text-shadow: 0 2px 0 var(--color-primary-fonce), 0 0 10px rgba(200, 100, 59, .7); animation: plus-un .95s ease-out forwards; }
+@keyframes plus-un { 0% { opacity: 0; transform: translate(-50%, 10px) scale(.5); } 20% { opacity: 1; transform: translate(-50%, -14px) scale(1.25); } 100% { opacity: 0; transform: translate(-50%, -70px) scale(1); } }
+
+/* Les boutons répondent au doigt. */
+@media (hover: hover) { .gros:hover, .suivant:hover, .petit:hover, .refaire:hover, .rond:hover { translate: 0 -2px; } }
+
+/* La carte : les lieux apparaissent un à un. */
+.lieu { animation: lieu-pop .5s var(--rebond) backwards; }
+.lieu:nth-of-type(2) { animation-delay: .07s; } .lieu:nth-of-type(3) { animation-delay: .14s; } .lieu:nth-of-type(4) { animation-delay: .21s; }
+.lieu:nth-of-type(5) { animation-delay: .28s; } .lieu:nth-of-type(6) { animation-delay: .35s; } .lieu:nth-of-type(7) { animation-delay: .42s; }
+@keyframes lieu-pop { from { scale: .3; opacity: 0; } }
+.lieu.secoue { animation: secoue .4s; }
+
+@media (prefers-reduced-motion: reduce) { .saison-fx { display: none; } .bulle .mot, .plateau, .lieu, .perso img, .bulle-zone .leo-mini img { animation: none; } }
+/* L'écran titre : le titre et la phrase lisibles sur le ciel et le feuillage. */
+.titre-image { background-position: center 85%; }
+.titre h1 { text-shadow: 0 3px 0 #fff6e1, 0 0 18px rgba(255, 246, 225, .95), 0 0 36px rgba(255, 246, 225, .8); }
+.titre p { display: inline-block; background: var(--color-surface); padding: .35em .9em; border-radius: 16px 18px 16px 20px; box-shadow: var(--ombre); }
+/* Téléphone : la bulle prend la place qui reste, les deux personnages restent entiers. */
+.bulle-zone .bulle { min-width: 0; }
+@media (max-width: 520px) and (orientation: portrait) {
+  .perso { min-width: 62px; }
+  .perso img { height: clamp(88px, 15vh, 130px); }
+  .perso:not([data-qui=sage]) img, .bulle-zone .leo-mini img { height: clamp(78px, 13vh, 115px); }
+  .bulle-zone .leo-mini { min-width: 46px; }
+  .perso .nom, .bulle-zone .leo-mini span { font-size: .8rem; padding: 2px 7px; }
+  .bulle { padding: 10px 11px; }
+}
+/* Une explication : les cases montrées sont une image (pointillés, sans pulsation), et une étiquette dit qu'on regarde. */
+.plateau.demo .case.cible::after { background: rgba(255, 252, 240, .45); box-shadow: 0 0 0 3px rgba(47, 127, 122, .55); border: 0; animation: point .25s var(--rebond); }
+.plateau.demo .case.cible::after { outline: 2px dashed rgba(47, 127, 122, .7); outline-offset: 3px; box-shadow: none; }
+.plateau.demo::before { content: 'Regarde'; position: absolute; z-index: 80; left: 50%; top: 0; transform: translate(-50%, -55%); padding: .1em .9em .15em; border-radius: 999px;
+  background: var(--color-encre); color: #fff8ec; font: 800 clamp(.9rem, 2.6vw, 1.1rem)/1.3 var(--font-display); box-shadow: 0 3px 0 rgba(0, 0, 0, .25); pointer-events: none; animation: entre .4s var(--rebond); }
+.plateau.demo { cursor: default; }
+/* « Suivant » appelé : il arrive sans attendre et se secoue. */
+.suite.appelle { animation: appelle .55s ease-in-out 2, respire 2s 1.1s ease-in-out infinite !important; box-shadow: 0 5px 0 var(--color-primary-fonce), 0 0 0 6px rgba(242, 185, 40, .7), 0 14px 28px rgba(80, 40, 10, .35); }
+@keyframes appelle { 0%, 100% { transform: none; opacity: 1; } 20% { transform: rotate(-6deg) scale(1.12); } 40% { transform: rotate(5deg) scale(1.12); } 60% { transform: rotate(-3deg) scale(1.06); } }

@@ -7,7 +7,8 @@ Les jeux de Julien pour [Ludiworld](https://pikifou.github.io/ludiworld/), réun
 | Jeu | Dossier | Adresse |
 |---|---|---|
 | Le Monde à la craie : trouver les pays du monde sur une carte au tableau noir | `monde-a-la-craie/` | https://pikifou.github.io/ludigames/monde-a-la-craie/ |
-| Le Chemin du Roi : apprendre les échecs avec un vieux sage et ses amis | `chemin-du-roi/` | https://pikifou.github.io/ludigames/chemin-du-roi/ (pas encore publié) |
+| Le Chemin du Roi : apprendre les échecs avec un vieux sage et ses amis | `chemin-du-roi/` | https://pikifou.github.io/ludigames/chemin-du-roi/ |
+| Les Défis de Barnabé : s'entraîner aux échecs avec des défis au bord de la mer (la suite du Chemin du Roi) | `defis-de-barnabe/` | https://pikifou.github.io/ludigames/defis-de-barnabe/ (pas encore publié) |
 
 ## Ajouter un jeu
 
@@ -32,3 +33,11 @@ Carte : [Natural Earth](https://www.naturalearthdata.com) (domaine public), via 
 - `node tools/version.js chemin-du-roi` après chaque modification. `node --test` : règles (perft), validité et solution de chaque exercice. `python tests/chemin-navigateur.py` : tout le chemin joué depuis une sauvegarde vide, une vraie partie, six formats d'écran, hors ligne (port 7362).
 - Pour tester : `?tout` ouvre toutes les leçons, `?lecon=<id>` ouvre une leçon, `?amis` les parties.
 - Images : Higgsfield (Nano Banana 2), détourées par `factory/direction-artistique/tour22-echecs/preparer.py`.
+
+## Les Défis de Barnabé
+
+- Le même moteur que Le Chemin du Roi (`js/echecs.js`, `js/exercice.js`, `js/plateau.js`), avec deux buts de plus : la fourchette et la parade au mat.
+- `node tools/defis.js` fabrique les 90 défis dans `defis-de-barnabe/js/defis.js` : des positions tirées au hasard ou de parties jouées par le moteur, gardées seulement si elles ont la bonne forme (le hasard est réglé : toujours le même résultat). Ne pas modifier `defis.js` à la main.
+- `node tools/version.js defis-de-barnabe` après chaque modification. `node --test tests/defis-contenu.test.js` : chaque défi a une solution. `python tests/defis-navigateur.py` : tout le jeu joué dans le navigateur (port 7374).
+- Pour tester : `?tout` ouvre tout, `?lecon=<bouteille>` (par exemple `?lecon=jetee-1`), `?amis` le match, `?histoire`, `?fin`.
+- Images : Higgsfield (Nano Banana Pro), musique : ElevenLabs.

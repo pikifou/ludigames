@@ -62,7 +62,7 @@ def glisser(page, de, vers):
 
 
 def bouton(page, texte):
-    b = page.locator('.fete .actions button, .bulle .actions button, .jeu > .suite', has_text=texte).filter(visible=True)
+    b = page.locator('.fete .actions button, .bulle .actions button, .jeu .suite', has_text=texte).filter(visible=True)
     return b.first if b.count() else None
 
 
@@ -200,24 +200,24 @@ def chemin_complet(nav):
 
 
 def partie_ami(nav):
-    print('Une vraie partie avec Lina (tablette), annuler, dangers')
+    print('Une vraie partie avec Barnabé (tablette), annuler, dangers')
     page = nav.new_page(viewport={'width': 1180, 'height': 820}, has_touch=True, reduced_motion='reduce')
     erreurs = []
     page.on('pageerror', lambda e: erreurs.append(str(e)))
     page.goto(BASE + '?amis')
-    page.locator('[data-qui=lina]').click(force=True)
+    page.locator('[data-qui=sage]').click(force=True)
     page.wait_for_selector('.piece')
     verifier(page.locator('.piece').count() == 32, '32 pièces au départ')
     glisser(page, 12, 28)  # e2-e4
     page.wait_for_timeout(1500)
-    verifier(page.locator('.piece.noire').count() == 16 and page.locator('.case.dernier').count() == 2, "Lina a répondu")
+    verifier(page.locator('.piece.noire').count() == 16 and page.locator('.case.dernier').count() == 2, "Barnabé a répondu")
     bouton(page, 'Annuler mon coup').click(force=True)
     page.wait_for_timeout(300)
     verifier(page.evaluate("document.querySelector('.case[data-sq=\"12\"]') && [...document.querySelectorAll('.piece.blanche')].length") == 16, 'annuler remet la position')
     bouton(page, 'Voir les dangers').click(force=True)
     page.wait_for_timeout(200)
     page.screenshot(path=str(CAPTURES / 'partie-tablette.png'))
-    verifier(jouer_partie(page, 300), 'la partie avec Lina va jusqu\'au bout')
+    verifier(jouer_partie(page, 300), 'la partie avec Barnabé va jusqu\'au bout')
     page.screenshot(path=str(CAPTURES / 'partie-fin.png'))
     verifier(not erreurs, f'aucune erreur ({erreurs[:3]})')
     page.close()

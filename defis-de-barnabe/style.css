@@ -1,0 +1,649 @@
+/* Les Défis de Barnabé : le bord de mer peint, des figurines, un plateau en bois flotté. */
+@font-face { font-family: 'Baloo 2'; font-weight: 500; font-display: swap; src: url('fonts/baloo2-500.woff2') format('woff2'); }
+@font-face { font-family: 'Baloo 2'; font-weight: 700; font-display: swap; src: url('fonts/baloo2-700.woff2') format('woff2'); }
+@font-face { font-family: 'Baloo 2'; font-weight: 800; font-display: swap; src: url('fonts/baloo2-800.woff2') format('woff2'); }
+@font-face { font-family: 'Lexend'; font-weight: 300 700; font-display: swap; src: url('fonts/lexend.woff2') format('woff2'); }
+
+:root {
+  --color-papier: #f7edd8;
+  --color-papier-2: #efe0bf;
+  --color-encre: #2b2f52;          /* indigo des plantes */
+  --color-encre-douce: #5a5d7d;
+  --color-primary: #c8643b;        /* terracotta : ce qu'on touche */
+  --color-primary-fonce: #9c4523;
+  --color-ocre: #d9a441;
+  --color-sarcelle: #2f7f7a;
+  --color-case-claire: #f1ddb6;
+  --color-case-foncee: #b88552;
+  --color-cadre: #7a4e2b;
+  --color-or: #f2b928;
+  --color-danger: #d23b2a;
+  --color-surface: rgba(247, 237, 216, .96);
+  --font-display: 'Baloo 2', 'Trebuchet MS', sans-serif;
+  --font-texte: 'Lexend', 'Trebuchet MS', sans-serif;
+  --ombre: 0 3px 0 rgba(90, 55, 25, .25), 0 10px 24px rgba(60, 40, 20, .18);
+  --rebond: cubic-bezier(.2, 1.5, .4, 1);
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; }
+body {
+  background: var(--color-papier); color: var(--color-encre); font-family: var(--font-texte);
+  overflow: hidden; user-select: none; -webkit-user-select: none; -webkit-tap-highlight-color: transparent;
+}
+#app { position: fixed; inset: 0; }
+button { font: inherit; color: inherit; cursor: pointer; border: 0; background: none; touch-action: manipulation; }
+img { max-width: 100%; }
+[hidden] { display: none !important; }
+
+.ecran { position: absolute; inset: 0; display: flex; flex-direction: column; animation: ecran .35s ease-out;
+  padding: env(safe-area-inset-top, 0) env(safe-area-inset-right, 0) env(safe-area-inset-bottom, 0) env(safe-area-inset-left, 0); }
+@keyframes ecran { from { opacity: 0; transform: scale(1.02); } }
+
+/* ---------- boutons ---------- */
+.gros, .suivant, .petit {
+  font-family: var(--font-display); font-weight: 800; border-radius: 999px 999px 999px 999px / 60% 60% 70% 70%;
+  transition: transform .12s, box-shadow .12s;
+}
+.gros { font-size: 1.8rem; padding: .35em 1.7em; background: var(--color-primary); color: #fff8ec; box-shadow: 0 5px 0 var(--color-primary-fonce), 0 12px 24px rgba(80, 40, 10, .3); }
+.suivant { font-size: 1.2rem; padding: .3em 1.2em; background: var(--color-primary); color: #fff8ec; box-shadow: 0 4px 0 var(--color-primary-fonce); }
+.petit { font-size: 1rem; padding: .32em 1em; background: var(--color-papier-2); color: var(--color-encre); box-shadow: 0 3px 0 #c9b083; }
+.gros:active, .suivant:active, .petit:active { transform: translateY(3px) scale(.97); box-shadow: 0 1px 0 var(--color-primary-fonce); }
+.rond { width: 46px; height: 46px; border-radius: 50%; background: var(--color-surface); box-shadow: var(--ombre); display: grid; place-items: center; flex: none; position: relative; transition: transform .12s; }
+.rond:active { transform: scale(.9); }
+.rond svg { width: 24px; height: 24px; fill: none; stroke: var(--color-encre); stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }
+.rond.son svg path:first-child { fill: var(--color-encre); }
+.rond.son.coupe .ondes { stroke: transparent; }
+.rond.son.coupe { opacity: .7; }
+.rond.son.coupe::after { content: ''; position: absolute; width: 30px; height: 3px; background: var(--color-danger); transform: rotate(-45deg); border-radius: 2px; }
+
+.haut { display: flex; align-items: center; gap: 10px; padding: 10px 12px 4px; position: relative; z-index: 5; }
+.haut h2 { flex: 1; margin: 0; text-align: center; font: 800 1.4rem/1.1 var(--font-display); text-shadow: 0 2px 0 rgba(255, 248, 230, .85); }
+body.ludiworld .haut { padding-left: 130px; }
+
+/* ---------- écran titre ---------- */
+.titre { background: #f4e7cd; overflow: hidden; }
+.titre-image { position: absolute; inset: 0; background: url(img/titre.webp) center bottom / cover no-repeat; animation: kenburns 18s ease-in-out infinite alternate; }
+@keyframes kenburns { to { transform: scale(1.06) translateY(-1%); } }
+.titre-bloc { position: relative; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: space-between; padding: max(6vh, 30px) 20px max(6vh, 28px); }
+.titre-texte { text-align: center; animation: tombe .9s var(--rebond) both; }
+.titre h1 { margin: 0; font: 800 clamp(3rem, 13vw, 5.6rem)/.88 var(--font-display); color: var(--color-encre); letter-spacing: -.01em; text-shadow: 0 3px 0 rgba(255, 246, 225, .9); }
+.titre h1::after { content: ''; display: block; width: 2.2em; height: .16em; margin: .18em auto 0; background: var(--color-ocre); border-radius: 40% 60% 50% 50%; transform: rotate(-2deg); }
+.titre p { margin: .7em 0 0; font-size: clamp(1rem, 4vw, 1.3rem); color: var(--color-encre); line-height: 1.35; }
+.titre .gros { animation: monte .7s .5s var(--rebond) both, pulse 2.4s 1.4s ease-in-out infinite; }
+@keyframes tombe { from { opacity: 0; transform: translateY(-40px) rotate(-3deg); } }
+@keyframes monte { from { opacity: 0; transform: translateY(40px) scale(.8); } }
+@keyframes pulse { 50% { transform: scale(1.06); } }
+/* Paysage : l'image à droite, le titre à gauche sur le papier, jamais sur les visages. */
+@media (orientation: landscape) and (min-aspect-ratio: 5/4) {
+  .titre-image { left: 42%; background-position: center 70%; }
+  .titre-image::before { content: ''; position: absolute; inset: 0 auto 0 0; width: 18%; background: linear-gradient(90deg, #f4e7cd, transparent); }
+  .titre-bloc { width: 46%; justify-content: center; gap: 6vh; }
+}
+.feuilles { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+.feuilles i { position: absolute; top: -40px; width: 22px; height: 12px; border-radius: 0 100% 0 100%; background: #7c9a5a; opacity: .8; animation: feuille 9s linear infinite; }
+.feuilles i:nth-child(2) { left: 30%; animation-delay: -3s; background: #d9a441; animation-duration: 11s; }
+.feuilles i:nth-child(3) { left: 62%; animation-delay: -6s; background: #2f7f7a; }
+.feuilles i:nth-child(4) { left: 84%; animation-delay: -1.5s; animation-duration: 13s; }
+.feuilles i:nth-child(5) { left: 12%; animation-delay: -8s; background: #c8643b; animation-duration: 10s; }
+@keyframes feuille { to { transform: translate(-60px, 110vh) rotate(720deg); } }
+
+/* ---------- l'histoire en images ---------- */
+.histoire { background: #2b2f52; align-items: center; justify-content: center; gap: 14px; padding: 16px; }
+.planche { position: relative; width: min(100%, 560px, calc((100vh - 220px) * .8)); aspect-ratio: 4 / 5; border-radius: 22px 26px 22px 28px; overflow: hidden; box-shadow: 0 0 0 6px #f7edd8, 0 20px 50px rgba(0, 0, 0, .45); cursor: pointer; flex: none; }
+.planche-image { position: absolute; inset: 0; background: center / cover no-repeat; }
+.planche-image.entre { animation: planche 6s ease-out forwards; }
+@keyframes planche { from { transform: scale(1.12); opacity: .2; } 12% { opacity: 1; } to { transform: scale(1); } }
+.legende { position: relative; width: min(100%, 560px); background: var(--color-papier); border-radius: 18px 22px 18px 24px; padding: 14px 64px 14px 18px; box-shadow: var(--ombre); min-height: 124px; }
+.legende.arrive { animation: bulle .35s var(--rebond); }
+.legende p { margin: 0; font-size: clamp(1.05rem, 3.8vw, 1.3rem); line-height: 1.35; }
+.legende.parle { background: #fffaf0; }
+.legende.parle p { font-family: var(--font-display); font-weight: 700; font-size: clamp(1.15rem, 4.2vw, 1.45rem); }
+.legende .qui { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+.legende .qui:empty { display: none; }
+.legende .qui .visage { width: 34px; height: 34px; border-radius: 50%; background-color: var(--color-papier-2); background-size: auto 270%; background-position: 50% 3%; background-repeat: no-repeat; }
+.legende .qui b { font: 800 1rem var(--font-display); color: var(--color-primary); }
+.legende .suivant { position: absolute; right: 10px; bottom: 10px; width: 46px; height: 46px; padding: 0; font-size: 1.2rem; border-radius: 50%; animation: pulse 1.6s ease-in-out infinite; }
+.passer { position: absolute; top: calc(10px + env(safe-area-inset-top, 0)); right: 14px; color: #f7edd8; font: 700 1rem var(--font-display); padding: 8px 12px; opacity: .8; z-index: 2; }
+@media (orientation: landscape) and (min-aspect-ratio: 5/4) {
+  .histoire { flex-direction: row; }
+  .planche { width: auto; height: min(88vh, 640px); }
+  .legende { width: min(40vw, 460px); }
+}
+
+/* ---------- le chemin ---------- */
+.chemin { background: #ead9b4 url(img/fond-paysage-plage.webp) center / cover; }
+.chemin::before { content: ''; position: absolute; inset: 0; background: rgba(240, 225, 190, .45); backdrop-filter: blur(3px); }
+.total { display: inline-flex; align-items: center; gap: .25em; background: var(--color-surface); padding: .1em .7em; border-radius: 999px; box-shadow: var(--ombre); font-size: 1.15rem; }
+.totaux { display: inline-flex; gap: 6px; flex-wrap: wrap; justify-content: center; }
+.ico { width: 1.15em; height: 1.15em; object-fit: contain; vertical-align: -.2em; filter: drop-shadow(0 1px 1px rgba(90, 60, 0, .3)); }
+.medailles-btn img { width: 34px; height: 34px; object-fit: contain; }
+.medailles-btn b { position: absolute; right: -4px; bottom: -4px; min-width: 22px; height: 22px; border-radius: 11px; background: var(--color-primary); color: #fff; font: 800 .8rem/22px var(--font-display); }
+.carte-cadre { position: relative; flex: 1; display: grid; place-items: center; min-height: 0; container-type: size; padding-bottom: 6px; }
+.carte { position: relative; height: min(100cqh, 100cqw * 1376 / 768); aspect-ratio: 768 / 1376; border-radius: 18px; background: url(img/carte.webp) center / cover; box-shadow: 0 0 0 5px rgba(255, 248, 230, .8), 0 14px 40px rgba(80, 50, 20, .35); }
+@supports not (aspect-ratio: 1) { .carte { width: 56vh; } }
+.lieu { --t: clamp(46px, 11.5vmin, 70px); position: absolute; transform: translate(-50%, calc(-.5 * var(--t))); display: flex; flex-direction: column; align-items: center; gap: 1px; z-index: 2; }
+.lieu .visage { width: var(--t); height: var(--t); border-radius: 50%; background-color: var(--color-papier);
+  background-size: auto 270%; background-position: 50% 3%; border: 3px solid #fff8ea; box-shadow: var(--ombre); transition: filter .4s; }
+.lieu.actuel .visage { border-color: var(--color-ocre); box-shadow: 0 0 0 4px rgba(242, 185, 40, .45), var(--ombre); animation: respire 1.8s ease-in-out infinite; }
+.lieu.fini .visage { border-color: var(--color-sarcelle); }
+.lieu .badge { position: absolute; top: calc(var(--t) * .58); left: 50%; margin-left: calc(var(--t) * .18); width: calc(var(--t) * .48); height: calc(var(--t) * .48); display: grid; place-items: center; }
+.lieu .badge:empty { display: none; }
+.lieu .badge img { width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 2px 2px rgba(0, 0, 0, .3)); }
+.lieu .badge svg { width: 62%; height: 62%; background: var(--color-encre); border-radius: 50%; padding: 4px; box-sizing: content-box; }
+.lieu .badge svg rect { fill: #f7edd8; }
+.lieu .badge svg path { stroke: #f7edd8; }
+.etiquette { display: flex; flex-direction: column; align-items: center; background: var(--color-surface); border-radius: 10px 12px 10px 14px; padding: 1px 9px 2px; box-shadow: var(--ombre); line-height: 1.1; }
+.etiquette b { font: 800 .95rem/1.1 var(--font-display); white-space: nowrap; }
+.etiquette small { display: inline-flex; align-items: center; gap: 3px; font-size: .78rem; color: var(--color-encre-douce); }
+.lieu.ferme .visage { filter: grayscale(1) brightness(.9); }
+.lieu.ferme .etiquette { opacity: .75; }
+.lieu.ferme .etiquette small { display: none; }
+.lieu.secoue { animation: secoue .4s; }
+.lieu.debloque .visage { animation: debloque .8s var(--rebond); }
+.lieu.debloque::after { content: ''; position: absolute; left: 50%; top: calc(var(--t) / 2); width: calc(var(--t) * 2); height: calc(var(--t) * 2); transform: translate(-50%, -50%); border-radius: 50%;
+  background: radial-gradient(circle, rgba(242, 185, 40, .7), transparent 65%); animation: halo 1s ease-out forwards; pointer-events: none; z-index: -1; }
+@keyframes debloque { 0% { transform: scale(.6); filter: grayscale(1); } 60% { transform: scale(1.25); } 100% { transform: scale(1); filter: none; } }
+@keyframes halo { from { opacity: 1; transform: translate(-50%, -50%) scale(.3); } to { opacity: 0; transform: translate(-50%, -50%) scale(1.3); } }
+/* Léo debout sur le chemin : les pieds sur le point, une ombre au sol. */
+.leo { position: absolute; z-index: 3; width: 0; height: clamp(64px, 15vmin, 104px); transform: translateY(-100%); pointer-events: none; transition: left 1.6s ease-in-out, top 1.6s ease-in-out; }
+.leo img { position: absolute; bottom: 0; left: 50%; height: 100%; width: auto; max-width: none; transform: translate(-50%, 0); transform-origin: 50% 100%; animation: respire-leo 2.6s ease-in-out infinite; }
+.leo .ombre { position: absolute; left: 50%; bottom: -5px; width: clamp(34px, 8vmin, 52px); height: 10px; transform: translateX(-50%); border-radius: 50%; background: radial-gradient(ellipse, rgba(60, 35, 10, .5), transparent 70%); z-index: -1; }
+.leo.marche img { animation: marche .32s ease-in-out infinite; }
+.leo.gauche img { transform: translate(-50%, 0) scaleX(-1); }
+@keyframes respire-leo { 50% { transform: translate(-50%, 0) scaleY(1.025); } }
+@keyframes marche { 50% { translate: 0 -5%; } }
+@keyframes respire { 50% { transform: scale(1.07); } }
+@keyframes secoue { 25% { translate: -6px 0; } 75% { translate: 6px 0; } }
+@media (max-height: 520px) {
+  .carte-cadre { overflow-y: auto; place-items: start center; container-type: inline-size; }
+  .carte { height: auto; width: min(100cqw, 460px); }
+  .lieu { --t: 44px; }
+  .etiquette b { font-size: .8rem; }
+}
+
+/* Les feuilles qui montent du bas : un chapitre, les médailles. */
+.feuille { position: absolute; inset: 0; background: rgba(43, 47, 82, .35); display: flex; align-items: flex-end; justify-content: center; z-index: 20; animation: fondu .2s; }
+.feuille-carte { position: relative; width: min(560px, 100%); background: var(--color-papier); border-radius: 26px 30px 0 0; padding: 18px 18px calc(18px + env(safe-area-inset-bottom, 0)); box-shadow: 0 -10px 40px rgba(40, 30, 20, .3); animation: glisse .35s var(--rebond); }
+.feuille-perso { position: absolute; right: 14px; bottom: calc(100% - 70px); height: 150px; filter: drop-shadow(0 8px 6px rgba(40, 30, 20, .25)); animation: entre .5s .1s var(--rebond) backwards; }
+.feuille-tete small { color: var(--color-sarcelle); font-weight: 600; }
+.feuille-tete h3 { margin: 0 0 8px; font: 800 1.7rem/1.1 var(--font-display); }
+.lecons { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.lecons li { animation: entre .35s var(--rebond) backwards; }
+.lecons li:nth-child(2) { animation-delay: .05s; } .lecons li:nth-child(3) { animation-delay: .1s; } .lecons li:nth-child(4) { animation-delay: .15s; } .lecons li:nth-child(5) { animation-delay: .2s; } .lecons li:nth-child(6) { animation-delay: .25s; }
+.lecons button { width: 100%; display: flex; align-items: center; gap: 12px; padding: 6px 14px 6px 8px; background: #fffaf0; border-radius: 16px 18px 16px 20px; box-shadow: 0 3px 0 #d8c39a; text-align: left; transition: transform .12s; }
+.lecons button:active { transform: scale(.98); }
+.lecons button:disabled { opacity: .55; cursor: default; }
+.lecons button.faite { background: #e9f2ea; box-shadow: 0 3px 0 #a9c7ad; }
+.lecons button.prochaine { box-shadow: 0 3px 0 var(--color-primary-fonce), 0 0 0 3px var(--color-primary); }
+.lecons .pion { width: 44px; height: 55px; object-fit: contain; margin: -6px 0 -2px; }
+.lecons .nom { flex: 1; font: 700 1.15rem/1.1 var(--font-display); }
+.lecons .go { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; background: var(--color-primary); color: #fff; font-size: .9rem; animation: pulse 1.4s ease-in-out infinite; }
+.cadenas svg { width: 22px; height: 22px; }
+.cadenas rect { fill: var(--color-encre-douce); }
+.medailles-n { font-weight: 700; color: var(--color-sarcelle); }
+.fermer { position: absolute; top: 8px; right: 12px; font-size: 2rem; line-height: 1; color: var(--color-encre-douce); width: 44px; height: 44px; }
+.vitrine { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px 6px; }
+.vitrine li { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 2px; font: 700 .85rem/1.1 var(--font-display); color: var(--color-encre-douce); }
+.vitrine img { width: 100%; max-width: 92px; aspect-ratio: 1; object-fit: contain; filter: grayscale(1) brightness(.4) opacity(.22); }
+.vitrine li.gagnee img { filter: drop-shadow(0 4px 3px rgba(60, 40, 20, .3)); animation: entre .5s var(--rebond) backwards; }
+.vitrine li.gagnee span { color: var(--color-encre); }
+@keyframes fondu { from { opacity: 0; } }
+@keyframes glisse { from { transform: translateY(100%); } }
+@keyframes entre { from { transform: translateY(20px) scale(.9); opacity: 0; } }
+
+.etoiles { display: inline-flex; gap: 1px; vertical-align: -3px; }
+/* Les étoiles de note : sculptées, dorées ou en terre nue. */
+.etoiles i, .grosses-etoiles i { background: url(img/etoile-vide.webp) center / contain no-repeat; }
+.etoiles i.pleine, .grosses-etoiles i.pleine { background-image: url(img/etoile.webp); filter: drop-shadow(0 2px 2px rgba(110, 70, 0, .35)); }
+.etoiles i { width: 22px; height: 22px; }
+.bulle .etoiles i { width: 34px; height: 34px; }
+.bulle .etoiles i.pleine { animation: pop .45s var(--rebond) backwards; }
+.bulle .etoiles i:nth-child(2) { animation-delay: .15s; }
+.bulle .etoiles i:nth-child(3) { animation-delay: .3s; }
+@keyframes pop { from { transform: scale(0) rotate(-90deg); } 70% { transform: scale(1.35); } }
+
+/* ---------- une leçon ---------- */
+.jeu { background: #eadcb8 url(img/fond-portrait-plage.webp) center / cover no-repeat; }
+.progression { display: flex; gap: 4px; padding: 2px 16px 0; justify-content: center; }
+.progression i { width: 8px; height: 8px; border-radius: 50%; background: rgba(43, 47, 82, .18); transition: background .3s, transform .3s; }
+.progression i.ex { width: 14px; border-radius: 5px; }
+.progression i.fait { background: var(--color-sarcelle); }
+.progression i.la { background: var(--color-primary); transform: scale(1.35); }
+.scene { flex: 1; min-height: 0; display: flex; flex-direction: column; padding: 4px 10px 10px; gap: 4px; }
+.cote { display: flex; flex-direction: column; gap: 4px; flex: none; }
+.bulle-zone { display: flex; align-items: flex-end; gap: 4px; min-height: 0; }
+.perso { flex: none; position: relative; width: clamp(78px, 22vw, 120px); align-self: stretch; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; }
+.perso img { height: clamp(104px, 19vh, 180px); width: auto; max-width: none; filter: drop-shadow(0 6px 4px rgba(60, 40, 20, .3)); transform-origin: 50% 100%; }
+.perso img.entre { animation: entre .45s var(--rebond); }
+.perso img.rebond { animation: rebond .5s var(--rebond); }
+@keyframes rebond { 0% { transform: scaleY(.85) scaleX(1.1); } 50% { transform: translateY(-12%) scaleY(1.05); } }
+.perso .nom { position: relative; z-index: 2; font: 800 .95rem/1 var(--font-display); background: var(--color-surface); padding: 3px 10px; border-radius: 999px; margin-top: -8px; box-shadow: var(--ombre); }
+.bulle { position: relative; flex: 1; align-self: center; background: var(--color-surface); border-radius: 20px 24px 22px 18px; padding: 12px 14px; box-shadow: var(--ombre); cursor: pointer; }
+.bulle::before { content: ''; position: absolute; left: -12px; top: 50%; border: 10px solid transparent; border-right: 14px solid var(--color-surface); border-left: 0; }
+.bulle.arrive { animation: bulle .3s var(--rebond); }
+@keyframes bulle { from { transform: scale(.92); opacity: .3; } }
+.bulle .texte { margin: 0; font-size: clamp(1.02rem, 3.7vw, 1.25rem); line-height: 1.35; }
+.bulle .aide { margin: 6px 0 0; padding: 6px 10px; border-radius: 10px; background: rgba(242, 185, 40, .25); font-size: .95rem; }
+.bulle .actions { display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-end; margin-top: 8px; }
+.bulle .actions:empty { display: none; }
+.bulle.de-leo { background: #fff4f0; }
+.bulle.de-leo .texte { font-family: var(--font-display); font-weight: 700; font-size: clamp(1.1rem, 4vw, 1.35rem); }
+.bulle.pense .texte::after { content: ' …'; display: inline-block; animation: clignote .5s ease-in-out infinite alternate; }
+/* Léo sous la bulle, et l'objectif (étoiles, pièces à manger, prises). */
+.statut { display: flex; align-items: center; gap: 10px; min-height: 52px; padding: 0 4px; }
+.leo-mini { position: relative; width: 56px; height: 74px; flex: none; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; transform-origin: 50% 100%; }
+.leo-mini img { height: 74px; width: auto; max-width: none; filter: drop-shadow(0 3px 2px rgba(60, 40, 20, .3)); }
+.leo-mini span { position: absolute; bottom: -6px; font: 800 .7rem/1 var(--font-display); background: var(--color-surface); padding: 1px 6px; border-radius: 999px; }
+.leo-mini.saute { animation: saute-leo .7s var(--rebond); }
+.leo-mini.triste { animation: triste .5s ease-in-out; }
+@keyframes saute-leo { 0% { transform: scaleY(.8) scaleX(1.15); } 40% { transform: translateY(-40%) scale(1.15); } 70% { transform: translateY(0) scaleY(.9); } }
+@keyframes triste { 25% { transform: rotate(-6deg); } 75% { transform: rotate(6deg); } }
+.objectif { flex: 1; display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 44px; background: rgba(247, 237, 216, .82); border-radius: 14px; padding: 4px 10px; box-shadow: inset 0 2px 0 rgba(255, 255, 255, .5); }
+.objectif:empty { background: transparent; box-shadow: none; }
+.objectif .pot { display: flex; gap: 3px; }
+.objectif .pot i { width: 30px; height: 30px; }
+.objectif .pot i { background: url(img/pomme.webp) center / contain no-repeat; filter: grayscale(1) brightness(1.1) opacity(.28); transition: filter .3s; }
+.objectif .pot i.pleine { filter: drop-shadow(0 2px 2px rgba(70, 40, 10, .3)); }
+.objectif .pot i.arrive { animation: pop .45s var(--rebond); }
+.objectif .coups, .objectif .but { font: 700 1rem var(--font-display); color: var(--color-encre-douce); text-align: right; }
+.objectif .coups small { font-size: .8rem; display: block; line-height: 1; }
+.objectif .plat { display: flex; gap: 2px; }
+.objectif .plat img { height: 50px; width: auto; margin: -8px -10px -4px; transition: filter .3s, opacity .3s; }
+.objectif .plat img.mangee { filter: grayscale(1); opacity: .3; }
+.objectif .prises { display: flex; align-items: center; min-height: 30px; }
+.objectif .prises img { height: 46px; width: auto; margin: -10px -14px -4px; animation: pop .4s var(--rebond); }
+.objectif .prises em { font-size: .85rem; color: var(--color-encre-douce); }
+.objectif .prises .visage { width: 28px; height: 28px; border-radius: 50%; background-color: var(--color-papier-2); background-size: auto 270%; background-position: 50% 3%; background-repeat: no-repeat; margin-right: 6px; flex: none; }
+.zone-plateau { position: relative; flex: 1; min-height: 0; display: grid; place-items: center; container-type: size; }
+/* Le cadre et la couche des pièces ont la même marge, mesurée sur le plateau lui-même (un padding en % se mesure sur la zone autour, plus large en tablette). */
+.zone-plateau .plateau-el { --bord: calc(min(100cqw, 100cqh) * .036); width: min(100cqw, 100cqh); height: auto; aspect-ratio: 1; padding: var(--bord); }
+
+@media (orientation: landscape) and (min-aspect-ratio: 5/4) {
+  .jeu { background-image: url(img/fond-paysage-plage.webp); }
+  .scene { flex-direction: row-reverse; align-items: stretch; padding: 4px 16px 12px; gap: 16px; }
+  .cote { width: min(40%, 440px); justify-content: center; gap: 10px; }
+  .bulle-zone { flex-direction: column; align-items: stretch; }
+  .perso { width: auto; align-self: center; }
+  .perso img { height: clamp(100px, 30vh, 240px); }
+  .bulle { align-self: stretch; }
+  .bulle::before { left: 50%; top: -12px; border: 10px solid transparent; border-bottom: 14px solid var(--color-surface); border-top: 0; transform: translateX(-50%); }
+  .perso .nom { margin-top: -10px; margin-bottom: 14px; }
+}
+
+/* ---------- le plateau ---------- */
+.plateau { position: relative; padding: 3.6%; background: var(--color-cadre); border-radius: 14px 16px 14px 18px;
+  box-shadow: inset 0 2px 0 rgba(255, 230, 190, .35), 0 6px 0 #5c3a1f, 0 18px 30px rgba(60, 35, 15, .35); touch-action: none; transition: filter .3s; }
+.plateau.secoue { animation: secoue-plateau .45s; }
+@keyframes secoue-plateau { 20% { transform: translate(-5px, 2px) rotate(-.6deg); } 40% { transform: translate(5px, -2px) rotate(.5deg); } 60% { transform: translate(-3px, 1px); } 80% { transform: translate(2px, 0); } }
+.plateau[data-tour='ami'] { filter: saturate(.85) brightness(.96); cursor: wait; }
+.cases { position: relative; width: 100%; aspect-ratio: 1; display: grid; grid-template-columns: repeat(8, 1fr); grid-template-rows: repeat(8, 1fr); border-radius: 4px; overflow: hidden; }
+.case { position: relative; }
+.case.claire { background: var(--color-case-claire); }
+.case.foncee { background: var(--color-case-foncee); }
+.coord { position: absolute; font: 700 clamp(9px, 2.3cqmin, 13px)/1 var(--font-texte); opacity: .7; pointer-events: none; }
+.coord.rang { left: 3px; top: 2px; }
+.coord.col { right: 3px; bottom: 1px; }
+.case.claire .coord { color: #8a5f35; }
+.case.foncee .coord { color: #f6e6c6; }
+.case.dernier::before { content: ''; position: absolute; inset: 0; background: rgba(242, 185, 40, .38); }
+.case.choisie::before { content: ''; position: absolute; inset: 0; background: rgba(47, 127, 122, .5); }
+.case.indice::before { content: ''; position: absolute; inset: 0; background: rgba(242, 185, 40, .75); animation: clignote .7s ease-in-out infinite alternate; }
+.case.indice-vers::before { content: ''; position: absolute; inset: 10%; border-radius: 50%; border: 5px solid var(--color-or); box-shadow: 0 0 12px var(--color-or); animation: clignote .7s ease-in-out infinite alternate; z-index: 31; }
+@keyframes clignote { to { opacity: .35; } }
+/* Les cases où l'on peut aller : un point clair cerclé de foncé, visible sur les deux couleurs. */
+.case.cible::after { content: ''; position: absolute; left: 33%; top: 33%; width: 34%; height: 34%; border-radius: 50%; background: rgba(255, 252, 240, .9); box-shadow: 0 0 0 3px rgba(47, 127, 122, .85); z-index: 30; pointer-events: none; animation: point .25s var(--rebond); }
+.case.cible-prise::after { content: ''; position: absolute; inset: 4%; border-radius: 50%; border: 5px solid rgba(47, 127, 122, .85); box-shadow: 0 0 0 2px rgba(255, 252, 240, .8); z-index: 30; pointer-events: none; animation: point .25s var(--rebond); }
+@keyframes point { from { transform: scale(0); } }
+/* Échec : un anneau rouge et un point d'exclamation (pas seulement une couleur). */
+.case.echec::before { content: '!'; position: absolute; inset: 0; display: grid; place-items: start end; padding: 0 8%; font: 800 clamp(12px, 4cqmin, 26px)/1 var(--font-display); color: #fff;
+  background: radial-gradient(circle, rgba(210, 59, 42, .75) 0 45%, rgba(210, 59, 42, .25) 70%, transparent 72%); z-index: 1; animation: clignote .6s ease-in-out 3 alternate; }
+/* Une pièce menacée (avec « Voir les dangers ») : un anneau rouge pointillé sous elle. */
+.case.menace::before { content: ''; position: absolute; inset: 8%; border-radius: 50%; border: 4px dashed var(--color-danger); background: rgba(210, 59, 42, .15); }
+.case.doree::before { content: ''; position: absolute; inset: 0; background: radial-gradient(circle, rgba(255, 220, 90, .95), rgba(242, 185, 40, .4)); animation: doree 1.2s ease-out forwards; z-index: 1; }
+@keyframes doree { 0% { opacity: 0; } 20% { opacity: 1; } 100% { opacity: .55; } }
+.case.refus::before { content: '✕'; position: absolute; inset: 0; display: grid; place-items: center; font: 800 clamp(16px, 7cqmin, 44px)/1 var(--font-display); color: var(--color-danger); background: rgba(210, 59, 42, .22); animation: refus .9s forwards; z-index: 32; }
+@keyframes refus { 0% { transform: scale(.4); opacity: 0; } 20% { transform: scale(1.15); opacity: 1; } 75% { opacity: 1; } 100% { opacity: 0; } }
+.deco { position: absolute; inset: 0; display: grid; place-items: center; pointer-events: none; z-index: 2; }
+.deco svg { width: 74%; height: 74%; }
+.deco.pomme img { width: 76%; height: 76%; object-fit: contain; filter: drop-shadow(0 3px 2px rgba(70, 40, 10, .35)); animation: balance 2.2s ease-in-out infinite; transform-origin: 50% 90%; }
+.deco.danger svg { width: 46%; height: 46%; fill: none; stroke: var(--color-danger); stroke-width: 3.5; stroke-linecap: round; opacity: .8; }
+@keyframes balance { 25% { transform: rotate(-6deg); } 75% { transform: rotate(6deg) scale(1.05); } }
+
+.pieces, .effets { position: absolute; inset: var(--bord, 3.6%); pointer-events: none; }
+.effets { z-index: 70; }
+.piece { position: absolute; left: 0; top: 0; width: 12.5%; height: 12.5%; transition: transform .26s cubic-bezier(.3, .8, .4, 1); }
+.piece img { position: absolute; left: 50%; bottom: 3%; height: 144%; width: auto; max-width: none; transform: translateX(-50%); transform-origin: 50% 95%;
+  filter: drop-shadow(0 0 1px rgba(60, 35, 15, .7)) drop-shadow(0 3px 2px rgba(50, 30, 10, .45)); transition: transform .15s; }
+.piece.levee img { transform: translateX(-50%) translateY(-10%) scale(1.08); filter: drop-shadow(0 0 1px rgba(60, 35, 15, .7)) drop-shadow(0 10px 6px rgba(50, 30, 10, .35)); }
+.piece.saute img { animation: saut .3s ease-out; }
+@keyframes saut { 0% { transform: translateX(-50%) scale(1); } 45% { transform: translateX(-50%) translateY(-28%) scale(1.12); } 80% { transform: translateX(-50%) scaleY(.88) scaleX(1.08); } 100% { transform: translateX(-50%); } }
+.piece.tiree { transition: none; z-index: 60 !important; }
+.piece.tiree img { transform: translateX(-50%) scale(1.18); }
+.piece.bouge { z-index: 50 !important; }
+.piece.prise { z-index: 55 !important; }
+.piece.prise img { animation: ejecte .45s ease-in forwards; }
+@keyframes ejecte { 0% { transform: translateX(-50%); } 30% { transform: translateX(-10%) translateY(-50%) rotate(30deg) scale(1.1); opacity: 1; } 100% { transform: translateX(60%) translateY(30%) rotate(110deg) scale(.3); opacity: 0; } }
+.piece.apparait img { animation: apparait .35s var(--rebond); }
+@keyframes apparait { from { transform: translateX(-50%) scale(.3); opacity: 0; } }
+.piece.non img { animation: non .45s; }
+@keyframes non { 20% { transform: translateX(-62%) rotate(-8deg); } 45% { transform: translateX(-38%) rotate(8deg); } 70% { transform: translateX(-56%) rotate(-4deg); } }
+.piece.echec img { animation: tremble .6s ease-in-out 2; }
+@keyframes tremble { 25% { transform: translateX(-52%) rotate(-4deg); } 75% { transform: translateX(-48%) rotate(4deg); } }
+.piece.renverse-d img { animation: renverse-d .7s .15s cubic-bezier(.5, 0, .7, 1.4) forwards; }
+.piece.renverse-g img { animation: renverse-g .7s .15s cubic-bezier(.5, 0, .7, 1.4) forwards; }
+@keyframes renverse-d { to { transform: translateX(-38%) translateY(10%) rotate(80deg) scale(.82); } }
+@keyframes renverse-g { to { transform: translateX(-62%) translateY(10%) rotate(-80deg) scale(.82); } }
+.plateau.mat .case.echec::before { display: none; }
+/* Les particules : poussière à l'atterrissage, éclats d'une prise, étoiles ramassées. */
+.eclats { position: absolute; width: 12.5%; height: 12.5%; }
+.eclats i { position: absolute; left: 50%; top: 70%; width: 14%; height: 14%; border-radius: 50%; animation: eclat .55s ease-out forwards; }
+.poussiere i { background: rgba(220, 195, 150, .9); }
+.eclat-prise i { background: var(--color-ocre); width: 12%; height: 18%; border-radius: 2px; top: 50%; }
+.eclat-prise i:nth-child(odd) { background: var(--color-primary); }
+.pomme-eclat i { width: 16%; height: 10%; top: 45%; border-radius: 0 70% 0 70%; background: #6f9a3c; animation-duration: .7s; }
+.pomme-eclat i:nth-child(3n) { background: #e8c25a; border-radius: 50%; width: 10%; height: 10%; }
+@keyframes eclat { from { transform: translate(-50%, -50%) scale(1); opacity: 1; } to { transform: translate(calc(-50% + var(--dx) * 2.4), calc(-50% + var(--dy) * 2.4)) scale(.3); opacity: 0; } }
+.pomme-vol { position: fixed; left: 0; top: 0; width: 38px; height: 38px; z-index: 100; pointer-events: none; }
+.pomme-vol img { width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 4px 4px rgba(70, 40, 10, .4)); }
+
+/* Confettis de papier. */
+.confettis { position: absolute; inset: 0; overflow: hidden; pointer-events: none; z-index: 80; }
+.confettis i { position: absolute; top: -20px; width: 9px; height: 12px; border-radius: 2px; animation: confetti var(--d) cubic-bezier(.25, .4, .5, 1) forwards; }
+.confettis i.long { width: 6px; height: 18px; }
+@keyframes confetti { to { transform: translate(var(--x), 110vh) rotate(var(--r)); } }
+
+/* ---------- la fête de fin ---------- */
+.fete { position: absolute; inset: 0; z-index: 40; background: rgba(43, 47, 82, .72); display: grid; place-items: center; padding: 16px; animation: fondu .3s; overflow: hidden; }
+.rayons { position: absolute; left: 50%; top: 42%; width: 180vmax; height: 180vmax; transform: translate(-50%, -50%);
+  background: repeating-conic-gradient(rgba(242, 185, 40, .22) 0 10deg, transparent 10deg 20deg); animation: tourne 30s linear infinite;
+  -webkit-mask: radial-gradient(circle, #000 0, transparent 45%); mask: radial-gradient(circle, #000 0, transparent 45%); }
+@keyframes tourne { to { transform: translate(-50%, -50%) rotate(360deg); } }
+.fete-carte { position: relative; width: min(440px, 100%); background: var(--color-papier); border-radius: 28px 32px 26px 30px; padding: 0 22px 22px; text-align: center; box-shadow: 0 20px 60px rgba(0, 0, 0, .4); animation: bulle .5s var(--rebond); margin-top: 90px; }
+.fete-persos { position: relative; height: 150px; margin-top: -110px; display: flex; justify-content: center; align-items: flex-end; gap: 4px; }
+.fete-persos img { height: 100%; width: auto; filter: drop-shadow(0 8px 6px rgba(40, 30, 20, .3)); transform-origin: 50% 100%; position: relative; z-index: 1; }
+.fete-persos .p-leo { height: 118%; animation: hop 1s .2s ease-in-out infinite; }
+.fete-persos .p-ami { animation: hop 1s .55s ease-in-out infinite; }
+.fete-persos .sol { position: absolute; bottom: -6px; left: 18%; right: 18%; height: 16px; border-radius: 50%; background: radial-gradient(ellipse, rgba(60, 35, 10, .35), transparent 70%); }
+@keyframes hop { 0%, 100% { transform: translateY(0) scaleY(1); } 15% { transform: scaleY(.9) scaleX(1.06); } 45% { transform: translateY(-14%); } 70% { transform: translateY(0) scaleY(.95); } }
+.fete-carte h3 { margin: 10px 0 0; font: 800 clamp(1.8rem, 7vw, 2.4rem)/1.05 var(--font-display); color: var(--color-primary); }
+.fete-texte { margin: 6px 0 0; font-size: 1.1rem; }
+.grosses-etoiles { display: flex; justify-content: center; gap: 6px; margin: 10px 0 0; }
+.grosses-etoiles i { width: 64px; height: 64px; }
+.grosses-etoiles i:nth-child(2) { width: 78px; height: 78px; margin-top: -12px; }
+.grosses-etoiles i.pleine { filter: drop-shadow(0 0 12px rgba(255, 210, 80, .75)) drop-shadow(0 3px 3px rgba(110, 70, 0, .35)); }
+.grosses-etoiles i.pleine { animation: pop .5s var(--rebond); }
+.grosses-etoiles i.vide { animation: triste .4s; }
+.score { margin: 2px 0 6px; font: 800 1.5rem var(--font-display); color: var(--color-encre-douce); }
+.score b { color: var(--color-encre); font-size: 1.9rem; }
+.score.fini { animation: pop .4s var(--rebond); }
+.medaille-gagnee { display: flex; flex-direction: column; align-items: center; gap: 4px; margin: 4px 0 8px; }
+.medaille-gagnee img { width: 120px; height: 120px; object-fit: contain; animation: medaille 1.1s var(--rebond); filter: drop-shadow(0 8px 10px rgba(60, 40, 10, .35)); }
+.medaille-gagnee span { font: 800 1.15rem var(--font-display); color: var(--color-sarcelle); }
+@keyframes medaille { 0% { transform: translateY(-160px) rotateY(0) scale(.4); opacity: 0; } 50% { transform: translateY(10px) rotateY(540deg) scale(1.15); opacity: 1; } 100% { transform: rotateY(720deg) scale(1); } }
+.fete .actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; min-height: 44px; }
+.fete .actions button { animation: entre .4s var(--rebond); }
+.fin-du-jeu { background: #2b2f52 url(img/histoire-fin.webp) center / cover; }
+
+/* ---------- les amis ---------- */
+.amis { background: #eadcb8 url(img/fond-portrait-phare.webp) center / cover; overflow-y: auto; }
+.amis .intro { margin: 4px auto 10px; max-width: 560px; text-align: center; background: var(--color-surface); border-radius: 16px; padding: 10px 16px; }
+.liste-amis { list-style: none; margin: 0 auto; padding: 0 14px 24px; display: grid; gap: 10px; width: min(560px, 100%); }
+.liste-amis li { animation: entre .4s var(--rebond) backwards; }
+.liste-amis li:nth-child(2) { animation-delay: .06s; } .liste-amis li:nth-child(3) { animation-delay: .12s; } .liste-amis li:nth-child(4) { animation-delay: .18s; } .liste-amis li:nth-child(5) { animation-delay: .24s; } .liste-amis li:nth-child(6) { animation-delay: .3s; }
+.liste-amis button { width: 100%; display: flex; align-items: center; gap: 12px; background: var(--color-surface); border-radius: 18px 22px 18px 24px; padding: 6px 14px 6px 6px; box-shadow: var(--ombre); text-align: left; transition: transform .12s; }
+.liste-amis button:active { transform: scale(.98); }
+.liste-amis img { height: 86px; width: 66px; object-fit: cover; object-position: top; }
+.liste-amis .txt { flex: 1; display: flex; flex-direction: column; }
+.liste-amis b { font: 800 1.3rem/1.1 var(--font-display); }
+.liste-amis small { color: var(--color-encre-douce); }
+.liste-amis .jouer { font: 800 1rem var(--font-display); background: var(--color-primary); color: #fff8ec; padding: .2em .9em; border-radius: 999px; }
+.liste-amis .medaille svg { width: 38px; height: 38px; fill: var(--color-or); stroke: #a67400; }
+
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01s !important; animation-iteration-count: 1 !important; transition-duration: .01s !important; } }
+
+/* Pendant la fête, la bulle d'avant disparaît. */
+.jeu.fete-en-cours .cote { visibility: hidden; }
+/* Grands écrans : la fête, Léo et la carte un peu plus grands. */
+@media (min-width: 700px) and (min-height: 700px) {
+  .fete-carte { width: min(500px, 100%); margin-top: 130px; }
+  .fete-persos { height: 200px; margin-top: -150px; }
+  .lieu { --t: clamp(56px, 8vmin, 82px); }
+  .etiquette b { font-size: 1.05rem; }
+  .etiquette small { font-size: .85rem; }
+  .leo-mini { width: 60px; height: 80px; }
+  .leo-mini img { height: 80px; }
+  .objectif { min-height: 56px; }
+  .objectif .pot i { width: 38px; height: 38px; }
+  .objectif .plat img { height: 46px; }
+  .bulle .texte { font-size: 1.3rem; }
+}
+
+/* Pause demandée par Ludiworld. */
+.voile-pause { position: fixed; inset: 0; z-index: 200; background: rgba(43, 47, 82, .85); display: grid; place-items: center; color: #f7edd8; text-align: center; animation: fondu .3s; }
+.voile-pause img { height: 160px; width: auto; display: block; margin: 0 auto; filter: drop-shadow(0 8px 8px rgba(0, 0, 0, .4)); }
+.voile-pause p { margin: 8px 0 0; font: 800 2.4rem var(--font-display); }
+.voile-pause small { font-size: 1.1rem; }
+
+/* Le gros bouton « Suivant » : il monte du bas de l'écran après un petit temps pour lire, puis respire. */
+.suite { position: absolute; right: max(16px, env(safe-area-inset-right, 0px)); bottom: calc(16px + env(safe-area-inset-bottom, 0px)); z-index: 60;
+  display: inline-flex; align-items: center; gap: .3em; font-size: 1.45rem; padding: .45em 1em .45em 1.3em;
+  box-shadow: 0 5px 0 var(--color-primary-fonce), 0 14px 28px rgba(80, 40, 10, .35);
+  animation: monte-suite .7s 1.3s var(--rebond) both, respire 2s 2.2s ease-in-out infinite; }
+.suite svg { width: 1.1em; height: 1.1em; fill: none; stroke: currentColor; stroke-width: 3.2; stroke-linecap: round; stroke-linejoin: round; }
+@keyframes monte-suite { from { transform: translateY(calc(100% + 40px)); opacity: 0; } }
+@keyframes respire { 50% { transform: scale(1.05); } }
+.jeu.fete-en-cours .suite { display: none; }
+
+/* La prise en passant, expliquée la première fois : en haut (à droite en paysage), le plateau reste visible. */
+.explication { position: absolute; inset: 0; z-index: 90; display: grid; align-items: start; justify-items: center; padding: 58px 10px 10px; animation: fondu .3s; }
+.explication-carte { position: relative; width: min(100%, 560px); display: grid; grid-template-columns: auto 1fr; align-items: start; gap: 4px 10px; background: var(--color-surface); border-radius: 20px 24px 22px 18px; padding: 12px 14px 12px 8px; box-shadow: 0 0 0 4px var(--color-or), 0 14px 40px rgba(40, 25, 10, .4); animation: entre .45s var(--rebond); }
+.explication-carte img { height: 120px; width: auto; filter: drop-shadow(0 4px 3px rgba(60, 40, 20, .3)); }
+.explication-carte h3 { margin: 0 0 4px; font: 800 1.3rem/1.1 var(--font-display); color: var(--color-primary); }
+.explication-carte p { margin: 0; font-size: 1.02rem; line-height: 1.35; }
+.explication-carte button { grid-column: 1 / -1; justify-self: end; margin-top: 6px; }
+@media (orientation: landscape) and (min-aspect-ratio: 5/4) {
+  .explication { justify-items: end; align-items: center; padding: 58px 16px 12px; }
+  .explication-carte { width: min(40%, 440px); }
+}
+@media (prefers-reduced-motion: reduce) { .suite { animation: none; } }
+
+/* La note d'un exercice : trois grosses étoiles en tête de bulle. Une étoile qui manque est un creux sombre, bien différent. */
+.etoiles i:not(.pleine), .grosses-etoiles i:not(.pleine) { filter: grayscale(1) brightness(.38) opacity(.5); }
+.note { display: flex; align-items: center; gap: 10px; margin: -2px 0 8px; padding-bottom: 8px; border-bottom: 2px dashed rgba(43, 47, 82, .15); }
+.note .etoiles { gap: 4px; }
+.note .etoiles i { width: 42px; height: 42px; }
+.note .etoiles i.pleine { animation: pop .45s var(--rebond) backwards; }
+.note .etoiles i:nth-child(2) { animation-delay: .22s; }
+.note .etoiles i:nth-child(3) { animation-delay: .44s; }
+.note .etoiles i:not(.pleine) { animation: manque .5s .7s ease-in-out backwards; }
+@keyframes manque { 0% { transform: scale(.4); opacity: 0; } 40% { transform: scale(1.1) rotate(-10deg); } 70% { transform: rotate(8deg); } }
+.note b { white-space: nowrap; font: 800 1.08rem/1.1 var(--font-display); color: var(--color-encre-douce); }
+.note.n3 b { color: var(--color-primary); }
+/* « Refaire » quand il manque des étoiles : un vrai bouton doré, pas un petit bouton gris. */
+.refaire { display: inline-flex; align-items: center; gap: .35em; font: 800 1.05rem var(--font-display); padding: .35em 1em; border-radius: 999px 999px 999px 999px / 60% 60% 70% 70%;
+  background: #f6d27a; color: var(--color-encre); box-shadow: 0 4px 0 #c99a2e; animation: respire 1.8s 1.2s ease-in-out infinite; }
+.refaire .etoiles i { width: 22px; height: 22px; filter: none; }
+.refaire:active { transform: translateY(3px); box-shadow: 0 1px 0 #c99a2e; }
+.suite { animation-delay: var(--attente, 1.3s), calc(var(--attente, 1.3s) + .9s); }
+/* La barre du haut : chaque exercice montre les étoiles gagnées. */
+.progression i.ex { width: auto; height: auto; display: inline-flex; gap: 1px; padding: 2px 4px; border-radius: 8px; background: rgba(43, 47, 82, .1); }
+.progression i.ex b { width: 11px; height: 11px; background: url(img/etoile-vide.webp) center / contain no-repeat; filter: grayscale(1) brightness(.55) opacity(.4); }
+.progression i.ex[data-n="1"] b:nth-child(-n+1), .progression i.ex[data-n="2"] b:nth-child(-n+2), .progression i.ex[data-n="3"] b { background-image: url(img/etoile.webp); filter: none; }
+.progression i.ex.fait { background: rgba(47, 127, 122, .18); }
+.progression i.ex.la { background: rgba(200, 100, 59, .25); transform: scale(1.15); }
+@media (prefers-reduced-motion: reduce) { .note .etoiles i, .refaire { animation: none; } }
+
+/* ==================== Tour 45 : la gouache d'album, les saisons, et plus de vie ==================== */
+/* Le décor suit la saison du lieu (et la musique). */
+@media (orientation: landscape) and (min-aspect-ratio: 5/4) {
+}
+/* Ce qui vole dans l'air : feuilles, flocons, pétales, poussières de soleil. */
+.saison-fx { position: absolute; inset: 0; pointer-events: none; overflow: hidden; z-index: 0; }
+.jeu .scene, .jeu .progression { position: relative; z-index: 1; }
+.saison-fx i { position: absolute; top: -6%; left: var(--x, 50%); width: 16px; height: 10px; border-radius: 0 100% 0 100%; background: #c8643b; opacity: .85;
+  animation: fx-tombe var(--d, 11s) linear var(--t, 0s) infinite; }
+.saison-fx i:nth-child(1) { --x: 6%; --d: 12s; --t: -2s; }
+.saison-fx i:nth-child(2) { --x: 18%; --d: 15s; --t: -9s; background: #d9a441; }
+.saison-fx i:nth-child(3) { --x: 29%; --d: 10s; --t: -5s; }
+.saison-fx i:nth-child(4) { --x: 41%; --d: 14s; --t: -12s; background: #a8452a; }
+.saison-fx i:nth-child(5) { --x: 52%; --d: 11s; --t: -1s; background: #d9a441; }
+.saison-fx i:nth-child(6) { --x: 63%; --d: 16s; --t: -7s; }
+.saison-fx i:nth-child(7) { --x: 72%; --d: 12s; --t: -10s; background: #7c9a5a; }
+.saison-fx i:nth-child(8) { --x: 81%; --d: 13s; --t: -3s; }
+.saison-fx i:nth-child(9) { --x: 90%; --d: 10s; --t: -6s; background: #d9a441; }
+.saison-fx i:nth-child(10) { --x: 96%; --d: 17s; --t: -14s; }
+.saison-fx i:nth-child(11) { --x: 12%; --d: 18s; --t: -11s; background: #a8452a; }
+.saison-fx i:nth-child(12) { --x: 58%; --d: 19s; --t: -16s; }
+@keyframes fx-tombe { 0% { transform: translate(0, 0) rotate(0); } 25% { transform: translate(28px, 28vh) rotate(160deg); } 50% { transform: translate(-12px, 55vh) rotate(320deg); }
+  75% { transform: translate(24px, 82vh) rotate(480deg); } 100% { transform: translate(0, 112vh) rotate(640deg); } }
+.jeu[data-saison=hiver] .saison-fx i { width: 9px; height: 9px; border-radius: 50%; background: #fffdf6; opacity: .9; box-shadow: 0 0 4px rgba(255, 255, 255, .8); }
+.jeu[data-saison=hiver] .saison-fx i:nth-child(3n) { width: 6px; height: 6px; }
+.jeu[data-saison=printemps] .saison-fx i { width: 11px; height: 9px; border-radius: 60% 0 60% 0; background: #f4c6d2; }
+.jeu[data-saison=printemps] .saison-fx i:nth-child(odd) { background: #fff4f4; }
+.jeu[data-saison=ete] .saison-fx i { top: auto; bottom: -4%; width: 7px; height: 7px; border-radius: 50%; background: radial-gradient(circle, #fff6c8, rgba(255, 220, 120, .2) 70%); opacity: .8;
+  animation-name: fx-monte; animation-duration: calc(var(--d, 11s) * 1.4); }
+@keyframes fx-monte { 0% { transform: translate(0, 0); opacity: 0; } 15% { opacity: .9; } 50% { transform: translate(30px, -50vh); } 100% { transform: translate(-10px, -105vh); opacity: 0; } }
+
+/* L'en-tête : le titre de la leçon sur une étiquette. */
+.jeu .haut h2 { flex: 0 1 auto; margin: 0 auto; padding: .12em .9em .18em; background: var(--color-surface); border-radius: 999px 999px 999px 999px / 70% 70% 80% 80%;
+  box-shadow: var(--ombre); font-size: clamp(1.2rem, 4.4vw, 1.65rem); text-shadow: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 70vw; animation: tombe .6s var(--rebond) both; }
+
+/* La barre des étapes : de vraies pastilles, lisibles. */
+.progression { gap: 7px; padding: 8px 16px 2px; flex-wrap: wrap; align-items: center; }
+.progression i { width: 11px; height: 11px; background: rgba(255, 250, 240, .8); box-shadow: 0 1px 0 rgba(90, 55, 25, .35); }
+.progression i.fait { background: var(--color-sarcelle); }
+.progression i.la { background: var(--color-primary); transform: scale(1.45); }
+.progression i.ex { padding: 3px 7px; gap: 2px; border-radius: 11px; background: rgba(255, 250, 240, .92); box-shadow: 0 2px 0 rgba(90, 55, 25, .3); }
+.progression i.ex b { width: 17px; height: 17px; filter: grayscale(1) brightness(.4) opacity(.4); }
+.progression i.ex.fait { background: #dcefe9; }
+.progression i.ex.la { background: #fffaf0; box-shadow: 0 0 0 3px var(--color-primary), 0 2px 0 rgba(90, 55, 25, .3); transform: scale(1.12); }
+@media (min-width: 700px) { .progression i.ex b { width: 20px; height: 20px; } }
+
+/* Les personnages : l'ami à gauche, Léo à droite qui le regarde, les pieds sur la même ligne. */
+.bulle-zone { align-items: flex-end; gap: 6px; }
+.perso { width: auto; min-width: clamp(70px, 19vw, 120px); }
+.perso img { animation: souffle 3.4s ease-in-out infinite; }
+.perso:not([data-qui=sage]) img { height: clamp(94px, 17vh, 165px); }
+.perso::after, .bulle-zone .leo-mini::after { content: ''; position: absolute; left: 15%; right: 15%; bottom: 8px; height: 12px; border-radius: 50%;
+  background: radial-gradient(ellipse, rgba(50, 30, 10, .38), transparent 70%); z-index: -1; }
+.perso img.parle { animation: parle .45s ease-in-out 2; }
+@keyframes souffle { 50% { transform: scaleY(1.018) translateY(-.5%); } }
+@keyframes parle { 50% { transform: translateY(-4%) rotate(-2deg) scaleY(1.03); } }
+.bulle .mot { display: inline-block; animation: mot .34s calc(var(--k) * 40ms) var(--rebond) backwards; }
+@keyframes mot { from { opacity: 0; transform: translateY(.45em) scale(.85); } }
+.bulle-zone .leo-mini { position: relative; width: auto; min-width: clamp(56px, 15vw, 100px); height: auto; align-self: flex-end; flex: none; transform-origin: 50% 100%; }
+.bulle-zone .leo-mini img { height: clamp(84px, 15vh, 150px); transform: scaleX(-1); animation: souffle-leo 2.8s ease-in-out infinite; }
+@keyframes souffle-leo { 0%, 100% { transform: scaleX(-1); } 50% { transform: scaleX(-1) scaleY(1.025); } }
+.bulle-zone .leo-mini span { position: relative; bottom: auto; margin-top: -8px; z-index: 2; font: 800 .95rem/1 var(--font-display); padding: 3px 10px; box-shadow: var(--ombre); }
+.bulle-zone.leo-parle .leo-mini { display: none; }
+.statut { min-height: 0; padding: 0 2px; }
+.objectif:empty { display: none; }
+/* « Suivant » monte sous la bulle, à droite : jamais sur le plateau. */
+.statut .suite { position: relative; right: auto; bottom: auto; margin-left: auto; flex: none; font-size: clamp(1.2rem, 4vw, 1.45rem); }
+@media (orientation: landscape) and (min-aspect-ratio: 5/4) {
+  .bulle-zone { flex-direction: row; flex-wrap: wrap; justify-content: center; align-items: flex-end; }
+  .bulle-zone .bulle { order: -1; flex: 1 1 100%; }
+  .bulle::before { left: 22%; }
+  .perso img { height: clamp(110px, 30vh, 240px); }
+  .perso:not([data-qui=sage]) img { height: clamp(100px, 26vh, 210px); }
+  .bulle-zone .leo-mini img { height: clamp(96px, 25vh, 200px); }
+  .statut { justify-content: flex-end; }
+}
+
+/* Le plateau : un vrai plateau de bois, en volume. */
+.plateau { background: repeating-linear-gradient(97deg, rgba(255, 220, 170, .07) 0 3px, transparent 3px 11px), linear-gradient(150deg, #a26b3b, #77461f 55%, #5e3718);
+  border-radius: 18px 20px 18px 22px; box-shadow: inset 0 2px 0 rgba(255, 228, 185, .5), inset 0 -4px 0 rgba(0, 0, 0, .22), 0 7px 0 #4a2c14, 0 24px 36px rgba(50, 28, 10, .42);
+  animation: plateau-entre .6s var(--rebond) both; }
+@keyframes plateau-entre { from { transform: translateY(28px) scale(.95); opacity: 0; } }
+.cases { border-radius: 6px; box-shadow: 0 0 0 3px #4a2c14, 0 0 0 5px rgba(255, 220, 170, .25); }
+.case.claire { background: radial-gradient(circle at 28% 22%, #fdf0d2, #efd5a6 80%); }
+.case.foncee { background: radial-gradient(circle at 28% 22%, #cf9a64, #a8713d 80%); }
+.coord { font: 800 clamp(10px, 2.6cqmin, 15px)/1 var(--font-display); opacity: .85; }
+.case.cible::after { animation: point .25s var(--rebond), cible 1.5s .25s ease-in-out infinite; }
+@keyframes cible { 50% { transform: scale(1.2); } }
+.case.choisie::before { background: rgba(47, 127, 122, .5); box-shadow: inset 0 0 0 3px rgba(255, 255, 255, .55); }
+.piece img { filter: drop-shadow(0 0 1px rgba(60, 35, 15, .7)) drop-shadow(0 4px 3px rgba(50, 30, 10, .45)); }
+
+/* Une pomme ramassée : « +1 ». */
+.plus-un { position: fixed; z-index: 101; pointer-events: none; font: 800 1.7rem/1 var(--font-display); color: #fff8ec;
+  text-shadow: 0 2px 0 var(--color-primary-fonce), 0 0 10px rgba(200, 100, 59, .7); animation: plus-un .95s ease-out forwards; }
+@keyframes plus-un { 0% { opacity: 0; transform: translate(-50%, 10px) scale(.5); } 20% { opacity: 1; transform: translate(-50%, -14px) scale(1.25); } 100% { opacity: 0; transform: translate(-50%, -70px) scale(1); } }
+
+/* Les boutons répondent au doigt. */
+@media (hover: hover) { .gros:hover, .suivant:hover, .petit:hover, .refaire:hover, .rond:hover { translate: 0 -2px; } }
+
+/* La carte : les lieux apparaissent un à un. */
+.lieu { animation: lieu-pop .5s var(--rebond) backwards; }
+.lieu:nth-of-type(2) { animation-delay: .07s; } .lieu:nth-of-type(3) { animation-delay: .14s; } .lieu:nth-of-type(4) { animation-delay: .21s; }
+.lieu:nth-of-type(5) { animation-delay: .28s; } .lieu:nth-of-type(6) { animation-delay: .35s; } .lieu:nth-of-type(7) { animation-delay: .42s; }
+@keyframes lieu-pop { from { scale: .3; opacity: 0; } }
+.lieu.secoue { animation: secoue .4s; }
+
+@media (prefers-reduced-motion: reduce) { .saison-fx { display: none; } .bulle .mot, .plateau, .lieu, .perso img, .bulle-zone .leo-mini img { animation: none; } }
+/* L'écran titre : le titre et la phrase lisibles sur le ciel et le feuillage. */
+.titre-image { background-position: center 85%; }
+.titre h1 { text-shadow: 0 3px 0 #fff6e1, 0 0 18px rgba(255, 246, 225, .95), 0 0 36px rgba(255, 246, 225, .8); }
+.titre p { display: inline-block; background: var(--color-surface); padding: .35em .9em; border-radius: 16px 18px 16px 20px; box-shadow: var(--ombre); }
+/* Téléphone : la bulle prend la place qui reste, les deux personnages restent entiers. */
+.bulle-zone .bulle { min-width: 0; }
+@media (max-width: 520px) and (orientation: portrait) {
+  .perso { min-width: 62px; }
+  .perso img { height: clamp(88px, 15vh, 130px); }
+  .perso:not([data-qui=sage]) img, .bulle-zone .leo-mini img { height: clamp(78px, 13vh, 115px); }
+  .bulle-zone .leo-mini { min-width: 46px; }
+  .perso .nom, .bulle-zone .leo-mini span { font-size: .8rem; padding: 2px 7px; }
+  .bulle { padding: 10px 11px; }
+}
+/* Une explication : les cases montrées sont une image (pointillés, sans pulsation), et une étiquette dit qu'on regarde. */
+.plateau.demo .case.cible::after { background: rgba(255, 252, 240, .45); box-shadow: 0 0 0 3px rgba(47, 127, 122, .55); border: 0; animation: point .25s var(--rebond); }
+.plateau.demo .case.cible::after { outline: 2px dashed rgba(47, 127, 122, .7); outline-offset: 3px; box-shadow: none; }
+.plateau.demo::before { content: 'Regarde'; position: absolute; z-index: 80; left: 50%; top: 0; transform: translate(-50%, -55%); padding: .1em .9em .15em; border-radius: 999px;
+  background: var(--color-encre); color: #fff8ec; font: 800 clamp(.9rem, 2.6vw, 1.1rem)/1.3 var(--font-display); box-shadow: 0 3px 0 rgba(0, 0, 0, .25); pointer-events: none; animation: entre .4s var(--rebond); }
+.plateau.demo { cursor: default; }
+/* « Suivant » appelé : il arrive sans attendre et se secoue. */
+.suite.appelle { animation: appelle .55s ease-in-out 2, respire 2s 1.1s ease-in-out infinite !important; box-shadow: 0 5px 0 var(--color-primary-fonce), 0 0 0 6px rgba(242, 185, 40, .7), 0 14px 28px rgba(80, 40, 10, .35); }
+@keyframes appelle { 0%, 100% { transform: none; opacity: 1; } 20% { transform: rotate(-6deg) scale(1.12); } 40% { transform: rotate(5deg) scale(1.12); } 60% { transform: rotate(-3deg) scale(1.06); } }
+
+/* ==================== Les Défis de Barnabé : le bord de mer ==================== */
+:root { --color-primary: #d4553c; --color-primary-fonce: #a63a26; --color-sarcelle: #1f8a93; --color-ocre: #e0a83a; --color-papier: #f6eedc; --color-papier-2: #e8dcc0;
+  --color-case-claire: #f4e6c8; --color-case-foncee: #6fa3a6; --color-cadre: #a07a55; }
+.jeu[data-saison=port] { background-image: url(img/fond-portrait-port.webp); }
+.jeu[data-saison=dunes] { background-image: url(img/fond-portrait-dunes.webp); }
+.jeu[data-saison=rochers] { background-image: url(img/fond-portrait-rochers.webp); }
+.jeu[data-saison=cabanes] { background-image: url(img/fond-portrait-cabanes.webp); }
+.jeu[data-saison=jetee] { background-image: url(img/fond-portrait-jetee.webp); }
+.jeu[data-saison=phare] { background-image: url(img/fond-portrait-phare.webp); }
+@media (orientation: landscape) and (min-aspect-ratio: 5/4) {
+  .jeu[data-saison=plage] { background-image: url(img/fond-paysage-plage.webp); }
+  .jeu[data-saison=port] { background-image: url(img/fond-paysage-port.webp); }
+  .jeu[data-saison=dunes] { background-image: url(img/fond-paysage-dunes.webp); }
+  .jeu[data-saison=rochers] { background-image: url(img/fond-paysage-rochers.webp); }
+  .jeu[data-saison=cabanes] { background-image: url(img/fond-paysage-cabanes.webp); }
+  .jeu[data-saison=jetee] { background-image: url(img/fond-paysage-jetee.webp); }
+  .jeu[data-saison=phare] { background-image: url(img/fond-paysage-phare.webp); }
+}
+/* Dans l'air : des reflets de soleil qui montent doucement, partout au bord de la mer. */
+.jeu .saison-fx i { top: auto; bottom: -4%; width: 7px; height: 7px; border-radius: 50%; background: radial-gradient(circle, #fffbe6, rgba(255, 230, 150, .15) 70%); opacity: .8;
+  animation-name: fx-monte; animation-duration: calc(var(--d, 11s) * 1.4); }
+/* Le plateau en bois flotté, cases sable et mer. */
+.plateau { background: repeating-linear-gradient(94deg, rgba(255, 245, 225, .1) 0 2px, transparent 2px 9px), linear-gradient(150deg, #c09a72, #9c7650 55%, #7f5c3c); }
+.case.claire { background: radial-gradient(circle at 28% 22%, #fbf2dc, #efdfbb 80%); }
+.case.foncee { background: radial-gradient(circle at 28% 22%, #86b7b8, #5d9497 80%); }
+.case.claire .coord { color: #4f7f82; }
+.case.foncee .coord { color: #f4ecd8; }
+/* La pièce à sauver : un anneau rouge qui bat. */
+.case.a-sauver::before { content: ''; position: absolute; inset: 6%; border-radius: 50%; border: 4px solid var(--color-danger); box-shadow: 0 0 10px rgba(210, 59, 42, .6); animation: respire 1.2s ease-in-out infinite; z-index: 1; }
+/* La menace de mat : la pièce noire entourée de rouge, et la case où elle frapperait marquée d'une cible. */
+.case.menace-de::before { content: ''; position: absolute; inset: 4%; border-radius: 50%; background: rgba(210, 59, 42, .28); border: 4px solid var(--color-danger); animation: respire 1.2s ease-in-out infinite; z-index: 1; }
+.case.menace-vers::after { content: '!'; position: absolute; inset: 18%; border-radius: 50%; border: 4px dashed var(--color-danger); display: grid; place-items: center;
+  font: 800 clamp(12px, 4cqmin, 26px)/1 var(--font-display); color: var(--color-danger); z-index: 31; pointer-events: none; }
+.titre { background: #f3ead6; }
+.titre-bas { display: flex; flex-direction: column; align-items: center; gap: 14px; text-align: center; }
+.titre-bas p { margin: 0; font-size: clamp(.95rem, 3.6vw, 1.15rem); }
+.titre-image { background-position: center 100%; }
+/* Tablette en portrait (écran presque carré) : une image plus large, les personnages plus bas, le titre dans le ciel. */
+@media (orientation: portrait) and (min-aspect-ratio: 3/5) {
+  .titre-image { background-image: url(img/titre-carre.webp); background-position: center 100%; }
+}
+.feuilles { display: none; }

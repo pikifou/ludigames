@@ -15,7 +15,7 @@ const dit = (texte, qui) => ({ dit: texte, qui });
 
 export const CHAPITRES = [
   {
-    id: 'pieces', saison: 'automne', medaille: 1, qui: 'sage', titre: 'Les pièces', lieu: 'La maison de Barnabé', x: 34, y: 82, pied: [52, 88],
+    id: 'pieces', saison: 'automne', medaille: 1, qui: 'sage', titre: 'Les pièces', lieu: 'La maison de Barnabé', x: 30, y: 76, pied: [45, 89],
     lecons: [
       {
         id: 'tour', titre: 'La tour', piece: 'wr',
@@ -83,7 +83,7 @@ export const CHAPITRES = [
     ],
   },
   {
-    id: 'pions', saison: 'automne', medaille: 2, qui: 'lina', titre: 'La course des pions', lieu: 'Le potager de Lina', x: 30, y: 66, pied: [57, 73],
+    id: 'pions', saison: 'automne', medaille: 2, qui: 'lina', titre: 'La course des pions', lieu: 'Le potager de Lina', x: 78, y: 79, pied: [57, 77],
     lecons: [
       {
         id: 'promotion', titre: 'Le pion devient dame', piece: 'wq',
@@ -108,7 +108,7 @@ export const CHAPITRES = [
     ],
   },
   {
-    id: 'prises', saison: 'hiver', medaille: 3, qui: 'malo', titre: 'Le croque-pièces', lieu: 'La boulangerie de Malo', x: 66, y: 54, pied: [53, 59],
+    id: 'prises', saison: 'hiver', medaille: 3, qui: 'malo', titre: 'Le croque-pièces', lieu: 'La boulangerie de Malo', x: 24, y: 55, pied: [48, 64],
     lecons: [
       {
         id: 'croquer', titre: 'Tout croquer', piece: 'wr',
@@ -142,7 +142,7 @@ export const CHAPITRES = [
     ],
   },
   {
-    id: 'pieges', saison: 'hiver', medaille: 4, qui: 'ines', titre: 'Gare aux pièges', lieu: 'La bibliothèque d\'Inès', x: 32, y: 43, pied: [48, 47],
+    id: 'pieges', saison: 'hiver', medaille: 4, qui: 'ines', titre: 'Gare aux pièges', lieu: 'La bibliothèque d\'Inès', x: 80, y: 58, pied: [54, 54],
     lecons: [
       {
         id: 'danger', titre: 'Les cases dangereuses', piece: 'wr',
@@ -168,7 +168,7 @@ export const CHAPITRES = [
     ],
   },
   {
-    id: 'echec', saison: 'printemps', medaille: 5, qui: 'sacha', titre: 'Échec au roi', lieu: 'La maison de Sacha', x: 68, y: 35, pied: [56, 40],
+    id: 'echec', saison: 'printemps', medaille: 5, qui: 'sacha', titre: 'Échec au roi', lieu: 'Le fort de Sacha', x: 24, y: 30, pied: [41, 41],
     lecons: [
       {
         id: 'donner', titre: 'Faire échec', piece: 'wn',
@@ -198,7 +198,7 @@ export const CHAPITRES = [
     ],
   },
   {
-    id: 'mat', saison: 'printemps', medaille: 6, qui: 'yuna', titre: 'Échec et mat', lieu: 'Le fort de Yuna', x: 32, y: 25, pied: [47, 30],
+    id: 'mat', saison: 'printemps', medaille: 6, qui: 'yuna', titre: 'Échec et mat', lieu: 'La maison de Yuna', x: 78, y: 36, pied: [57, 33],
     lecons: [
       {
         id: 'mat-1', titre: 'Le premier mat', piece: 'bk',
@@ -225,7 +225,7 @@ export const CHAPITRES = [
     ],
   },
   {
-    id: 'tour-finale', saison: 'ete', medaille: 7, qui: 'sage', titre: 'La vraie partie', lieu: 'La tour du château', x: 50, y: 12, pied: [52, 19],
+    id: 'tour-finale', saison: 'ete', medaille: 7, qui: 'sage', titre: 'La vraie partie', lieu: 'La tour du château', x: 70, y: 11, pied: [45, 20],
     lecons: [
       {
         id: 'roque', titre: 'Le roque', piece: 'wk',
@@ -244,11 +244,11 @@ export const CHAPITRES = [
           dit("Quand un pion noir avance de deux cases d'un coup et arrive juste à côté de ton pion, ton pion peut le prendre quand même, comme s'il n'avait avancé que d'une case !"),
           dit("Mais attention : c'est seulement tout de suite, juste après son coup."),
           { ex: { id: 'passant-1', type: 'coup', fen: '8/8/8/3pP3/8/8/8/8 w - d6', coups: ['e5d6'], dit: "Le pion noir vient d'avancer de deux cases. Prends-le en passant : va en biais, juste derrière lui." } },
-          dit("Au début d'une partie, sors tes cavaliers et tes fous, prends le centre, et roque tôt. Tu es prêt, Léo ! Mes amis t'attendent pour de vraies parties. Et à la fin… c'est contre moi !"),
+          dit("Au début d'une partie, sors tes cavaliers et tes fous, prends le centre, et roque tôt. Tu es prêt, Léo ! Maintenant, une vraie partie, du début à la fin… contre moi !"),
         ],
       },
       {
-        id: 'parties', titre: 'Jouer avec les amis', piece: 'wk', parties: true,
+        id: 'parties', titre: 'Le match contre Barnabé', piece: 'wk', parties: true,
         etapes: [],
       },
     ],
@@ -259,11 +259,7 @@ export const CHAPITRES = [
 export const AMIS = [
 // Tous jouent doucement : le but est une première vraie victoire. Pendant la partie, l'ami prévient Léo
 // quand un coup lui ferait perdre une grosse pièce, et lui montre un très bon coup qu'il a laissé passer.
-  { qui: 'lina', niveau: { prof: 1, hasard: 0.6, bruit: 200 }, mot: "Je débute aussi, on s'amuse !" },
-  { qui: 'malo', niveau: { prof: 1, hasard: 0.45, bruit: 160 }, mot: "Je vais tout manger !" },
-  { qui: 'ines', niveau: { prof: 1, hasard: 0.35, bruit: 130 }, mot: "Je regarde où sont les pièges." },
-  { qui: 'sacha', niveau: { prof: 1, hasard: 0.28, bruit: 110 }, mot: "Mes cavaliers vont te surprendre." },
-  { qui: 'yuna', niveau: { prof: 1, hasard: 0.2, bruit: 90 }, mot: "Je cherche toujours le mat." },
+// Julien, 23/11 : dans ce jeu, le seul qu'on affronte, c'est Barnabé (les amis enseignent sur le chemin, ils ne jouent pas de partie).
   { qui: 'sage', niveau: { prof: 1, hasard: 0.2, bruit: 90 }, mot: "Je vais t'aider pendant la partie. Sors tes cavaliers et tes fous, prends le centre, et pense à roquer !" },
 ];
 

@@ -127,6 +127,8 @@ function confettis(dans, n = 46) {
 function envolerPomme(de, vers, fini) {
   const s = h(`<span class="pomme-vol">${POMME}</span>`);
   document.body.appendChild(s);
+  const plus = h(`<span class="plus-un" style="left:${de.left + de.width / 2}px;top:${de.top}px">+1</span>`);
+  document.body.appendChild(plus); setTimeout(() => plus.remove(), 1000);
   const x0 = de.left + de.width / 2, y0 = de.top + de.height / 2, x1 = vers.left + vers.width / 2, y1 = vers.top + vers.height / 2;
   if (!s.animate) { s.remove(); fini?.(); return; }
   const a = s.animate([
@@ -302,8 +304,9 @@ function ouvrirChapitre(e, c) {
 }
 
 // ---------- L'écran de jeu (leçon ou partie) ----------
-function ecranJeu(titre, retour) {
+function ecranJeu(titre, retour, saison = 'automne') {
   const e = ecran('jeu', `
+    <div class="saison-fx" aria-hidden="true">${'<i></i>'.repeat(12)}</div>
     ${boutonsHaut('retour', titre)}
     <div class="progression"></div>
     <div class="scene">
@@ -311,14 +314,15 @@ function ecranJeu(titre, retour) {
         <div class="bulle-zone">
           <div class="perso"></div>
           <div class="bulle"><p class="texte"></p><p class="aide" hidden></p><div class="actions"></div></div>
+          <div class="leo-mini"><img src="img/enfant-pense.webp" alt="Léo"><span>Léo</span></div>
         </div>
         <div class="statut">
-          <div class="leo-mini"><img src="img/enfant-pense.webp" alt="Léo"><span>Léo</span></div>
           <div class="objectif"></div>
         </div>
       </div>
       <div class="zone-plateau"><div class="plateau-el"></div></div>
     </div>`);
+  e.dataset.saison = saison;
   e.querySelector('[data-act=retour]').onclick = retour;
   e.querySelector('[data-act=voix]').onclick = ev => basculerVoix(ev.currentTarget);
   return e;
@@ -339,7 +343,11 @@ function bulle(e, qui, texte, boutons = [], { joie = false, aide = '', pense = f
   b.classList.toggle('pense', pense);
   b.classList.toggle('de-leo', qui === 'enfant');
   b.querySelector('.note')?.remove();
-  b.querySelector('.texte').textContent = texte;
+  const mots = texte.split(' ');
+  b.querySelector('.texte').innerHTML = mots.map((m, k) => `<span class="mot" style="--k:${Math.min(k, 40)}">${m.replace(/&/g, '&amp;').replace(/</g, '&lt;')}</span>`).join(' ');
+  e.querySelector('.bulle-zone').classList.toggle('leo-parle', qui === 'enfant');
+  const img = perso.querySelector('img');
+  if (img && !img.classList.contains('entre')) { img.classList.remove('parle', 'rebond'); void img.offsetWidth; img.classList.add('parle'); }
   const a = b.querySelector('.aide');
   a.hidden = !aide; a.textContent = aide;
   b.onclick = ev => { if (!ev.target.closest('button')) parler(texte + (aide ? ' ' + aide : '')); };
@@ -351,9 +359,19 @@ function bulle(e, qui, texte, boutons = [], { joie = false, aide = '', pense = f
     const grand = bt.classe === 'suivant';
     const n = h(grand ? `<button class="suivant suite" style="--attente: ${bt.attente ?? 1.3}s">${bt.texte}<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>` : `<button class="${bt.classe || 'petit'}">${bt.texte}</button>`);
     n.onclick = ev => { ev.stopPropagation(); n.disabled = true; bt.act(); };
-    (grand ? e : zone).appendChild(n);
+    (grand ? e.querySelector('.statut') || e : zone).appendChild(n);
   }
   if (!pense) parler(texte + (aide ? ' ' + aide : ''));
+}
+
+// L'enfant touche le plateau pendant une explication : « Suivant » arrive tout de suite, se secoue, et Léo le dit.
+function appelerSuite(e) {
+  const b = e.querySelector('.suite');
+  if (!b || b.disabled) return;
+  b.classList.remove('appelle'); void b.offsetWidth; b.classList.add('appelle');
+  son('refus');
+  const a = e.querySelector('.bulle .aide');
+  if (a && a.hidden) { a.hidden = false; a.textContent = e.querySelector('.plateau.demo') ? 'Ici, on regarde. Appuie sur « Suivant » pour jouer !' : 'Appuie sur « Suivant » pour continuer !'; }
 }
 
 // Léo, sous la bulle : il réfléchit, puis saute de joie quand c'est réussi.
@@ -400,7 +418,7 @@ function objectif(e, html) { e.querySelector('.objectif').innerHTML = html; }
 function lancerLecon(lecon) {
   const chapitre = chapitreDe(lecon);
   musique(chapitre.saison);
-  const e = ecranJeu(lecon.titre, () => ecranCarte(chapitre));
+  const e = ecranJeu(lecon.titre, () => ecranCarte(chapitre), chapitre.saison);
   const plateau = new Plateau(e.querySelector('.plateau-el'), { surCoup: m => surCoup(m), surRefus: (de, vers, r) => surRefus(r) });
   const etapes = lecon.etapes;
   const prog = e.querySelector('.progression');
@@ -426,6 +444,9 @@ function lancerLecon(lecon) {
     ex = null; partie = null;
     plateau.interactif = false; plateau.choix = null; plateau.dernier = null; plateau.oublierIndice(); plateau.nettoyer();
     plateau.racine.dataset.tour = '';
+    // Une explication : le plateau montre, on ne joue pas. Le toucher appelle le bouton « Suivant ».
+    plateau.racine.classList.toggle('demo', !!s.dit);
+    plateau.surToucherInactif = () => appelerSuite(e);
     if (s.dit) {
       plateau.etoiles = []; plateau.dangers = false;
       const pos = apercu(i);
@@ -831,8 +852,8 @@ function demarrerPartie(e, plateau, def, qui, fini, options = {}) {
 function ecranAmis() {
   musique('ete');
   const e = ecran('amis', `
-    ${boutonsHaut('chemin', 'Jouer avec les amis')}
-    <p class="intro">Une vraie partie, du début à la fin. Léo a les blancs : il commence. Les amis sont rangés du plus facile au plus fort.</p>
+    ${boutonsHaut('chemin', 'Le match contre Barnabé')}
+    <p class="intro">Une vraie partie, du début à la fin. Léo a les blancs : il commence. Barnabé l'aide pendant la partie.</p>
     <ol class="liste-amis">
       ${AMIS.map(a => `<li><button data-qui="${a.qui}">
         <img src="${PERSONNAGES[a.qui].image}" alt="">
@@ -847,7 +868,7 @@ function ecranAmis() {
 
 function lancerPartie(ami) {
   const nom = PERSONNAGES[ami.qui].nom;
-  const e = ecranJeu(`Partie avec ${nom}`, ecranAmis);
+  const e = ecranJeu(`Partie avec ${nom}`, ecranAmis, 'ete');
   e.querySelector('.progression').remove();
   let partie;
   const plateau = new Plateau(e.querySelector('.plateau-el'), { surCoup: m => partie.surCoup(m), surRefus: (de, vers, r) => { son('refus'); partie.surRefus(r); } });

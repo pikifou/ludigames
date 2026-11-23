@@ -223,7 +223,9 @@ export class Plateau {
     let tirage = null;
     const r = this.racine;
     r.addEventListener('pointerdown', ev => {
-      if (!this.interactif || ev.button > 0) return;
+      if (ev.button > 0) return;
+      // Un toucher quand ce n'est pas à Léo de jouer (une démonstration) : le jeu le dit.
+      if (!this.interactif) { this.surToucherInactif?.(); return; }
       const sq = this.sqDe(ev);
       if (sq == null) return;
       ev.preventDefault();

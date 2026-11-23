@@ -1,0 +1,77 @@
+{
+  "ludi": 1,
+  "id": "defis-de-barnabe",
+  "status": "draft",
+  "title": {
+    "fr": "Les Défis de Barnabé",
+    "en": "Barnabé's Challenges"
+  },
+  "pitch": {
+    "fr": "La suite du Chemin du Roi. C'est l'été : au bord de la mer, Barnabé a caché des défis d'échecs dans des bouteilles, tout le long de la côte. Léo les ouvre un par un : prendre ce qui traîne, mettre ses pièces à l'abri, faire échec, trouver le mat, la fourchette, empêcher le mat. Au phare, Barnabé l'attend pour un vrai match.",
+    "en": "The sequel to The King's Path. It is summer: by the sea, Barnabé has hidden chess challenges in bottles all along the coast. Leo opens them one by one: take what is left undefended, move pieces to safety, give check, find the mate, the fork, stop a mate. At the lighthouse, Barnabé waits for a real match."
+  },
+  "url": "https://pikifou.github.io/ludigames/defis-de-barnabe/",
+  "icon": "https://pikifou.github.io/ludigames/defis-de-barnabe/icons/icon-512.png",
+  "color": "#2f8f9a",
+  "author": {
+    "name": "Julien",
+    "url": "https://github.com/pikifou/ludigames"
+  },
+  "languages": [
+    "fr"
+  ],
+  "age": {
+    "min": 6,
+    "max": 10
+  },
+  "reading": "some",
+  "learning": {
+    "level": "core",
+    "domains": [
+      "logique.puzzle",
+      "strategie.choix"
+    ],
+    "what": {
+      "fr": "Mettre en pratique les règles des échecs déjà connues : voir une pièce qui n'est pas protégée et la prendre, ne pas tomber dans une prise piégée, mettre une pièce attaquée à l'abri, faire échec, sortir d'échec en prenant l'attaquant, le mat en un coup (avec la dame, le mat du couloir), la fourchette, voir une menace de mat et l'empêcher. Il faut déjà savoir comment bougent les pièces (Le Chemin du Roi l'apprend).",
+      "en": "Putting known chess rules into practice: spotting an undefended piece and taking it, avoiding a trapped capture, moving an attacked piece to safety, giving check, escaping check by taking the attacker, mate in one (with the queen, the back-rank mate), the fork, seeing a mate threat and stopping it. The child should already know how the pieces move (The King's Path teaches it)."
+    },
+    "how": {
+      "fr": "Six lieux sur la côte, trois bouteilles par lieu, cinq défis par bouteille : quatre-vingt-dix défis courts, du plus simple au plus chargé. Dans chaque lieu, la première bouteille n'a que quelques pièces, la troisième vient de positions de vraies parties. Chaque défi est une position vérifiée par le moteur du jeu, avec une phrase qui dit quoi chercher ; la pièce à sauver ou la menace de mat est montrée en rouge. Une erreur est montrée puis annulée, avec une phrase qui dit pourquoi, et on réessaie ; un bouton Indice montre un bon coup. Chaque défi donne de une à trois étoiles, chaque lieu une médaille. À la fin, une vraie partie contre Barnabé, un peu plus fort que dans Le Chemin du Roi, qui prévient encore avant une grosse étourderie.",
+      "en": "Six places along the coast, three bottles per place, five challenges per bottle: ninety short challenges, from the simplest to the busiest. In each place, the first bottle has only a few pieces, the third comes from positions of real games. Each challenge is a position checked by the game's engine, with a sentence saying what to look for; the piece to save or the mate threat is shown in red. A mistake is shown then undone, with a sentence saying why, and the child tries again; a Hint button shows a good move. Each challenge gives one to three stars, each place a medal. At the end, a real game against Barnabé, a bit stronger than in The King's Path, who still warns before a big blunder."
+    }
+  },
+  "session": {
+    "minutes": [
+      5,
+      20
+    ],
+    "natural_end": true
+  },
+  "content": {
+    "fr": "Un enfant et un vieil homme, un bord de mer peint, un plateau d'échecs. Pas de violence : on « prend » les pièces. Les textes sont à lire ; une voix de l'appareil peut les lire, si on l'allume (le jeu démarre en silence). Le jeu n'existe qu'en français pour l'instant.",
+    "en": "A child and an old man, a painted seaside, a chessboard. No violence: pieces are \"taken\". Texts must be read; the device's own voice can read them if switched on (the game starts silent). The game is in French only for now."
+  },
+  "devices": [
+    "tablet",
+    "phone",
+    "computer"
+  ],
+  "offline": true,
+  "healthy": {
+    "no_ads": true,
+    "no_purchases": true,
+    "no_subscription": true,
+    "no_loot_boxes": true,
+    "no_daily_pressure": true,
+    "no_notifications": true,
+    "no_strangers": true,
+    "no_tracking": true,
+    "natural_stops": true
+  },
+  "third_parties": [],
+  "kit": true,
+  "after": {
+    "fr": "Et si tu cachais à ton tour un petit défi d'échecs sur un papier, pour quelqu'un de ta maison ?",
+    "en": "What if you hid a little chess challenge on a piece of paper for someone at home?"
+  }
+}
