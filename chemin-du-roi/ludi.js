@@ -1,18 +1,29 @@
 /*!
- * Ludiworld kit (ludi.js) v0.3.0
- * Temps de jeu, scores, progression et notions apprises, pour les jeux Ludiworld.
+ * Ludiworld kit (ludi.js) v0.5.0
+ * Temps de jeu, scores, progression et notions apprises, réglage du son, pour les jeux Ludiworld.
  * N'envoie rien sur le réseau. Ne parle qu'au launcher Ludiworld qui a ouvert le jeu.
  * Spec : https://github.com/pikifou/ludiworld/blob/main/spec/kit.md
  */
 (function () {
   'use strict';
 
-  var VERSION = '0.3.0';
+  var VERSION = '0.5.0';
   var DEFAULT_LAUNCHERS = ['https://ludiworld.app', 'https://pikifou.github.io'];
   var LOCAL_ORIGIN = /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/;
   var MAX_EVENTS = 300;
   var FLUSH_MS = 30000;
   var MAX_SAVE = 250000; // taille maximale d'une sauvegarde (texte JSON)
+  // Le son (Julien, 2026-11-23) : trois réglages séparés, tous allumés au départ ; un jeu ne démarre jamais muet.
+  // Dans Ludiworld, c'est le réglage de la maison ; ouvert seul, celui de cet appareil.
+  var SON_CLE = 'ludi.v1.son';
+  var SON_DEFAUT = { musique: true, bruitages: true, voix: true };
+  function sonPropre(o, base) {
+    base = base || SON_DEFAUT;
+    var out = {};
+    for (var k in SON_DEFAUT) out[k] = o && typeof o[k] === 'boolean' ? o[k] : base[k];
+    return out;
+  }
+  function memeSon(a, b) { for (var k in SON_DEFAUT) if (a[k] !== b[k]) return false; return true; }
 
   function createLudi(win, opts) {
     opts = opts || {};
@@ -100,10 +111,13 @@
       if (m.type === 'ludi:welcome') {
         var name = m.player && typeof m.player.name === 'string' ? m.player.name.slice(0, 40) : null;
         st.player = name ? { name: name } : null;
+        if (m.son && typeof m.son === 'object') changerSon(m.son, false);
         receiveSave(m.save);
       } else if (m.type === 'ludi:pause') {
         flush();
         st.pauseFns.forEach(function (fn) { try { fn(m.reason || null); } catch (err) { warn(err); } });
+      } else if (m.type === 'ludi:son') {
+        if (m.son && typeof m.son === 'object') changerSon(m.son, false);
       } else if (m.type === 'ludi:wrapup') {
         var min = Number(m.minutes);
         st.wrapFns.forEach(function (fn) { try { fn(isFinite(min) ? min : null); } catch (err) { warn(err); } });
@@ -134,6 +148,18 @@
       }
     }
 
+    // Le son : gardé sur l'appareil (clé commune à tous les jeux de la même adresse), appliqué par le jeu via onSon.
+    // depuisJeu : le jeu l'a changé lui-même (son bouton) ; Ludiworld l'apprend et le garde pour toute la maison.
+    function changerSon(o, depuisJeu) {
+      var nouveau = sonPropre(o, st.son);
+      if (!memeSon(nouveau, st.son)) {
+        st.son = nouveau;
+        try { win.localStorage.setItem(SON_CLE, JSON.stringify(nouveau)); } catch (e) { /* rien */ }
+        st.sonFns.forEach(function (fn) { try { fn(sonPropre(nouveau)); } catch (err) { warn(err); } });
+      }
+      if (depuisJeu) post('ludi:son', { son: sonPropre(st.son) });
+    }
+
     function ready(fnName) {
       if (!st) { warn(fnName + ' appelé avant Ludi.init()'); return false; }
       return true;
@@ -152,6 +178,7 @@
         var t = now();
         st = {
           game: game, key: key, data: data, player: null, pauseFns: [], wrapFns: [], restoreFns: [], pending: null,
+          son: sonPropre(load(SON_CLE)), sonFns: [],
           launcher: findLauncher(o.launchers),
           sessionId: t, activeSince: visible() ? t : null
         };
@@ -198,6 +225,27 @@
         s.at = now();
         st.data.skills[id] = s;
         record({ kind: 'skill', domain: String(domain), item: item === undefined ? null : item, success: !!success });
+      },
+
+      // Où en est l'enfant dans le jeu : fini() quand le parcours principal est terminé (ça ne s'enlève pas),
+      // complet(x) de 0 à 1 pour ce qui reste en option (mode difficile, médailles, étoiles). Le jeu les montre sur son écran
+      // principal ; Ludiworld les lit pour ranger le jeu et les garde dans le compte. complet() ne redescend jamais.
+      fini: function () {
+        if (!ready('fini')) return;
+        var e = st.data.etat || (st.data.etat = { fini: false, complet: null });
+        if (e.fini) return;
+        e.fini = true; e.at = now(); save();
+        record({ kind: 'etat', fini: true, complet: e.complet });
+      },
+      complet: function (x) {
+        if (!ready('complet')) return;
+        x = Number(x);
+        if (!isFinite(x)) { warn('complet : valeur invalide'); return; }
+        x = Math.max(0, Math.min(1, Math.round(x * 100) / 100));
+        var e = st.data.etat || (st.data.etat = { fini: false, complet: null });
+        if (e.complet !== null && e.complet !== undefined && x <= e.complet) return;
+        e.complet = x; e.at = now(); save();
+        record({ kind: 'etat', fini: !!e.fini, complet: x });
       },
 
       // Moment où l'enfant peut s'arrêter sans rien perdre (fin de niveau, de course, de série).
@@ -248,6 +296,21 @@
       onWrapUp: function (fn) { if (ready('onWrapUp') && typeof fn === 'function') st.wrapFns.push(fn); },
 
       inLauncher: function () { return !!(st && st.launcher); },
+
+      // Le son : { musique, bruitages, voix }, des booléens. Le jeu l'applique (musique, bruitages, voix qui lit les textes).
+      son: function () { return sonPropre(st ? st.son : load(SON_CLE)); },
+      // fn(son) est appelée tout de suite avec le réglage actuel, puis à chaque changement (Ludiworld, ou le bouton du jeu).
+      onSon: function (fn) {
+        if (!ready('onSon') || typeof fn !== 'function') return;
+        st.sonFns.push(fn);
+        try { fn(sonPropre(st.son)); } catch (err) { warn(err); }
+      },
+      // Le bouton du son du jeu : reglerSon({ musique: false }). Dans Ludiworld, ça change le réglage de toute la maison.
+      reglerSon: function (o) {
+        if (!ready('reglerSon') || !o || typeof o !== 'object') return null;
+        changerSon(o, true);
+        return sonPropre(st.son);
+      },
 
       // Pour les tests : force l'enregistrement du temps de jeu en cours.
       _flush: function () { flush(); }

@@ -4,8 +4,9 @@ import { Exercice, SEUL, finDePartie } from './exercice.js';
 import { depuisFen, jouer, coupsLegaux, choisirCoup, enEchec, couleur, type, caseDe, roiDe } from './echecs.js';
 import { Plateau } from './plateau.js';
 import { erreur, occasionManquee } from './conseils.js';
-import { son, sonActif, musique, pauseMusique } from './sons.js';
-import { dire, voixDisponible } from './voix.js';
+import { son, musique, pauseMusique } from './sons.js';
+import { dire } from './voix.js';
+import { boutonSon, brancherSon, voixActive } from './reglage-son.js';
 
 const Ludi = globalThis.Ludi;
 try { Ludi?.init({ game: 'chemin-du-roi' }); } catch { /* le jeu marche sans le kit */ }
@@ -27,10 +28,14 @@ kit(L => L.onPause(() => {
 const CLE = 'chemin-du-roi.v1';
 const q = new URLSearchParams(location.search);
 const toutOuvert = q.has('tout');
-// Le jeu démarre muet : la voix et les sons s'allument avec le haut-parleur.
-let etat = { notes: {}, lecons: {}, amis: {}, medailles: {}, voix: false, son: false, histoire: false, place: 0, fin: false };
+let etat = { notes: {}, lecons: {}, amis: {}, medailles: {}, histoire: false, place: 0, fin: false };
 try { Object.assign(etat, JSON.parse(localStorage.getItem(CLE)) || {}); } catch { /* première fois */ }
-// Ce qui suit l'enfant dans son compte Ludiworld : tout sauf les réglages de son et de voix, propres à chaque appareil.
+// Le son ne se garde plus ici : Ludiworld le règle pour toute la maison (js/reglage-son.js). Une vieille sauvegarde
+// qui avait le son coupé ne rend pas le jeu muet.
+if ('voix' in etat || 'son' in etat) {
+  delete etat.voix; delete etat.son;
+  try { localStorage.setItem(CLE, JSON.stringify(etat)); } catch { /* navigation privée */ }
+}
 const partage = () => { const { voix, son, ...reste } = etat; return reste; };
 const sauver = () => {
   try { localStorage.setItem(CLE, JSON.stringify(etat)); } catch { /* navigation privée */ }
@@ -40,12 +45,12 @@ const sauver = () => {
 try {
   Ludi?.onRestore(d => {
     if (!d || typeof d !== 'object' || !d.notes || !d.lecons) return;
-    try { localStorage.setItem(CLE, JSON.stringify({ ...etat, ...d, voix: etat.voix, son: etat.son })); location.reload(); } catch { /* ignore */ }
+    try { localStorage.setItem(CLE, JSON.stringify({ ...etat, ...d })); location.reload(); } catch { /* ignore */ }
   });
   // Une partie commencée avant ce changement : on la confie aussi à Ludiworld (sans écraser une plus récente venue d'ailleurs).
   if (localStorage.getItem(CLE)) Ludi?.save(partage(), { existante: true });
 } catch { /* sans kit */ }
-sonActif(etat.son);
+brancherSon();
 
 const exercicesDe = l => l.etapes.filter(e => e.ex).map(e => e.ex);
 const etoilesDe = l => exercicesDe(l).reduce((s, e) => s + (etat.notes[e.id] || 0), 0);
@@ -71,8 +76,7 @@ const CADENAS = '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" 
 const visage = qui => `<span class="visage" style="background-image:url(${PERSONNAGES[qui].image})"></span>`;
 const etoiles = (n, max = 3) => `<span class="etoiles" aria-label="${n} étoiles sur ${max}">${Array.from({ length: max }, (_, i) => `<i class="${i < n ? 'pleine' : ''}"></i>`).join('')}</span>`;
 const imageJoie = qui => `img/${qui}-joie.webp`;
-const voixOk = () => etat.voix && voixDisponible('fr');
-const parler = texte => { if (voixOk()) dire(texte, 'fr'); };
+const parler = texte => { if (voixActive()) dire(texte, 'fr'); };
 const attendre = ms => new Promise(r => setTimeout(r, ms));
 const auHasard = l => l[Math.floor(Math.random() * l.length)];
 const NOM_PIECE = { p: 'pion', n: 'cavalier', b: 'fou', r: 'tour', q: 'dame', k: 'roi' };
@@ -93,15 +97,8 @@ function boutonsHaut(retour, titre, extra = '') {
     <button class="rond retour" data-act="${retour}" aria-label="Retour"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
     <h2>${titre}</h2>
     ${extra}
-    <button class="rond son ${etat.voix ? '' : 'coupe'}" data-act="voix" aria-label="Voix et sons"><svg viewBox="0 0 24 24"><path d="M4 9h4l5-4v14l-5-4H4z"/><path class="ondes" d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12"/></svg></button>
+    ${boutonSon()}
   </header>`;
-}
-
-function basculerVoix(bouton) {
-  etat.voix = !etat.voix; etat.son = etat.voix; sonActif(etat.son); sauver();
-  bouton.classList.toggle('coupe', !etat.voix);
-  if (!etat.voix) globalThis.speechSynthesis?.cancel();
-  else son('juste');
 }
 
 // Des confettis de papier qui tombent (des éléments animés en CSS).
@@ -145,6 +142,7 @@ function ecranTitre() {
   const commence = etat.histoire;
   const e = ecran('titre', `
     <div class="titre-image"></div>
+    <div class="coin-son">${boutonSon()}</div>
     <div class="feuilles" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
     <div class="titre-bloc">
       <div class="titre-texte">
@@ -175,6 +173,7 @@ const FIN = [
 
 function ecranHistoire(pages, fini) {
   let i = 0;
+  musique(pages === FIN ? 'ete' : 'automne'); // l'histoire a sa musique, même ouverte par un lien direct
   const e = ecran('histoire', `
     <button class="passer" data-act="passer">Passer</button>
     <div class="planche"><div class="planche-image"></div></div>
@@ -223,7 +222,6 @@ function ecranCarte(ouvrir) {
       <div class="leo" style="left:${CHAPITRES[depart].pied[0]}%;top:${CHAPITRES[depart].pied[1]}%"><img src="img/enfant.webp" alt="Léo"><i class="ombre"></i></div>
     </div></div>`);
   e.querySelector('[data-act=titre]').onclick = ecranTitre;
-  e.querySelector('[data-act=voix]').onclick = ev => basculerVoix(ev.currentTarget);
   e.querySelector('[data-act=medailles]').onclick = () => ouvrirMedailles(e);
   e.querySelectorAll('.lieu').forEach(b => b.onclick = () => {
     const c = CHAPITRES.find(x => x.id === b.dataset.ch);
@@ -324,7 +322,6 @@ function ecranJeu(titre, retour, saison = 'automne') {
     </div>`);
   e.dataset.saison = saison;
   e.querySelector('[data-act=retour]').onclick = retour;
-  e.querySelector('[data-act=voix]').onclick = ev => basculerVoix(ev.currentTarget);
   return e;
 }
 
@@ -501,12 +498,13 @@ function lancerLecon(lecon) {
   function boutonsExercice() {
     return [
       { texte: 'Indice', classe: 'petit', act: () => {
+        if (!ex) return;   // une bulle d'avant, touchée juste après la fin du défi
         const m = ex.indice();
         if (!m) return;
         ex.aide = true; plateau.montrerIndice(m);
         bulle(e, quiEtape(), ex.def.dit, boutonsExercice(), { aide: 'Indice : joue la pièce qui brille, vers le rond qui clignote.' });
       } },
-      { texte: 'Recommencer', classe: 'petit', act: () => demarrerExercice(ex.def) },
+      { texte: 'Recommencer', classe: 'petit', act: () => { if (ex) demarrerExercice(ex.def); } },
     ];
   }
 
@@ -862,7 +860,6 @@ function ecranAmis() {
       </button></li>`).join('')}
     </ol>`);
   e.querySelector('[data-act=chemin]').onclick = () => ecranCarte(CHAPITRES[CHAPITRES.length - 1]);
-  e.querySelector('[data-act=voix]').onclick = ev => basculerVoix(ev.currentTarget);
   e.querySelectorAll('[data-qui]').forEach(b => b.onclick = () => { son('pose'); lancerPartie(AMIS.find(a => a.qui === b.dataset.qui)); });
 }
 

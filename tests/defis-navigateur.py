@@ -12,6 +12,27 @@ import urllib.request
 
 from playwright.sync_api import sync_playwright
 
+
+# Navigateur de test muet : pas de son (--mute-audio) et la voix des textes ne parle pas (speechSynthesis bouchée).
+# Le jeu démarre avec le son et la voix allumés (règle de Ludiworld du 23 novembre).
+MUET = "if (window.speechSynthesis) window.speechSynthesis.speak = () => {};"
+
+
+def muet(nav):
+    np, nc = nav.new_page, nav.new_context
+
+    def new_page(**k):
+        p = np(**k)
+        p.add_init_script(MUET)
+        return p
+
+    def new_context(**k):
+        c = nc(**k)
+        c.add_init_script(MUET)
+        return c
+    nav.new_page, nav.new_context = new_page, new_context
+    return nav
+
 sys.stdout.reconfigure(encoding='utf-8')
 RACINE = pathlib.Path(__file__).resolve().parent.parent
 PORT = 7374
@@ -265,7 +286,7 @@ def hors_ligne(nav):
 p = serveur()
 try:
     with sync_playwright() as pw:
-        nav = pw.chromium.launch(args=['--mute-audio'])
+        nav = muet(pw.chromium.launch(args=['--mute-audio']))
         formats(nav)
         hors_ligne(nav)
         partie_ami(nav)

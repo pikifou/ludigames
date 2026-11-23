@@ -9,17 +9,19 @@ import { dansNiveau } from '../niveaux.js';
 import { t, duree, auteurImage, licenceImage } from '../textes.js';
 import { son } from '../sons.js';
 import { dire, voixDisponible } from '../voix.js';
+import { voixActive, interrupteursSon } from '../reglage-son.js';
 import { ICONES } from '../icones.js';
 
 export function partie(app, zoneId) {
   const { hud, etat } = app;
   const zone = zoneParId(zoneId), niveau = app.niveau(zoneId);
-  const avecVoix = etat.voix && voixDisponible(app.langue);
+  // La voix lit le nom et le savoir quand le réglage « Voix » est allumé (le bouton Écouter se cache sinon : html.sans-voix).
+  const voixOk = voixDisponible(app.langue), avecVoix = () => voixActive() && voixOk;
   hud.innerHTML = `
     <header class="haut haut-partie">
       <div id="compteur" class="compteur craie"></div>
       <div class="nom-ligne"><h2 id="nom" class="nom craie" aria-live="polite"></h2>
-        ${avecVoix ? `<button class="bouton-rond petit" data-action="ecouter" aria-label="${t('ecouter')}" title="${t('ecouter')}">${ICONES.voix}</button>` : ''}</div>
+        ${voixOk ? `<button class="bouton-rond petit" data-action="ecouter" aria-label="${t('ecouter')}" title="${t('ecouter')}">${ICONES.voix}</button>` : ''}</div>
       <div id="chrono" class="chrono craie"></div>
     </header>
     <div class="coin-bas droite">
@@ -138,7 +140,7 @@ export function partie(app, zoneId) {
     note.style.setProperty('--haut', hud.querySelector('.haut').offsetHeight + 6 + 'px');
     note.hidden = false;
     placerBande(img, [code, touche]);
-    if (avecVoix) dire(`${app.nom(code)}. ${savoir.texte}`, app.langue);
+    if (avecVoix()) dire(`${app.nom(code)}. ${savoir.texte}`, app.langue);
   }
   // On essaie chaque côté et on garde celui qui ne cache rien (sinon, celui qui laisse voir le bon pays).
   // Mesures sans transformation (offset*) : la bande est encore en train d'entrer.
@@ -201,7 +203,8 @@ export function partie(app, zoneId) {
     voile.classList.remove('clair');
     voile.innerHTML = `<div class="note-tableau"><p class="grand craie">${t('pause')}</p>
       <div class="boutons"><button class="bouton-craie plein" data-action="reprendre">${t('reprendre')}</button>
-      <button class="bouton-craie" data-action="quitter">${t('quitter')}</button></div></div>`;
+      <button class="bouton-craie" data-action="quitter">${t('quitter')}</button></div>
+      <div class="reglages-son">${interrupteursSon(voixOk)}</div></div>`;
     voile.hidden = false;
   }
   function reprendre() {

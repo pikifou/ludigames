@@ -34,8 +34,9 @@ for _ in range(50):
         time.sleep(0.1)
 try:
     with sync_playwright() as pw:
-        nav = pw.chromium.launch(args=['--autoplay-policy=no-user-gesture-required'])
+        nav = pw.chromium.launch(args=['--autoplay-policy=no-user-gesture-required', '--mute-audio'])
         page = nav.new_page(viewport={'width': 390, 'height': 844}, reduced_motion='reduce')
+        page.add_init_script("if (window.speechSynthesis) window.speechSynthesis.speak = () => {};")
         page.goto(f'http://localhost:{PORT}/package.json')
         page.set_content(f'''<html><body style="margin:0"><script>window.messages=[];addEventListener('message',e=>messages.push(e.data));</script>
           <iframe id="jeu" style="width:390px;height:844px;border:0" src="{JEU}?lecon=en-passant"></iframe></body></html>''')
@@ -64,13 +65,12 @@ try:
         verifier(data.get('progress', {}).get('lecons', {}).get('value') == 1, 'progression : une leçon finie')
         verifier(any(e.get('kind') == 'skill' and e.get('domain') == 'logique.puzzle' for e in evts), 'une notion enregistrée (logique.puzzle)')
         verifier(page.evaluate("messages.some(m => m.type === 'ludi:event')"), 'les événements partent vers le launcher')
-        cadre.locator('[data-act=voix]').evaluate('b => b.click()')  # la fête couvre l'écran : on touche le bouton directement
         jeu = page.frame(url=lambda u: 'chemin-du-roi' in u)
         for _ in range(60):
             if jeu.evaluate('__musique()'):
                 break
             page.wait_for_timeout(100)
-        verifier(jeu.evaluate('__musique()') == 'ete', "avec le son, la musique de l'été joue (le coup secret est à la tour)")
+        verifier(jeu.evaluate('__musique()') == 'ete', "sans rien régler, la musique de l'été joue (le coup secret est à la tour)")
         page.evaluate("document.getElementById('jeu').contentWindow.postMessage({type: 'ludi:pause'}, location.origin)")
         page.wait_for_timeout(300)
         verifier(jeu.evaluate('__musique()') is None, 'la pause de Ludiworld arrête la musique')

@@ -2,6 +2,7 @@
 
 Lance un petit serveur sur le port 7360 à la racine de ludigames (jamais 8000).
 """
+import os
 import pathlib
 import json
 import re
@@ -12,10 +13,31 @@ import urllib.request
 
 from playwright.sync_api import sync_playwright
 
+
+# Navigateur de test muet : pas de son (--mute-audio) et la voix des textes ne parle pas (speechSynthesis bouchée).
+# Le jeu démarre avec le son et la voix allumés (règle de Ludiworld du 23 novembre).
+MUET = "if (window.speechSynthesis) window.speechSynthesis.speak = () => {};"
+
+
+def muet(nav):
+    np, nc = nav.new_page, nav.new_context
+
+    def new_page(**k):
+        p = np(**k)
+        p.add_init_script(MUET)
+        return p
+
+    def new_context(**k):
+        c = nc(**k)
+        c.add_init_script(MUET)
+        return c
+    nav.new_page, nav.new_context = new_page, new_context
+    return nav
+
 sys.stdout.reconfigure(encoding='utf-8')
 
 RACINE = pathlib.Path(__file__).resolve().parent.parent
-PORT = 7360
+PORT = int(os.environ.get('PORT_TEST', 7360))  # PORT_TEST : un autre port si celui-ci est pris
 BASE = f'http://localhost:{PORT}'
 CAPTURES = RACINE / 'tests' / 'captures'
 ZONES = ['europe', 'afrique', 'asie', 'amerique-nord', 'amerique-sud', 'oceanie', 'monde']
@@ -330,10 +352,12 @@ def test_ecrans(nav):
 
     compter = "window.__dits = 0; if (window.speechSynthesis) { const s = speechSynthesis.speak.bind(speechSynthesis); speechSynthesis.speak = u => { window.__dits++; }; }"
     page, erreurs = ouvrir_jeu(nav, init=compter)
+    verifier(page.evaluate('__son()') == {'musique': True, 'bruitages': True, 'voix': True}, 'au départ : musique, bruitages et voix allumés (règle de Ludiworld)')
+    page.evaluate('Ludi.reglerSon({ voix: false })')
     lancer(page, 'europe')
     for _ in range(3):
         repondre(page, page.evaluate('jeu.manche.question'))
-    verifier(page.evaluate('window.__dits') == 0, 'voix coupée par défaut : rien n\'est lu')
+    verifier(page.evaluate('window.__dits') == 0, 'voix coupée : rien n\'est lu')
     page.close()
 
     bloque = "Object.defineProperty(window, 'localStorage', { get() { throw new Error('bloqué'); } });"
@@ -862,7 +886,7 @@ def test_credits(nav):
             jeu = page.inner_text('.credits-jeu')
             verifier('Natural Earth' in jeu and 'Baloo 2' in jeu and 'd3-geo' in jeu, 'seul : la carte, les polices et les bibliothèques sont créditées')
             page.click('.credits-tete [data-action="reglages"]')
-            verifier(page.locator('[data-reglage="son"]').count() == 1, 'Retour ramène aux réglages')
+            verifier(page.locator('[data-son="musique"]').count() == 1, 'Retour ramène aux réglages')
         verifier(not erreurs, f'{w}x{h} : aucune erreur ({erreurs[:2]})')
         page.close()
 
@@ -1007,7 +1031,7 @@ if __name__ == '__main__':
     srv = serveur()
     try:
         with sync_playwright() as p:
-            nav = p.chromium.launch()
+            nav = muet(p.chromium.launch(args=['--mute-audio']))
             for s in voulues:
                 SECTIONS[s](nav)
             nav.close()

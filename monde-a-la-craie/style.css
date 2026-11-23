@@ -202,6 +202,9 @@ button { font: inherit; color: inherit; }
 .interrupteur small { display: block; font-family: var(--font-texte); font-weight: 400; font-size: 13px; opacity: .75; }
 .interrupteur input { order: 2; width: 26px; height: 26px; accent-color: var(--craie-jaune); flex: none; }
 .interrupteur.grise { opacity: .6; cursor: default; }
+/* Voix coupée (réglage du son de Ludiworld) : pas de bouton Écouter. */
+html.sans-voix [data-action="ecouter"], html.sans-voix [data-action="ecouter-fiche"] { display: none; }
+.reglages-son { margin-top: 14px; padding-top: 6px; border-top: 2px dashed rgba(255, 255, 255, .25); }
 .interrupteur select { order: 2; font: 700 17px var(--font-craie); color: var(--color-craie); background: var(--color-ardoise-ombre);
   border: 2px solid var(--color-craie-douce); border-radius: 8px 12px 9px 11px; padding: 4px 8px; min-height: 40px; }
 

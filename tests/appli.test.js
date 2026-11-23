@@ -18,7 +18,7 @@ function fichiers(dossier = '', liste = []) {
 
 test("le service worker garde en cache tout ce dont le jeu a besoin hors ligne", () => {
   const sw = lire('sw.js');
-  const attendus = fichiers().filter(f => /\.(js|css|json|woff2|png|webp|webmanifest|html)$/.test(f) && f !== 'sw.js' && f !== 'ludi.json'
+  const attendus = fichiers().filter(f => /\.(js|css|json|woff2|png|webp|webmanifest|html|mp3)$/.test(f) && f !== 'sw.js' && f !== 'ludi.json'
     && !f.startsWith('img/savoirs/') && !f.startsWith('img/drapeaux/'));   // les images des savoirs et les drapeaux arrivent à la demande
   for (const f of ['img/histoire/depart.webp', 'img/histoire/retour.webp', 'img/histoire/nina.webp']) assert.ok(attendus.includes(f), f);
   for (const f of attendus) assert.ok(sw.includes(`'${f}'`), f + ' absent de sw.js');
@@ -52,8 +52,8 @@ test('la fiche Ludiworld', () => {
   assert.ok(!/—/.test(JSON.stringify(f)), 'pas de tiret long');
 });
 
-test('le kit Ludiworld est la version 0.4.0 (fini et complet)', () => {
-  assert.match(lire('ludi.js'), /VERSION = '0\.4\.0'/);
+test('le kit Ludiworld est la version 0.5.0 (le son réglé par Ludiworld)', () => {
+  assert.match(lire('ludi.js'), /VERSION = '0\.5\.0'/);
 });
 
 test("les vidéos de l'histoire ne passent pas par le cache (lecture par morceaux) ; le jeu montre l'image sans elles", () => {
@@ -69,16 +69,16 @@ test("la progression confiée à Ludiworld : sans les réglages de l'appareil, e
   const { charger, sauver, versPartage, depuisPartage } = await import('../monde-a-la-craie/js/progres.js');
   const memoire = () => { const m = new Map(); return { getItem: k => (m.has(k) ? m.get(k) : null), setItem: (k, v) => m.set(k, String(v)) }; };
   const a = charger('Léo', memoire());
-  a.connus = new Set(['FR', 'DE', 'JP']); a.meilleurs = { europe: 61.5 }; a.niveaux = { europe: 'moyen' }; a.voix = true; a.son = false; a.langue = 'en';
+  a.connus = new Set(['FR', 'DE', 'JP']); a.meilleurs = { europe: 61.5 }; a.niveaux = { europe: 'moyen' }; a.langue = 'en';
   const envoye = JSON.parse(JSON.stringify(versPartage(a)));
   assert.deepEqual(Object.keys(envoye).sort(), ['connus', 'meilleurs', 'niveaux', 'voyage']);
   const b = charger('Léo', memoire());
-  b.voix = false; b.son = true; b.langue = 'fr';
+  b.langue = 'fr';
   assert.equal(depuisPartage(b, envoye), true);
   assert.deepEqual([...b.connus].sort(), ['DE', 'FR', 'JP']);
   assert.deepEqual(b.meilleurs, { europe: 61.5 });
   assert.deepEqual(b.niveaux, { europe: 'moyen' });
-  assert.deepEqual([b.voix, b.son, b.langue], [false, true, 'fr'], "les réglages de l'appareil ne bougent pas");
+  assert.equal(b.langue, 'fr', "la langue de l'appareil ne bouge pas");
   assert.equal(depuisPartage(b, { connus: 'n importe quoi' }), false);
   assert.equal(depuisPartage(b, null), false);
   assert.deepEqual(b.niveaux, { europe: 'moyen' }, 'une donnée refusée ne change rien');

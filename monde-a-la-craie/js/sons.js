@@ -1,7 +1,8 @@
-// Petits sons de classe, fabriqués par le navigateur (pas de fichiers) : craie qui crisse, juste, raté, effacer.
-let ctx = null, actif = true;
+// Petits sons de classe, fabriqués par le navigateur (pas de fichiers) : craie qui crisse, juste, raté, effacer, tampon.
+// Et la musique du voyage de Nina. La musique et les bruitages se règlent à part (le réglage du son de Ludiworld : js/reglage-son.js).
+let ctx = null, bruitages = true, musiqueOui = true;
 
-export function sonActif(oui) { actif = oui; }
+export function reglerSons(r) { bruitages = !!r.bruitages; musiqueOui = !!r.musique; majMusique(); }
 
 function audio() {
   if (!ctx) {
@@ -39,7 +40,8 @@ function note(a, freq, debut, duree, volume, type = 'triangle') {
 }
 
 export function son(nom) {
-  if (!actif) return;
+  if (!bruitages) return;
+  globalThis.__sonsJoues?.push(nom); // pour les tests : les sons joués
   const a = audio();
   if (!a) return;
   try {
@@ -48,5 +50,75 @@ export function son(nom) {
     else if (nom === 'faux') note(a, 196, 0, 0.35, 0.12, 'sine');
     else if (nom === 'effacer') bruit(a, 0.7, 900, 0.06, -500);
     else if (nom === 'fin') [523, 659, 784, 1047].forEach((f, i) => note(a, f, i * 0.11, 0.35, 0.09));
+    else if (nom === 'tampon') { bruit(a, 0.12, 320, 0.22); note(a, 110, 0, 0.2, 0.2, 'sine'); }   // un tampon frappé dans le carnet
   } catch { /* pas de son : tant pis */ }
 }
+
+// ---------- La musique ----------
+// Une musique par écran : « voyage » sur la carte du monde et l'histoire de Nina, « manche » pendant une manche,
+// « decouvrir » quand on explore. Elle tourne en boucle sans couture : la fin du morceau se fond dans son début.
+// Elle se coupe avec le réglage « Musique », quand le jeu est caché, et pendant la pause de Ludiworld.
+const VOLUME_MUSIQUE = 0.5, FONDU = 2.5, RACCORD = 4;
+let voulue = null, enPause = false, courante = null;
+const tampons = new Map();
+
+function charger(nom) {
+  if (!tampons.has(nom)) {
+    const a = audio();
+    tampons.set(nom, fetch(`musique/${nom}.mp3`).then(r => r.arrayBuffer()).then(b => a.decodeAudioData(b)).then(bouclable)
+      .catch(() => { tampons.delete(nom); return null; }));
+  }
+  return tampons.get(nom);
+}
+
+// Le morceau sans ses RACCORD premières secondes, et sa fin fondue avec elles : la boucle ne s'entend pas.
+function bouclable(buf) {
+  const a = audio(), x = Math.min(Math.floor(RACCORD * buf.sampleRate), Math.floor(buf.length / 4));
+  const n = buf.length - x, out = a.createBuffer(buf.numberOfChannels, n, buf.sampleRate);
+  for (let c = 0; c < buf.numberOfChannels; c++) {
+    const src = buf.getChannelData(c), dst = out.getChannelData(c);
+    dst.set(src.subarray(x));
+    for (let i = 0; i < x; i++) {
+      const t = i / x, k = n - x + i;
+      dst[k] = src[x + k] * Math.cos(t * Math.PI / 2) + src[i] * Math.sin(t * Math.PI / 2);
+    }
+  }
+  return out;
+}
+
+function eteindre(m) {
+  if (!m) return;
+  const a = audio(), t = a.currentTime;
+  m.gain.gain.cancelScheduledValues(t);
+  m.gain.gain.setValueAtTime(m.gain.gain.value, t);
+  m.gain.gain.linearRampToValueAtTime(0, t + FONDU);
+  setTimeout(() => { try { m.src.stop(); } catch { /* déjà arrêtée */ } }, FONDU * 1000 + 100);
+}
+
+function majMusique() {
+  const jouer = musiqueOui && !enPause && voulue && !globalThis.document?.hidden;
+  if (!jouer) { eteindre(courante); courante = null; return; }
+  if (courante?.nom === voulue) return;
+  const nom = voulue, a = audio();
+  if (!a) return;
+  charger(nom).then(buf => {
+    if (!buf || voulue !== nom || !musiqueOui || enPause || courante?.nom === nom) return;
+    eteindre(courante);
+    const src = a.createBufferSource(), gain = a.createGain();
+    src.buffer = buf; src.loop = true;
+    gain.gain.setValueAtTime(0, a.currentTime);
+    gain.gain.linearRampToValueAtTime(VOLUME_MUSIQUE, a.currentTime + FONDU);
+    src.connect(gain).connect(a.destination);
+    src.start();
+    courante = { nom, src, gain };
+  });
+}
+
+// La musique à entendre : 'voyage', 'manche' ou 'decouvrir'.
+export function musique(nom) { voulue = nom; majMusique(); }
+export function pauseMusique(oui) { enPause = oui; majMusique(); }
+globalThis.document?.addEventListener('visibilitychange', majMusique);
+// Le navigateur n'autorise le son qu'après un geste : au premier toucher, on relance.
+globalThis.addEventListener?.('pointerdown', () => { if ((musiqueOui || bruitages) && ctx?.state === 'suspended') ctx.resume(); });
+// Pour les tests : la musique qu'on entend en ce moment (ou null).
+globalThis.__musique = () => courante?.nom ?? null;

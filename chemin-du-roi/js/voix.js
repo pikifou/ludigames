@@ -1,4 +1,4 @@
-// La voix, en option : seulement les voix installées sur l'appareil (jamais une voix en ligne).
+// La voix qui lit les textes (le réglage « Voix » de Ludiworld) : seulement les voix installées sur l'appareil (jamais une voix en ligne).
 const synth = globalThis.speechSynthesis;
 let voix = [];
 
@@ -11,6 +11,7 @@ function voixPour(langue) { return voix.find(v => v.lang.toLowerCase().startsWit
 export function voixDisponible(langue) { return !!(synth && voixPour(langue)); }
 
 export function dire(texte, langue) {
+  globalThis.__ditsJoues?.push(texte); // pour les tests : ce que la voix a eu à lire
   const v = voixPour(langue);
   if (!synth || !v) return;
   synth.cancel();

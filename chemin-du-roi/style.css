@@ -57,6 +57,26 @@ img { max-width: 100%; }
 .rond.son.coupe { opacity: .7; }
 .rond.son.coupe::after { content: ''; position: absolute; width: 30px; height: 3px; background: var(--color-danger); transform: rotate(-45deg); border-radius: 2px; }
 
+/* Le son : le haut-parleur ouvre trois interrupteurs (musique, bruitages, voix), réglés pour tout Ludiworld.
+   Allumé : une pastille pleine. Coupé : une pastille vide en pointillés, l'icône barrée. */
+.coin-son { position: absolute; top: calc(env(safe-area-inset-top, 0px) + 10px); right: calc(env(safe-area-inset-right, 0px) + 12px); z-index: 6; }
+.panneau-son { position: absolute; top: calc(100% + 8px); right: 0; z-index: 30; display: grid; gap: 6px; padding: 10px;
+  background: var(--color-papier); border-radius: 22px 18px 24px 16px; box-shadow: var(--ombre);
+  transform-origin: 85% 0; animation: panneau-son .28s var(--rebond) both; }
+.haut > .panneau-son { right: 12px; }
+@keyframes panneau-son { from { opacity: 0; transform: scale(.85) translateY(-6px); } }
+.interrupteur-son { display: flex; align-items: center; gap: 10px; min-width: 168px; padding: 4px 14px 4px 4px; border-radius: 999px;
+  font: 700 1.1rem/1 var(--font-display); color: var(--color-encre); text-align: left; transition: transform .12s; }
+.interrupteur-son:active { transform: scale(.95); }
+.interrupteur-son .pastille { width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; position: relative; flex: none;
+  background: var(--color-sarcelle); border: 3px solid var(--color-sarcelle); transition: background .15s, border-color .15s; }
+.interrupteur-son svg { width: 22px; height: 22px; fill: none; stroke: #fff8ec; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+.interrupteur-son[aria-pressed="false"] { color: var(--color-encre-douce); }
+.interrupteur-son[aria-pressed="false"] .pastille { background: transparent; border: 3px dashed var(--color-encre-douce); }
+.interrupteur-son[aria-pressed="false"] svg { stroke: var(--color-encre-douce); }
+.interrupteur-son[aria-pressed="false"] .pastille::after { content: ''; position: absolute; width: 34px; height: 3px; background: var(--color-encre); transform: rotate(-45deg); border-radius: 2px; }
+.interrupteur-son[aria-pressed="false"] b { text-decoration: line-through 2px; }
+
 .haut { display: flex; align-items: center; gap: 10px; padding: 10px 12px 4px; position: relative; z-index: 5; }
 .haut h2 { flex: 1; margin: 0; text-align: center; font: 800 1.4rem/1.1 var(--font-display); text-shadow: 0 2px 0 rgba(255, 248, 230, .85); }
 body.ludiworld .haut { padding-left: 130px; }

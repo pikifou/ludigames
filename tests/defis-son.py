@@ -1,8 +1,11 @@
 """Le son et la musique des Défis de Barnabé : python tests/defis-son.py
 
 Critère de Julien (23 novembre 2026) : la vertical slice a ses sons et sa musique, la production en a partout.
-Vérifie : muet au départ ; une musique sur chaque écran (titre, histoire, carte, chaque lieu, match, fin) ;
-le haut-parleur la coupe et la remet ; les bruitages des moments forts (pièce posée, prise, raté, réussi, étoiles,
+Règle de la plateforme (23 novembre) : un jeu ne démarre jamais muet ; le son se règle dans Ludiworld en trois parties
+(musique, bruitages, voix), et le bouton du jeu change le réglage de toute la maison.
+Vérifie : tout allumé au départ (même avec une vieille sauvegarde « son coupé ») ; chaque interrupteur du haut-parleur
+ne coupe que sa partie ; le réglage de Ludiworld (bonjour, message ludi:son) est suivi et le bouton du jeu le lui
+envoie ; une musique sur chaque écran (titre, histoire, carte, chaque lieu, match, fin) ; les bruitages des moments forts (pièce posée, prise, raté, réussi, étoiles,
 fin de bouteille, coup du match). Serveur sur le port 7376 (jamais 8000).
 """
 import pathlib
@@ -70,20 +73,94 @@ try:
     with sync_playwright() as pw:
         nav = pw.chromium.launch(args=['--autoplay-policy=no-user-gesture-required', '--mute-audio'])
         page = nav.new_page(viewport={'width': 820, 'height': 1180})
-        page.add_init_script("window.__sonsJoues = []; if (window.speechSynthesis) window.speechSynthesis.speak = () => {};")
+        page.add_init_script("window.__sonsJoues = []; window.__ditsJoues = []; if (window.speechSynthesis) window.speechSynthesis.speak = () => {};")
         erreurs = []
         page.on('pageerror', lambda e: erreurs.append(str(e)))
 
-        print('La musique')
+        print('Le son au départ et ses trois réglages')
+        # Une vieille sauvegarde qui avait coupé le son : le jeu ne reste pas muet.
+        page.add_init_script("if (!sessionStorage.getItem('vieille')) { sessionStorage.setItem('vieille', 1); localStorage.setItem('defis-de-barnabe.v1', JSON.stringify({ notes: {}, lecons: {}, amis: {}, medailles: {}, voix: false, son: false, histoire: true })); }")
         page.goto(BASE + '?chemin')
-        page.wait_for_timeout(1200)
-        verifier(page.evaluate('__musique()') is None, 'muet au départ : aucune musique')
-        page.locator('[data-act=voix]').click(force=True)
-        verifier(entendue(page, 'plage'), 'avec le son : la musique de la plage sur la carte')
-        page.locator('[data-act=voix]').click(force=True)
-        verifier(entendue(page, None), 'le haut-parleur coupe la musique')
-        page.locator('[data-act=voix]').click(force=True)
-        verifier(entendue(page, 'plage'), 'et la remet')
+        page.mouse.click(3, 3)
+        verifier(page.evaluate('__son()') == {'musique': True, 'bruitages': True, 'voix': True}, 'au départ : musique, bruitages et voix allumés')
+        verifier(entendue(page, 'plage'), 'au départ : la musique « plage » sur le chemin, sans rien régler')
+        verifier('son' not in (page.evaluate("JSON.parse(localStorage.getItem('defis-de-barnabe.v1'))") or {}), 'la sauvegarde ne garde plus de réglage de son')
+
+        def interrupteur(nom):
+            if not page.locator('.panneau-son').count():
+                page.locator('[data-act=son]').first.evaluate('b => b.click()')
+            page.locator(f'.panneau-son [data-son={nom}]').evaluate('b => b.click()')
+            page.wait_for_timeout(150)
+
+        def sons_joues():
+            return page.evaluate('window.__sonsJoues.splice(0)')
+
+        def toucher_lieu():
+            page.mouse.click(3, 3)
+            page.evaluate("document.querySelector('.lieu').click()")
+            page.wait_for_timeout(300)
+
+        interrupteur('musique')
+        verifier(entendue(page, None), 'interrupteur Musique : la musique s\'arrête')
+        verifier(page.evaluate('__son()') == {'musique': False, 'bruitages': True, 'voix': True}, '... et seulement elle')
+        verifier(page.get_attribute('.panneau-son [data-son=musique]', 'aria-pressed') == 'false', '... l\'interrupteur se montre coupé')
+        sons_joues()
+        toucher_lieu()
+        verifier(len(sons_joues()) > 0, 'musique coupée : les bruitages jouent toujours')
+        page.goto(BASE + '?chemin')
+        page.mouse.click(3, 3)
+        page.wait_for_timeout(800)
+        verifier(page.evaluate('__musique()') is None and page.evaluate('__son().musique') is False, 'le réglage reste en changeant d\'écran')
+        interrupteur('musique')
+        verifier(entendue(page, 'plage'), 'et l\'interrupteur la remet')
+        interrupteur('bruitages')
+        verifier(page.evaluate('__son()') == {'musique': True, 'bruitages': False, 'voix': True}, 'interrupteur Bruitages : seulement les bruitages')
+        page.goto(BASE + '?chemin')
+        sons_joues()
+        toucher_lieu()
+        verifier(sons_joues() == [] and entendue(page, 'plage'), 'bruitages coupés : aucun bruitage, la musique continue')
+        interrupteur('bruitages')
+        interrupteur('voix')
+        verifier(page.evaluate('__son()') == {'musique': True, 'bruitages': True, 'voix': False}, 'interrupteur Voix : seulement la voix')
+        page.goto(BASE + '?histoire')
+        page.wait_for_timeout(600)
+        verifier(page.evaluate('window.__ditsJoues') == [], 'voix coupée : l\'histoire n\'est pas lue')
+        page.evaluate("Ludi.reglerSon({ voix: true })")
+        page.goto(BASE + '?histoire')
+        page.wait_for_timeout(600)
+        verifier(len(page.evaluate('window.__ditsJoues')) > 0, 'voix allumée : l\'histoire est lue')
+        page.goto(BASE)
+        page.wait_for_timeout(500)
+        verifier(page.locator('.titre [data-act=son]').count() == 1, 'l\'écran titre a aussi son haut-parleur')
+        page.evaluate("localStorage.clear()")
+
+        print('Le réglage de Ludiworld')
+        cadre = nav.new_page(viewport={'width': 820, 'height': 1180})
+        cadre.add_init_script("window.__sonsJoues = []; window.__ditsJoues = []; if (window.speechSynthesis) window.speechSynthesis.speak = () => {};")
+        cadre.goto(f'http://localhost:{PORT}/package.json')
+        cadre.set_content(f"""<html><body style="margin:0"><script>window.messages=[];addEventListener('message',e=>{{messages.push(e.data);
+          if (e.data && e.data.type === 'ludi:hello') e.source.postMessage({{type: 'ludi:welcome', player: {{name: 'Lou'}}, save: null, son: {{musique: true, bruitages: true, voix: false}}}}, e.origin);}});</script>
+          <iframe id="jeu" style="width:820px;height:1180px;border:0" src="{BASE}?chemin"></iframe></body></html>""")
+        jeu = None
+        for _ in range(60):
+            jeu = cadre.frame(url=lambda u: 'defis-de-barnabe' in u)
+            if jeu and jeu.evaluate('typeof __son === "function"'):
+                break
+            cadre.wait_for_timeout(100)
+        cadre.wait_for_timeout(500)
+        verifier(jeu.evaluate('__son()') == {'musique': True, 'bruitages': True, 'voix': False}, 'le réglage de la maison arrive avec le bonjour de Ludiworld')
+        cadre.evaluate("document.getElementById('jeu').contentWindow.postMessage({type: 'ludi:son', son: {musique: false, bruitages: true, voix: false}}, location.origin)")
+        cadre.wait_for_timeout(300)
+        verifier(jeu.evaluate('__son().musique') is False and jeu.evaluate('__musique()') is None, 'Ludiworld coupe la musique (message ludi:son) : le jeu la coupe')
+        jeu.locator('[data-act=son]').first.click(force=True)
+        jeu.locator('.panneau-son [data-son=musique]').click(force=True)
+        cadre.wait_for_timeout(300)
+        envoye = cadre.evaluate("messages.filter(m => m.type === 'ludi:son').pop()")
+        verifier(bool(envoye) and envoye.get('son') == {'musique': True, 'bruitages': True, 'voix': False}, f'le bouton du jeu envoie le réglage à Ludiworld pour toute la maison ({envoye})')
+        verifier(jeu.evaluate('__son().musique') is True, '... et rallume la musique dans le jeu')
+        cadre.close()
+
+        print('La musique sur chaque écran')
         ecrans = [('', 'plage', 'écran titre'), ('?histoire', 'plage', 'histoire du début'),
                   ('?lecon=plage-1', 'plage', 'la plage'), ('?lecon=port-1', 'plage', 'le port'),
                   ('?lecon=dunes-1', 'plage', 'les dunes'), ('?lecon=rochers-1', 'rochers', 'les rochers'),

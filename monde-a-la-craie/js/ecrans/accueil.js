@@ -5,8 +5,9 @@ import { pourcentage, mondeDebloque } from '../regles.js';
 import { NIVEAUX } from '../niveaux.js';
 import { t, choisirLangue } from '../textes.js';
 import { ICONES } from '../icones.js';
-import { sonActif } from '../sons.js';
 import { voixDisponible } from '../voix.js';
+import { son } from '../sons.js';
+import { interrupteursSon } from '../reglage-son.js';
 import { pageCredits } from './credits.js';
 import { carnet, pageCarnet, tampon, trajet } from '../voyage.js';
 
@@ -56,6 +57,8 @@ export function accueil(app) {
     }
   }
   ecrireEtiquettes();
+  // Un tampon neuf se frappe dans le carnet (son animation arrive vers 0,8 s).
+  if (neufs.size) setTimeout(() => son('tampon'), 800);
   const carte = creerCarte(app.nouvelleCarte(), app.monde, MONDE,
     () => ({ haut: hud.querySelector('.haut').offsetHeight + 4, bas: enListe() ? etiquettes.offsetHeight + 84 : 64, gauche: 8, droite: 8 }),
     { ronds: () => false, zoom: false });
@@ -120,9 +123,7 @@ export function accueil(app) {
   function reglages() {
     const voixOk = voixDisponible(app.langue);
     ouvrir(`<p class="grand craie">${t('reglages')}</p>
-      <label class="interrupteur"><input type="checkbox" data-reglage="son" ${etat.son ? 'checked' : ''}><span>${t('son')}</span></label>
-      <label class="interrupteur${voixOk ? '' : ' grise'}"><input type="checkbox" data-reglage="voix" ${etat.voix && voixOk ? 'checked' : ''} ${voixOk ? '' : 'disabled'}>
-        <span>${t('voix')}${voixOk ? '' : `<small>${t('pasDeVoix')}</small>`}</span></label>
+      ${interrupteursSon(voixOk)}
       <label class="interrupteur"><span>${t('langue')}</span>
         <select data-reglage="langue"><option value="fr" ${app.langue === 'fr' ? 'selected' : ''}>Français</option><option value="en" ${app.langue === 'en' ? 'selected' : ''}>English</option></select></label>
       <div class="reglages-appli"></div>
@@ -165,10 +166,7 @@ export function accueil(app) {
   hud.addEventListener('change', e => {
     const r = e.target.dataset.reglage;
     if (!r) return;
-    if (r === 'langue') { etat.langue = e.target.value; choisirLangue(etat.langue); app.sauver(); app.aller('accueil'); return; }
-    etat[r] = e.target.checked;
-    if (r === 'son') sonActif(etat.son);
-    app.sauver();
+    if (r === 'langue') { etat.langue = e.target.value; choisirLangue(etat.langue); app.sauver(); app.aller('accueil'); }
   });
 
   // L'histoire : le départ au tout premier lancement, le retour quand les six tampons viennent d'être réunis.

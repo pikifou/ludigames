@@ -1,7 +1,8 @@
 // Petits sons fabriqués par le navigateur (pas de fichiers) : pièce posée, prise, étoile, raté, victoire.
-let ctx = null, actif = true;
+// La musique et les bruitages se règlent à part (le réglage du son de Ludiworld : js/reglage-son.js).
+let ctx = null, bruitages = true, musiqueOui = true;
 
-export function sonActif(oui) { actif = oui; majMusique(); }
+export function reglerSons(r) { bruitages = !!r.bruitages; musiqueOui = !!r.musique; majMusique(); }
 
 function audio() {
   if (!ctx) {
@@ -35,7 +36,8 @@ function toc(a, freq, volume) {
 }
 
 export function son(nom) {
-  if (!actif) return;
+  if (!bruitages) return;
+  globalThis.__sonsJoues?.push(nom); // pour les tests : les sons joués
   const a = audio();
   if (!a) return;
   try {
@@ -59,7 +61,7 @@ export function son(nom) {
 // ---------- La musique des saisons ----------
 // Une musique par saison (automne, hiver, printemps, été), qui suit le chemin de Léo.
 // Elle tourne en boucle sans couture : la fin du morceau se fond dans son début.
-// Elle se coupe avec le haut-parleur, quand le jeu est caché, et pendant la pause de Ludiworld.
+// Elle se coupe avec le réglage « Musique », quand le jeu est caché, et pendant la pause de Ludiworld.
 const VOLUME_MUSIQUE = 0.55, FONDU = 2.5, RACCORD = 4;
 let voulue = null, enPause = false, courante = null;
 const tampons = new Map();
@@ -98,13 +100,13 @@ function eteindre(m) {
 }
 
 function majMusique() {
-  const jouer = actif && !enPause && voulue && !globalThis.document?.hidden;
+  const jouer = musiqueOui && !enPause && voulue && !globalThis.document?.hidden;
   if (!jouer) { eteindre(courante); courante = null; return; }
   if (courante?.nom === voulue) return;
   const nom = voulue, a = audio();
   if (!a) return;
   charger(nom).then(buf => {
-    if (!buf || voulue !== nom || !actif || enPause || courante?.nom === nom) return;
+    if (!buf || voulue !== nom || !musiqueOui || enPause || courante?.nom === nom) return;
     eteindre(courante);
     const src = a.createBufferSource(), gain = a.createGain();
     src.buffer = buf; src.loop = true;
@@ -121,6 +123,6 @@ export function musique(nom) { voulue = nom; majMusique(); }
 export function pauseMusique(oui) { enPause = oui; majMusique(); }
 globalThis.document?.addEventListener('visibilitychange', majMusique);
 // Le navigateur n'autorise le son qu'après un geste : au premier toucher, on relance.
-globalThis.addEventListener?.('pointerdown', () => { if (actif && ctx?.state === 'suspended') ctx.resume(); });
+globalThis.addEventListener?.('pointerdown', () => { if ((musiqueOui || bruitages) && ctx?.state === 'suspended') ctx.resume(); });
 // Pour les tests : la saison qu'on entend en ce moment (ou null).
 globalThis.__musique = () => courante?.nom ?? null;

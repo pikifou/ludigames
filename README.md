@@ -22,7 +22,8 @@ GitHub Pages publie la racine de `main` : un jeu est en ligne à `https://pikifo
 
 - `node tools/carte.js` : prépare la carte (`monde-a-la-craie/data/monde.json`) à partir de Natural Earth, avec les corrections de `tools/pays.json` (zones, noms, territoires).
 - `node tools/version.js` : à lancer après chaque modification du jeu (`node tools/version.js chemin-du-roi` pour l'autre jeu), pour que l'appli installée se mette à jour.
-- `npm test` : tests de la logique et des données. `python tests/navigateur.py` : tests dans le navigateur (port 7360).
+- `npm test` : tests de la logique et des données. `python tests/navigateur.py` : tests dans le navigateur (port 7360). `python tests/monde-son.py` : le son (musique sur chaque écran, les trois réglages, port 7377).
+- Musique : ElevenLabs (`musique/`, une par écran : `voyage`, `manche`, `decouvrir`).
 - Conception et plan : `specs/`.
 
 Carte : [Natural Earth](https://www.naturalearthdata.com) (domaine public), via `world-atlas`. Bibliothèques : d3-geo, d3-array, topojson-client (licence ISC). Polices : Baloo 2 et Lexend (SIL Open Font License).
@@ -41,3 +42,7 @@ Carte : [Natural Earth](https://www.naturalearthdata.com) (domaine public), via 
 - `node tools/version.js defis-de-barnabe` après chaque modification. `node --test tests/defis-contenu.test.js` : chaque défi a une solution. `python tests/defis-navigateur.py` : tout le jeu joué dans le navigateur (port 7374).
 - Pour tester : `?tout` ouvre tout, `?lecon=<bouteille>` (par exemple `?lecon=jetee-1`), `?amis` le match, `?histoire`, `?fin`.
 - Images : Higgsfield (Nano Banana Pro), musique : ElevenLabs.
+
+## Le son
+
+Un jeu ne démarre jamais muet. La musique, les bruitages et la voix qui lit les textes se règlent dans Ludiworld pour toute la maison (kit 0.5 : `Ludi.onSon`, `Ludi.reglerSon`), et le bouton de chaque jeu change ce réglage : `js/reglage-son.js` dans chaque jeu. Ouvert seul, le réglage reste sur l'appareil. Les tests de navigateur coupent le son (`--mute-audio`) et la voix (`speechSynthesis` bouchée).

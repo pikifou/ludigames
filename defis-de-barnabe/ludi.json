@@ -48,8 +48,8 @@
     "natural_end": true
   },
   "content": {
-    "fr": "Un enfant et un vieil homme, un bord de mer peint, un plateau d'échecs. Pas de violence : on « prend » les pièces. Les textes sont à lire ; une voix de l'appareil peut les lire, si on l'allume (le jeu démarre en silence). Le jeu n'existe qu'en français pour l'instant.",
-    "en": "A child and an old man, a painted seaside, a chessboard. No violence: pieces are \"taken\". Texts must be read; the device's own voice can read them if switched on (the game starts silent). The game is in French only for now."
+    "fr": "Un enfant et un vieil homme, un bord de mer peint, un plateau d'échecs. Pas de violence : on « prend » les pièces. Une voix de l'appareil lit les textes à voix haute ; elle se coupe dans le réglage du son, comme la musique et les bruitages. Le jeu n'existe qu'en français pour l'instant.",
+    "en": "A child and an old man, a painted seaside, a chessboard. No violence: pieces are \"taken\". The device's own voice reads the texts aloud; it can be turned off in the sound settings, like the music and sound effects. The game is in French only for now."
   },
   "devices": [
     "tablet",

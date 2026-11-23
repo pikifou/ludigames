@@ -5,15 +5,17 @@ import { zoneParId } from '../zones.js';
 import { t } from '../textes.js';
 import { son } from '../sons.js';
 import { dire, voixDisponible } from '../voix.js';
+import { voixActive } from '../reglage-son.js';
 import { ICONES } from '../icones.js';
 import { CAPITALE } from '../savoirs.js';
 
 export function decouvrir(app, zoneId) {
-  const { hud, etat } = app;
+  const { hud } = app;
   const zone = zoneParId(zoneId);
   const dansLaZone = f => zoneId === 'monde' || f.properties.zone === zoneId;
   const avecFiche = app.monde.some(f => dansLaZone(f) && app.fiche(f.properties.code));
-  const avecVoix = etat.voix && voixDisponible(app.langue);
+  // La voix lit le nom touché quand le réglage « Voix » est allumé (le bouton Écouter se cache sinon : html.sans-voix).
+  const voixOk = voixDisponible(app.langue), avecVoix = () => voixActive() && voixOk;
   hud.innerHTML = `
     <header class="haut haut-decouvrir"><div class="nom-ligne"><h2 id="nom" class="nom craie consigne" aria-live="polite">${t('toucheUnPays')}</h2></div></header>
     <div class="coin-bas droite"><button class="bouton-rond" data-action="vue" aria-label="${t('vueEntiere')}" title="${t('vueEntiere')}">${ICONES.vue}</button></div>
@@ -58,7 +60,7 @@ export function decouvrir(app, zoneId) {
     nom.textContent = app.nomComplet(code);
     nom.classList.remove('ecrit'); void nom.offsetWidth; nom.classList.add('ecrit');
     son('craie');
-    if (avecVoix) dire(app.nom(code), app.langue);
+    if (avecVoix()) dire(app.nom(code), app.langue);
     if (panneau) remplirFiche(code);
   });
 
@@ -66,7 +68,7 @@ export function decouvrir(app, zoneId) {
     const f = app.fiche(code);
     if (!f) { panneau.innerHTML = `<p class="fiche-vide">${t('pasDeSavoir')}</p>`; return; }
     panneau.innerHTML = `<div class="fiche-tete"><p class="capitale craie">${f.capitale ? `<span aria-hidden="true">⭐</span> ${CAPITALE[app.langue]}${f.capitale}` : ''}</p>
-        ${avecVoix ? `<button class="bouton-rond petit" data-action="ecouter-fiche" aria-label="${t('ecouterFiche')}" title="${t('ecouterFiche')}">${ICONES.voix}</button>` : ''}</div>
+        ${voixOk ? `<button class="bouton-rond petit" data-action="ecouter-fiche" aria-label="${t('ecouterFiche')}" title="${t('ecouterFiche')}">${ICONES.voix}</button>` : ''}</div>
       <ul>${f.faits.map(x => `<li class="fait"><span class="emoji" aria-hidden="true">${x.e}</span><span>${x.texte}</span></li>`).join('')}</ul>`;
     panneau.classList.remove('pose'); void panneau.offsetWidth; panneau.classList.add('pose');
     panneau.dataset.code = code;

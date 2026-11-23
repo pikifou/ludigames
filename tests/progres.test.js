@@ -15,11 +15,11 @@ test('un prénom par clé', () => {
 test('sauver puis charger rend le même état, rangé sous le prénom', () => {
   const s = memoire();
   const e = charger('Joshua', s);
-  e.connus.add('FR'); e.voix = true;
+  e.connus.add('FR'); e.langue = 'en';
   sauver('Joshua', e, s);
   const r = charger('Joshua', s);
   assert.ok(r.connus.has('FR'));
-  assert.equal(r.voix, true);
+  assert.equal(r.langue, 'en');
   assert.equal(charger('Lou', s).connus.size, 0);
 });
 
@@ -27,8 +27,17 @@ test('JSON abîmé : état vide, sans exception', () => {
   const s = memoire(); s.setItem(cle(null), '{pas du json');
   const e = charger(null, s);
   assert.equal(e.connus.size, 0);
-  assert.equal(e.voix, false);
-  assert.equal(e.son, true);
+  assert.equal(e.langue, null);
+});
+
+test('le son ne vit plus dans la progression : une vieille sauvegarde « son coupé » est ignorée', () => {
+  const s = memoire(); s.setItem(cle(null), JSON.stringify({ connus: ['FR'], voix: false, son: false }));
+  const e = charger(null, s);
+  assert.ok(e.connus.has('FR'));
+  assert.ok(!('voix' in e) && !('son' in e));
+  sauver(null, e, s);
+  const brut = JSON.parse(s.getItem(cle(null)));
+  assert.ok(!('voix' in brut) && !('son' in brut), 'la sauvegarde réécrite ne les garde plus');
 });
 
 test('stockage qui lève une exception : état vide, sauver ne lève pas', () => {

@@ -11,7 +11,8 @@ export function cle(joueur) {
 function etatVide() {
   // langue null : celle de l'appareil. niveaux : le dernier niveau choisi pour chaque zone.
   // voyage : le tour du monde de Nina (étapes gagnées dans l'ordre, intro vue, tour fait). Rien ne s'y enlève.
-  return { connus: new Set(), meilleurs: {}, niveaux: {}, voix: false, son: true, langue: null, voyage: voyageVide() };
+  // Le son (musique, bruitages, voix) n'est plus ici : Ludiworld le règle pour toute la maison (js/reglage-son.js).
+  return { connus: new Set(), meilleurs: {}, niveaux: {}, langue: null, voyage: voyageVide() };
 }
 const voyageVide = () => ({ etapes: [], intro: false, fini: false });
 const ZONES_VOYAGE = ['europe', 'afrique', 'asie', 'amerique-nord', 'amerique-sud', 'oceanie'];
@@ -50,14 +51,13 @@ function appliquer(e, d) {
     e.niveaux = {};
     for (const [z, n] of Object.entries(d.niveaux)) if (NIVEAUX.includes(n)) e.niveaux[z] = n;
   }
-  if (typeof d.voix === 'boolean') e.voix = d.voix;
-  if (typeof d.son === 'boolean') e.son = d.son;
+  // voix et son d'une vieille sauvegarde : ignorés (un jeu ne reste jamais muet à cause d'eux).
   if (d.langue === 'fr' || d.langue === 'en') e.langue = d.langue;
   fusionnerVoyage(e.voyage, d.voyage);
   return e;
 }
 
-// Ce que Ludiworld garde dans le compte du parent : la progression, pas les réglages de l'appareil (voix, son, langue).
+// Ce que Ludiworld garde dans le compte du parent : la progression, pas les réglages de l'appareil (langue).
 export function versPartage(etat) {
   return { connus: [...etat.connus], meilleurs: etat.meilleurs, niveaux: etat.niveaux, voyage: etat.voyage };
 }
@@ -86,7 +86,7 @@ export function enregistrerManche(etat, zone, resultats, temps, niveau = 'diffic
 export function sauver(joueur, etat, stockage = stockageParDefaut()) {
   try {
     stockage && stockage.setItem(cle(joueur), JSON.stringify({
-      connus: [...etat.connus], meilleurs: etat.meilleurs, niveaux: etat.niveaux, voix: etat.voix, son: etat.son, langue: etat.langue,
+      connus: [...etat.connus], meilleurs: etat.meilleurs, niveaux: etat.niveaux, langue: etat.langue,
       voyage: etat.voyage,
     }));
   } catch { /* stockage plein ou bloqué : tant pis, le jeu continue */ }

@@ -1,12 +1,13 @@
 // Le Monde à la craie : chargement, progression, passage d'un écran à l'autre.
 import { chargerMonde } from './carte.js';
 import { fiche, prochainSavoir } from './savoirs.js';
-import { charger, sauver, cleRecord, versPartage, depuisPartage } from './progres.js';
+import { charger, sauver, cle, cleRecord, versPartage, depuisPartage } from './progres.js';
 import { dansNiveau, niveauValide, niveauDe } from './niveaux.js';
 import { ZONES_IDS, besoinEtape, nouvellesEtapes, tourFait, pourcentage } from './regles.js';
 import { histoire } from './histoire.js';
 import { langue, choisirLangue } from './textes.js';
-import { sonActif } from './sons.js';
+import { musique, pauseMusique } from './sons.js';
+import { brancherSon } from './reglage-son.js';
 import { t } from './textes.js';
 import { accueil } from './ecrans/accueil.js';
 import { partie } from './ecrans/partie.js';
@@ -22,6 +23,8 @@ const rand = params.has('graine') ? mulberry32(+params.get('graine')) : Math.ran
 if (params.has('vite')) document.documentElement.classList.add('vite');
 
 const ECRANS = { accueil, partie, decouvrir };
+// La musique de chaque écran (l'histoire de Nina passe sur l'accueil : celle du voyage).
+const MUSIQUES = { accueil: 'voyage', partie: 'manche', decouvrir: 'decouvrir' };
 // Les savoirs sont un plus : sans eux (fichier absent), le jeu marche comme avant.
 const [monde, savoirs] = await Promise.all([chargerMonde('data/monde.json'),
   fetch('data/savoirs.json').then(r => (r.ok ? r.json() : {})).catch(() => ({}))]);
@@ -37,17 +40,22 @@ if (Ludi) {
     for (let i = 0; i < 20 && !Ludi.player(); i++) await new Promise(r => setTimeout(r, 50));
     joueur = Ludi.player() ? Ludi.player().name : null;
     Ludi.onWrapUp(minutes => { if (minutes === 0) finDuTemps = true; });   // c'est l'heure : pas de nouvelle manche
+    // La pause de Ludiworld : plus de musique ni de voix.
+    Ludi.onPause(() => { pauseMusique(true); globalThis.speechSynthesis?.cancel(); });
   }
 }
 const dansLudi = !!(Ludi && Ludi.inLauncher());
 const etat = charger(joueur);
+// Une vieille sauvegarde gardait le son et la voix (coupés parfois) : on la réécrit sans eux, le son vient de Ludiworld.
+try { const brut = JSON.parse(localStorage.getItem(cle(joueur)) || '{}'); if ('son' in brut || 'voix' in brut) sauver(joueur, etat); } catch { /* stockage bloqué */ }
 if (Ludi) {
   // Une progression plus récente venue d'un autre appareil (par le compte du parent) remplace celle-ci, sauf les réglages de l'appareil.
   Ludi.onRestore(d => { if (depuisPartage(etat, d)) { sauver(joueur, etat); direEtat(); } });
   // Une progression d'avant ce changement : on la confie aussi à Ludiworld, sans écraser une plus récente venue d'ailleurs.
   if (etat.connus.size || Object.keys(etat.meilleurs).length) Ludi.save(versPartage(etat), { existante: true });
 }
-sonActif(etat.son);
+// Le son : musique, bruitages et voix, réglés par Ludiworld (ou sur cet appareil, ouvert seul). Tout est allumé au départ.
+brancherSon();
 choisirLangue(etat.langue || langue);
 
 // Le tour du monde : les pays Facile de chaque continent (un tampon aux trois quarts), et tous les pays interrogés (« complet »).
@@ -132,6 +140,7 @@ const app = {
     app.hud.replaceWith(hud);
     app.hud = hud;
     window.jeu.ecran = nom;
+    musique(MUSIQUES[nom]);
     quitter = ECRANS[nom](app, zone) || (() => {});
   },
 };

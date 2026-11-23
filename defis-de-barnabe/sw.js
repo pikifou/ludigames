@@ -1,6 +1,6 @@
 // Service worker des Défis de Barnabé : tout le jeu est gardé à l'installation, il se joue hors ligne.
 // VERSION est l'empreinte des fichiers du jeu : node tools/version.js defis-de-barnabe la met à jour.
-const VERSION = 'defis-de-barnabe-7032e79929';
+const VERSION = 'defis-de-barnabe-c85de74fe9';
 const PERSOS = ['sage', 'enfant'];
 const LIEUX = ['plage', 'port', 'dunes', 'rochers', 'cabanes', 'jetee', 'phare'];
 const IMAGES = ['titre', 'titre-carre', 'carte', ...LIEUX.flatMap(l => [`fond-portrait-${l}`, `fond-paysage-${l}`]), 'histoire-1', 'histoire-2', 'histoire-fin', 'enfant-marche', 'enfant-pense', 'etoile', 'etoile-vide', 'bouteille',
@@ -8,7 +8,7 @@ const IMAGES = ['titre', 'titre-carre', 'carte', ...LIEUX.flatMap(l => [`fond-po
   ...['w', 'b'].flatMap(c => ['k', 'q', 'r', 'b', 'n', 'p'].map(t => c + t))];
 const FICHIERS = [
   './', 'index.html', 'style.css', 'manifest.webmanifest', 'ludi.js',
-  'js/main.js', 'js/conseils.js', 'js/defis.js', 'js/echecs.js', 'js/exercice.js', 'js/lecons.js', 'js/plateau.js', 'js/sons.js', 'js/voix.js',
+  'js/main.js', 'js/conseils.js', 'js/defis.js', 'js/echecs.js', 'js/exercice.js', 'js/lecons.js', 'js/plateau.js', 'js/sons.js', 'js/voix.js', 'js/reglage-son.js',
   'fonts/baloo2-500.woff2', 'fonts/baloo2-700.woff2', 'fonts/baloo2-800.woff2', 'fonts/lexend.woff2',
   'icons/icon-192.png', 'icons/icon-512.png', 'icons/icon-maskable-512.png', 'icons/favicon-64.png',
   ...IMAGES.map(n => `img/${n}.webp`),
