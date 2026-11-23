@@ -9,6 +9,7 @@ Les jeux de Julien pour [Ludiworld](https://pikifou.github.io/ludiworld/), réun
 | Le Monde à la craie : trouver les pays du monde sur une carte au tableau noir | `monde-a-la-craie/` | https://pikifou.github.io/ludigames/monde-a-la-craie/ |
 | Le Chemin du Roi : apprendre les échecs avec un vieux sage et ses amis | `chemin-du-roi/` | https://pikifou.github.io/ludigames/chemin-du-roi/ |
 | Les Défis de Barnabé : s'entraîner aux échecs avec des défis au bord de la mer (la suite du Chemin du Roi) | `defis-de-barnabe/` | https://pikifou.github.io/ludigames/defis-de-barnabe/ (pas encore publié) |
+| Au fil de l’eau : tourner les rigoles pour ramener l’eau dans une vallée asséchée, jardin après jardin | `au-fil-de-leau/` | https://pikifou.github.io/ludigames/au-fil-de-leau/ |
 
 ## Ajouter un jeu
 
@@ -46,3 +47,9 @@ Carte : [Natural Earth](https://www.naturalearthdata.com) (domaine public), via 
 ## Le son
 
 Un jeu ne démarre jamais muet. La musique, les bruitages et la voix qui lit les textes se règlent dans Ludiworld pour toute la maison (kit 0.5 : `Ludi.onSon`, `Ludi.reglerSon`), et le bouton de chaque jeu change ce réglage : `js/reglage-son.js` dans chaque jeu. Ouvert seul, le réglage reste sur l'appareil. Les tests de navigateur coupent le son (`--mute-audio`) et la voix (`speechSynthesis` bouchée).
+
+## Au fil de l’eau
+
+- Ce dossier est une copie : le jeu vit dans son propre dépôt (`au-fil-de-leau/`, à côté de ludigames). On ne le modifie jamais ici ; on le refait avec `python tools/publier_ludigames.py <dossier de ludigames>` depuis le dépôt du jeu, puis `node tools/version.js au-fil-de-leau`.
+- Les tests sont dans le dépôt du jeu (`node --test tests/*.cjs`, `python tests/pilot-browser.py`, `python tests/pilot-grid.py`).
+- Pour tester : `?aller=N` ouvre directement le N-ième jardin (il remplace la partie en cours sur l’appareil).

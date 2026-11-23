@@ -1,0 +1,9 @@
+{
+  "files": {
+    "turn": "assets/adventure/turn.wav",
+    "water": "assets/adventure/water.wav",
+    "bloom": "assets/adventure/bloom.wav",
+    "leak": "assets/adventure/leak.wav",
+    "celebration": "assets/adventure/celebration.wav"
+  }
+}

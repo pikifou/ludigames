@@ -1,0 +1,76 @@
+{
+  "ludi": 1,
+  "id": "au-fil-de-leau",
+  "status": "draft",
+  "title": {
+    "fr": "Au fil de l’eau",
+    "en": "Let it flow"
+  },
+  "pitch": {
+    "fr": "Aide la fontainière à ramener l’eau dans une vallée asséchée. Tourne les rigoles, ouvre la vanne et regarde chaque jardin reprendre vie.",
+    "en": "Help the fountaineer bring water back to a dried-up valley. Turn the channels, open the gate and watch each garden come back to life."
+  },
+  "url": "https://pikifou.github.io/ludigames/au-fil-de-leau/",
+  "icon": "https://pikifou.github.io/ludigames/au-fil-de-leau/icon.svg",
+  "color": "#c8a77b",
+  "author": {
+    "name": "Julien"
+  },
+  "languages": [
+    "fr",
+    "en"
+  ],
+  "age": {
+    "min": 6,
+    "max": 9
+  },
+  "reading": "some",
+  "learning": {
+    "level": "side",
+    "domains": [
+      "logique.puzzle"
+    ],
+    "what": {
+      "fr": "Prévoir un trajet et repérer les directions des tuyaux.",
+      "en": "Plan a route and identify pipe directions."
+    },
+    "how": {
+      "fr": "Tourner les rigoles pour mener l’eau de la fontaine jusqu’aux plantes, en contournant rochers, souches, racines et murets, puis partager l’eau entre plusieurs plantes. Cent jardins dans cinq lieux de la vallée (la source, les potagers, le verger, la forêt, le village), chacun un peu plus dur que le précédent, avec un coup de pouce. Une histoire en grandes images et une vidéo de fin quand toute la vallée est verte. La difficulté reste à essayer avec des enfants.",
+      "en": "Turn the channels to lead the water from the fountain to the plants, around rocks, stumps, roots and walls, then share the water between several plants. A hundred gardens in five places of the valley (the spring, the vegetable gardens, the orchard, the forest, the village), each a little harder than the one before, with a little help. A story told in big pictures and an ending video once the whole valley is green. Difficulty still needs to be tried with children."
+    }
+  },
+  "session": {
+    "minutes": [
+      1,
+      8
+    ],
+    "natural_end": true
+  },
+  "content": {
+    "fr": "Pas de combat, de vies à perdre ni de chronomètre. Essais illimités, un coup de pouce, un réglage du son. Chaque texte est lu à voix haute quand l’enfant appuie dessus.",
+    "en": "No fighting, lives to lose or timer. Unlimited attempts, a little help, a sound setting. Every text is read aloud when the child taps it."
+  },
+  "devices": [
+    "phone",
+    "tablet",
+    "computer"
+  ],
+  "offline": true,
+  "healthy": {
+    "no_ads": true,
+    "no_purchases": true,
+    "no_subscription": true,
+    "no_loot_boxes": true,
+    "no_daily_pressure": true,
+    "no_notifications": true,
+    "no_strangers": true,
+    "no_tracking": true,
+    "natural_stops": true
+  },
+  "third_parties": [],
+  "kit": true,
+  "after": {
+    "fr": "Arrose une plante à la maison, et regarde où l’eau s’en va dans la terre.",
+    "en": "Water a plant at home, and watch where the water goes into the soil."
+  }
+}
