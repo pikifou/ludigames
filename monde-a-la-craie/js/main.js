@@ -3,7 +3,7 @@ import { chargerMonde } from './carte.js';
 import { fiche, prochainSavoir } from './savoirs.js';
 import { charger, sauver, cle, cleRecord, versPartage, depuisPartage } from './progres.js';
 import { dansNiveau, niveauValide } from './niveaux.js';
-import { ZONES_IDS, besoinEpreuve, nouvellesEtapes, tourFait, pourcentage, cleEpreuve } from './regles.js';
+import { ZONES_IDS, besoinEpreuve, nouvellesEtapes, tourFait, pourcentage, cleEpreuve, niveauOuvertContinent, prochainNiveau } from './regles.js';
 import { histoire } from './histoire.js';
 import { langue, choisirLangue } from './textes.js';
 import { musique, pauseMusique } from './sons.js';
@@ -26,6 +26,8 @@ if (params.has('vite')) document.documentElement.classList.add('vite');
 const ECRANS = { accueil, partie, decouvrir };
 // La musique de chaque écran (l'histoire de Nina passe sur l'accueil : celle du voyage).
 const MUSIQUES = { accueil: 'voyage', partie: 'manche', decouvrir: 'decouvrir' };
+// La musique de l'épreuve (ADR-008), un peu plus tendue, toujours douce.
+const MUSIQUE_EPREUVE = 'epreuve';
 // Les savoirs sont un plus : sans eux (fichier absent), le jeu marche comme avant.
 const [monde, savoirs] = await Promise.all([chargerMonde('data/monde.json'),
   fetch('data/savoirs.json').then(r => (r.ok ? r.json() : {})).catch(() => ({}))]);
@@ -96,8 +98,31 @@ const app = {
   // L'épreuve d'un continent à un niveau : ouverte ou non, combien de pays connaître encore, la meilleure médaille.
   epreuve(zone, niveau) {
     if (!ZONES_IDS.includes(zone)) return null;   // pas d'épreuve sur le monde entier
-    const b = besoinEpreuve(app.paysDeZone(zone, niveau).map(p => p.code), etat.connus);
-    return { ouverte: b.manque === 0, manque: b.manque, medaille: etat.medailles[cleEpreuve(zone, niveau)] || null };
+    const codes = app.paysDeZone(zone, niveau).map(p => p.code), b = besoinEpreuve(codes, etat.connus);
+    return { niveau, ouverte: b.manque === 0, manque: b.manque, besoin: b.besoin, faits: Math.min(b.faits, b.besoin), total: codes.length,
+      medaille: etat.medailles[cleEpreuve(zone, niveau)] || null, niveauOuvert: niveauOuvertContinent(zone, niveau, etat.medailles, etat.voyage.etapes) };
+  },
+  // Le prochain but d'un continent : l'épreuve du premier niveau sans médaille (null quand les trois sont gagnées).
+  but(zone) {
+    const n = prochainNiveau(zone, etat.medailles, etat.voyage.etapes);
+    return n ? app.epreuve(zone, n) : null;
+  },
+  // Une épreuve ouverte, pas encore réussie, dont le moment « l'épreuve est prête » n'a jamais été montré (ADR-008).
+  annonceAFaire() {
+    for (const z of ZONES_IDS) {
+      const b = app.but(z);
+      if (b && b.ouverte && !etat.voyage.annonces.includes(cleEpreuve(z, b.niveau))) return { zone: z, niveau: b.niveau };
+    }
+    return null;
+  },
+  // Le moment « l'épreuve est prête », en grande image. « Passer l'épreuve » la lance tout de suite.
+  async annoncer(zone, niveau) {
+    const k = cleEpreuve(zone, niveau);
+    if (!etat.voyage.annonces.includes(k)) { etat.voyage.annonces.push(k); app.sauver(); }
+    const e = app.epreuve(zone, niveau);
+    const choix = await histoire('prete', { sansVideo: true, zone, langue, niveau, total: e.total, tampon: niveau === 'facile' });
+    if (choix === 'go') { etat.niveaux[zone] = niveau; app.sauver(); app.aller('partie', zone, 'epreuve'); }
+    return choix;
   },
   besoinEtape(zone) { return app.epreuve(zone, 'facile'); },
   // Ajoute au carnet les tampons gagnés. Rend les nouveaux tampons, et vrai si le tour du monde vient d'être fait.
@@ -127,7 +152,12 @@ const app = {
     return monde.filter(f => f.properties.quiz && (id === 'monde' || f.properties.zone === id) && dansNiveau(f.properties.code, niveau))
       .map(f => ({ code: f.properties.code, rang: f.properties.rang }));
   },
-  niveau(zone) { return niveauValide(etat.niveaux[zone]); },
+  // Le niveau choisi pour une zone. Sur un continent, seulement un niveau ouvert (sinon le prochain à réussir).
+  niveau(zone) {
+    const n = niveauValide(etat.niveaux[zone]);
+    if (!ZONES_IDS.includes(zone) || niveauOuvertContinent(zone, n, etat.medailles, etat.voyage.etapes)) return n;
+    return prochainNiveau(zone, etat.medailles, etat.voyage.etapes) || 'facile';
+  },
   sauver() { sauver(joueur, etat); if (Ludi) Ludi.save(versPartage(etat)); },
 
   // Une carte neuve à chaque écran (ses gestes ne s'empilent pas sur ceux de l'écran d'avant).
@@ -140,10 +170,11 @@ const app = {
   aller(nom, zone, mode) {
     quitter();
     const hud = app.hud.cloneNode(false);   // sans les écouteurs de l'écran d'avant
+    hud.classList.remove('mode-epreuve');   // le cadre doré n'appartient qu'à l'épreuve
     app.hud.replaceWith(hud);
     app.hud = hud;
     window.jeu.ecran = nom;
-    musique(MUSIQUES[nom]);
+    musique(nom === 'partie' && mode === 'epreuve' ? MUSIQUE_EPREUVE : MUSIQUES[nom]);
     quitter = ECRANS[nom](app, zone, mode) || (() => {});
   },
 };

@@ -67,7 +67,7 @@ test('les médailles : la meilleure reste, gardée et additionnée d’un appare
 test('le voyage est gardé, et un tampon ne s’enlève pas quand on oublie un pays', () => {
   const s = memoire();
   const etat = charger('Lou', s);
-  assert.deepEqual(etat.voyage, { etapes: [], intro: false, fini: false });
+  assert.deepEqual(etat.voyage, { etapes: [], intro: false, fini: false, annonces: [] });
   etat.voyage.etapes.push('oceanie'); etat.voyage.intro = true;
   for (const c of FACILES.oceanie) etat.connus.add(c);
   enregistrerManche(etat, 'oceanie', new Map([[FACILES.oceanie[0], false]]), 30, 'facile');   // un pays oublié
@@ -81,7 +81,7 @@ test('un voyage abîmé est ignoré sans erreur', () => {
   const s = memoire();
   s.setItem('monde-a-la-craie.v1', JSON.stringify({ connus: [], voyage: { etapes: ['lune', 3, 'asie'], intro: 'oui', fini: 1 } }));
   const e = charger(null, s);
-  assert.deepEqual(e.voyage, { etapes: ['asie'], intro: false, fini: false });
+  assert.deepEqual(e.voyage, { etapes: ['asie'], intro: false, fini: false, annonces: [] });
 });
 
 test('d’un appareil à l’autre, les tampons s’additionnent et la fin reste faite', () => {

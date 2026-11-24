@@ -151,3 +151,18 @@ test('mondeDebloque', () => {
   assert.equal(mondeDebloque({ ...z, oceanie: 0.5 }), true);
   assert.equal(mondeDebloque({ europe: 1 }), false);
 });
+
+test('Chemin : les niveaux un par un ; un tampon d’avant les épreuves vaut le niveau Facile (ADR-008)', async () => {
+  const { niveauOuvertContinent, prochainNiveau, niveauSuivant } = await import('../monde-a-la-craie/js/regles.js');
+  assert.equal(niveauOuvertContinent('europe', 'facile', {}), true);
+  assert.equal(niveauOuvertContinent('europe', 'moyen', {}), false);
+  assert.equal(niveauOuvertContinent('europe', 'moyen', { 'europe-facile': 'bronze' }), true);
+  assert.equal(niveauOuvertContinent('europe', 'difficile', { 'europe-facile': 'or' }), false);
+  assert.equal(niveauOuvertContinent('europe', 'difficile', { 'europe-facile': 'or', 'europe-moyen': 'argent' }), true);
+  assert.equal(niveauOuvertContinent('europe', 'moyen', {}, ['europe']), true, 'tampon sans médaille');
+  assert.equal(prochainNiveau('europe', {}), 'facile');
+  assert.equal(prochainNiveau('europe', {}, ['europe']), 'moyen');
+  assert.equal(prochainNiveau('europe', { 'europe-facile': 'or', 'europe-moyen': 'or', 'europe-difficile': 'bronze' }), null);
+  assert.equal(niveauSuivant('facile'), 'moyen');
+  assert.equal(niveauSuivant('difficile'), null);
+});

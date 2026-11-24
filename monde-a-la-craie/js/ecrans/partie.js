@@ -6,8 +6,8 @@
 // Après chaque réponse, juste ou fausse, sur un pays dont on a des savoirs : une note « Le savais-tu ? », le chrono s'arrête, on touche pour continuer.
 import { creerCarte } from '../carte.js';
 import { zoneParId, ZONES } from '../zones.js';
-import { tampon, medaille } from '../voyage.js';
-import { DUREE_ERREUR, choisirManche, Manche, Epreuve, pourcentage } from '../regles.js';
+import { tampon, medaille, jauge } from '../voyage.js';
+import { DUREE_ERREUR, choisirManche, Manche, Epreuve, pourcentage, niveauSuivant } from '../regles.js';
 import { enregistrerManche, enregistrerEpreuve, cleRecord } from '../progres.js';
 import { dansNiveau } from '../niveaux.js';
 import { t, duree, auteurImage, licenceImage } from '../textes.js';
@@ -34,7 +34,8 @@ export function partie(app, zoneId, mode) {
       <button class="bouton-rond" data-action="vue" aria-label="${t('vueEntiere')}" title="${t('vueEntiere')}">${ICONES.vue}</button>
       <button class="bouton-rond" data-action="pause" aria-label="${t('pause')}" title="${t('pause')}">${ICONES.pause}</button>
     </div>
-    <div class="coin-bas gauche zone-courante craie">${zone[app.langue]} · ${t(niveau)}${epreuve ? ' · ' + t('epreuve') : ''}</div>
+    <div class="coin-bas gauche zone-courante craie">${epreuve ? t('epreuve') + ' · ' : ''}${zone[app.langue]} · ${t(niveau)}</div>
+    ${epreuve ? `<div class="nina-epreuve"><img src="img/histoire/nina.webp" alt=""><p class="bulle lisible">${t('ninaEpreuve')}</p></div>` : ''}
     <button class="savoir" data-action="continuer" hidden></button>
     <div class="voile" hidden></div>`;
   // Les pays qu'on peut demander : de la zone et du niveau. En Facile et Moyen, les autres sont estompés.
@@ -62,6 +63,9 @@ export function partie(app, zoneId, mode) {
   const couleurs = new Map();   // les pays trouvés et leur craie : touchés par erreur, ils la retrouvent ensuite
   let dernier = null;   // le pays qu'on vient de trouver : un deuxième toucher tout de suite n'est pas une erreur
   let epreuveAvant = null;   // l'épreuve de ce niveau était-elle ouverte au début de la manche ?
+  let faitsAvant = 0;   // les ronds de la jauge remplis au début de la manche
+  // L'épreuve a son propre écran (ADR-008) : un cadre doré, Nina qui encourage, les pays restants.
+  hud.classList.toggle('mode-epreuve', epreuve);
   window.jeu.carte = carte;
 
   // ---------- le chrono : il ne compte que pendant le jeu ----------
@@ -74,13 +78,17 @@ export function partie(app, zoneId, mode) {
     son('craie');
     lireAuto(texte);
   }
-  function majCompteur() { compteur.textContent = t('compteur', { n: manche.faites, total: manche.total }); }
+  function majCompteur() {
+    compteur.textContent = epreuve ? t('restants', { n: manche.total - manche.faites, total: manche.total }) : t('compteur', { n: manche.faites, total: manche.total });
+  }
 
   function nouvelleManche() {
     carte.effacer(); carte.vueEntiere();
     manche = epreuve ? new Epreuve(zonePays.map(p => p.code), app.rand) : new Manche(choisirManche(zonePays, etat.connus, app.rand));
     window.jeu.manche = manche;
-    epreuveAvant = app.epreuve(zoneId, niveau)?.ouverte ?? null;
+    const ep0 = app.epreuve(zoneId, niveau);
+    epreuveAvant = ep0 ? ep0.ouverte : null;
+    faitsAvant = ep0 ? ep0.faits : 0;
     couleurs.clear(); dernier = null;
     clearTimeout(attente); suite = null; enPause = false; lecture = false; note.hidden = true;
     couleur = 0; ecoule = 0; annonces.clear(); depart = performance.now(); finie = false;
@@ -147,6 +155,8 @@ export function partie(app, zoneId, mode) {
       ${img ? `<span class="photo"><img src="${img.src}" alt=""><span class="credit">${t('credit', { a: auteurImage(img), l: licenceImage(img) })}</span></span>` : ''}
       <span class="fait"><span class="emoji" aria-hidden="true">${savoir.e}</span><span class="lisible">${savoir.texte}</span></span>
       <small class="astuce">${t('toucheContinuer')}</small>`;
+    const imgDrapeau = note.querySelector('.drapeau');
+    imgDrapeau.onerror = () => { imgDrapeau.hidden = true; };   // un drapeau qui n'arrive pas (hors ligne) : rien plutôt qu'une image cassée
     note.style.setProperty('--drapeau', `url("${drapeau}")`);
     if (img) {
       note.style.setProperty('--ratio', img.l / img.h);
@@ -196,19 +206,28 @@ export function partie(app, zoneId, mode) {
     // L'épreuve de ce niveau : elle vient de s'ouvrir, on le dit ; ouverte, on peut y aller d'ici.
     const ep = app.epreuve(zoneId, niveau);
     const ouverteMaintenant = ep && ep.ouverte && epreuveAvant === false;
+    // La jauge du prochain tampon : les ronds gagnés pendant la manche s'allument (pas quand la médaille est déjà là).
+    const gain = ep ? ep.faits - faitsAvant : 0;
+    const ligneJauge = ep && !ep.medaille ? `<div class="fin-jauge">${jauge(ep.faits, ep.besoin, { neufs: Math.max(0, gain) })}${gain > 0 ? `<span class="gain craie">+${gain}</span>` : ''}</div>
+      <p class="epreuve-ouverte craie lisible">${ep.ouverte ? t(ouverteMaintenant ? 'epreuveOuverte' : 'epreuvePrete') : t(ep.manque > 1 ? 'encorePourEpreuve' : 'encorePourEpreuveUn', { m: ep.manque })}</p>` : '';
     voile.classList.add('clair');
     voile.innerHTML = `<div class="note-tableau fin">
       <p class="grand craie lisible">${t('trouves', { n: manche.trouves })}</p>
       <p class="lisible">${t('premierCoup', { n: premiers })} · ${t('temps', { t: duree(secondes) })}</p>
       <p class="record craie lisible">${record ? t('record') : t('meilleur', { t: duree(etat.meilleurs[cleRecord(zoneId, niveau)]) })}</p>
-      ${ouverteMaintenant ? `<p class="epreuve-ouverte craie lisible">${t('epreuveOuverte')}</p>` : ''}
+      ${ligneJauge}
       ${tamponsNeufs(nouvelles)}
       <div class="boutons">
         ${encore ? `<button class="bouton-craie${ouverteMaintenant ? '' : ' plein'}" data-action="encore">${t('encore')}</button>` : `<p class="lisible">${t('plusDeManche')}</p>`}
-        ${encore && ep && ep.ouverte ? `<button class="bouton-craie${ouverteMaintenant ? ' plein' : ''}" data-action="epreuve">${t('passerEpreuve')}</button>` : ''}
+        ${encore && ep && ep.ouverte && !ep.medaille ? `<button class="bouton-craie${ouverteMaintenant ? ' plein or' : ''}" data-action="epreuve">${t('passerEpreuve')}</button>` : ''}
         <button class="bouton-craie" data-action="changer">${t('changer')}</button>
       </div></div>`;
     montrerFin(finiMaintenant, nouvelles);
+    // L'épreuve vient de s'ouvrir : le moment « l'épreuve est prête », en grande image (s'il n'a pas déjà été montré ailleurs).
+    if (ouverteMaintenant && encore && app.histoireAuto) setTimeout(() => {
+      const a = app.annonceAFaire();
+      if (window.jeu.ecran === 'partie' && !document.querySelector('.cine') && a && a.zone === zoneId && a.niveau === niveau) app.annoncer(zoneId, niveau);
+    }, 1500);
   }
 
   // Les tampons gagnés à l'instant (l'accueil les tamponnera en arrivant).
@@ -250,6 +269,7 @@ export function partie(app, zoneId, mode) {
       ${medaille(res.medaille, 'grande neuve')}
       <p class="grand craie lisible">${t('medaille_' + res.medaille)}</p>
       <p class="lisible">${t('premierCoupSur', { n: manche.trouves, total: manche.total })}</p>
+      ${!res.avant && niveauSuivant(niveau) ? `<p class="epreuve-ouverte craie lisible">${t('niveauOuvre', { niveau: t(niveauSuivant(niveau)) })}</p>` : ''}
       ${ligneMeilleure}
       ${tamponsNeufs(nouvelles)}
       <div class="boutons">

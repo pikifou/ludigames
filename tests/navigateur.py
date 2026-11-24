@@ -327,7 +327,7 @@ def test_ecrans(nav):
     page.close()
 
     # En Difficile : le nom le plus long d'Afrique peut être demandé.
-    page, erreurs = ouvrir_jeu(nav, 360, 640, init="localStorage.setItem('monde-a-la-craie.v1', JSON.stringify({ niveaux: { afrique: 'difficile' } }))")
+    page, erreurs = ouvrir_jeu(nav, 360, 640, init="localStorage.setItem('monde-a-la-craie.v1', JSON.stringify({ niveaux: { afrique: 'difficile' }, medailles: { 'afrique-facile': 'or', 'afrique-moyen': 'or' } }))")   # Difficile s'ouvre avec les médailles (ADR-008)
     page.screenshot(path=str(CAPTURES / 'accueil-portrait.png'))
     lancer(page, 'afrique')
     page.evaluate("jeu.ecrireNom('République démocratique du Congo')")
@@ -782,8 +782,8 @@ def test_niveaux(nav):
         page, erreurs = ouvrir_jeu(nav, w, h)
         page.click('[data-zone="europe"]')
         verifier(page.get_attribute('[data-niveau="facile"]', 'aria-pressed') == 'true', f'{nom} : Facile choisi par défaut')
-        verifier('14 pays' in page.inner_text('[data-niveau="facile"]') and '46 pays' in page.inner_text('[data-niveau="difficile"]'),
-                 f'{nom} : chaque niveau dit son nombre de pays')
+        verifier('pays sur 11' in page.inner_text('[data-niveau="facile"]') and page.locator('[data-niveau="difficile"].ferme').count() == 1,
+                 f'{nom} : Facile dit les pays à connaître, Difficile est fermé (ADR-008)')
         page.screenshot(path=str(CAPTURES / f'niveaux-{nom}.png'))
         page.close()
 
@@ -804,9 +804,9 @@ def test_niveaux(nav):
     verifier(all(c in faciles for c in vus), f'Facile : seulement des pays faciles ({[c for c in vus if c not in faciles]})')
     verifier(not erreurs, f'aucune erreur ({erreurs[:2]})')
 
-    # Difficile : rien d'estompé, et le choix est gardé.
-    page.wait_for_timeout(1100)   # les boutons de fin ne répondent qu'après une seconde
-    page.click('[data-action="changer"]')
+    page.close()
+    # Difficile (ouvert avec les médailles Facile et Moyen, ADR-008) : rien d'estompé, et le choix est gardé.
+    page, erreurs = ouvrir_jeu(nav, init="if (!sessionStorage.getItem('deja')) { sessionStorage.setItem('deja', 1); localStorage.setItem('monde-a-la-craie.v1', JSON.stringify({ connus: [], medailles: { 'europe-facile': 'or', 'europe-moyen': 'bronze' } })); }")
     page.click('[data-zone="europe"]')
     page.click('[data-niveau="difficile"]')
     page.click('[data-action="jouer"]')
@@ -1004,7 +1004,7 @@ def test_histoire(nav):
 
     # l'épreuve Facile d'Océanie donne le dernier tampon : il s'annonce, Nina arrive en Océanie, puis elle rentre
     oceanie = ['AU', 'NZ', 'PG', 'FJ']
-    page, erreurs = ouvrir_histoire(nav, 1280, 800, {'connus': [c for c in faciles if c not in oceanie] + oceanie[:3], 'niveaux': {'oceanie': 'facile'}, 'voyage': {'etapes': cinq, 'intro': True}})
+    page, erreurs = ouvrir_histoire(nav, 1280, 800, {'connus': [c for c in faciles if c not in oceanie] + oceanie[:3], 'niveaux': {'oceanie': 'facile'}, 'voyage': {'etapes': cinq, 'intro': True, 'annonces': ['oceanie-facile']}})   # le moment « l'épreuve est prête » déjà vu
     verifier(page.locator('.carnet .tampon.gagne').count() == 5 and page.locator('.marque-fini').count() == 0, 'cinq tampons, pas encore fini')
     page.evaluate("jeu.app.aller('partie', 'oceanie', 'epreuve')")
     while page.evaluate('jeu.manche && !jeu.manche.finie'):

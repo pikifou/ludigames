@@ -4,6 +4,10 @@ Décisions du jeu (factory, 24 novembre 2026) : ADR-004, plus d'élimination (un
 erreur) ; ADR-005 et ADR-006, l'épreuve d'un continent à un niveau s'ouvre aux trois quarts des pays connus, on y cherche
 tous les pays du niveau, l'or sans erreur, l'argent avec une ou deux, le bronze au-delà ; une médaille ne redescend pas ;
 l'épreuve Facile donne le tampon de Nina et sa grande image ; une, deux ou trois étoiles distinguent les médailles.
+ADR-008, le chemin de Nina : les niveaux d'un continent s'ouvrent un par un ; le choix d'un continent montre son chemin
+(Nina, la jauge, le sceau de l'épreuve, un seul gros bouton) ; les étiquettes montrent le prochain tampon ; la jauge avance
+en fin de manche ; le moment « l'épreuve est prête » passe quand elle s'ouvre, et au lancement pour une épreuve déjà
+ouverte, une seule fois ; l'épreuve a son cadre doré et compte les pays restants.
 Serveur sur le port 7379 (jamais 8000).
 """
 import json
@@ -109,9 +113,16 @@ with sync_playwright() as p:
 
         print('L’épreuve : argent, puis or, puis bronze (la meilleure reste)')
         page, erreurs = ouvrir(nav, {'connus': EUROPE[:11]}, q='')   # avec l'histoire (le départ est déjà vu)
-        panneau(page, 'europe')
-        page.click('.bouton-epreuve')
-        page.wait_for_timeout(300)
+        # une épreuve déjà ouverte, jamais annoncée : le moment passe au lancement
+        page.wait_for_selector('.cine.prete.texte', timeout=5000)
+        verifier('Europe' in page.inner_text('.cine-texte') and 'tampon' in page.inner_text('.cine-texte'), 'au lancement : « L’épreuve est prête ! » pour l’Europe')
+        page.screenshot(path=str(N.CAPTURES / 'chemin-prete.png'))
+        page.click('.cine [data-action="go"]')
+        page.wait_for_timeout(400)
+        verifier(page.evaluate("jeu.ecran") == 'partie' and page.locator('#hud.mode-epreuve').count() == 1, '« Passer l’épreuve » lance l’épreuve, son cadre doré')
+        verifier('restants sur 14' in page.inner_text('#compteur'), f'les pays restants ({page.inner_text("#compteur")})')
+        verifier(page.evaluate('window.__musique ? __musique() : null') == 'epreuve', f"l'épreuve a sa musique ({page.evaluate('window.__musique ? __musique() : null')})")
+        page.screenshot(path=str(N.CAPTURES / 'chemin-epreuve.png'))
         N.toucher(page, page.evaluate('jeu.manche.question'))
         page.wait_for_timeout(400)
         verifier(page.locator('.savoir:not([hidden])').count() == 0, 'pas de note « Le savais-tu ? » pendant l’épreuve')
@@ -122,6 +133,7 @@ with sync_playwright() as p:
         verifier(page.locator('.fin .medaille.argent .etoile').count() == 2, 'l’argent a deux étoiles')
         verifier('12 pays sur 14 du premier coup' in fin, 'ce qu’on a trouvé du premier coup')
         verifier('Europe' in page.inner_text('.nouveau-tampon'), 'le tampon d’Europe est gagné')
+        verifier('Moyen est ouvert' in fin, 'le niveau Moyen s’ouvre avec le tampon')
         page.screenshot(path=str(N.CAPTURES / 'epreuve-argent.png'))
         page.wait_for_function("jeu.histoire === 'etape'", timeout=5000)
         page.wait_for_selector('.cine.texte')
@@ -149,19 +161,58 @@ with sync_playwright() as p:
         page.screenshot(path=str(N.CAPTURES / 'epreuve-carnet.png'))
         page.click('[data-action="fermer"]')
         panneau(page, 'europe')
-        verifier(page.locator('.bouton-epreuve .medaille.or').count() == 1, 'le bouton de l’épreuve montre la médaille')
+        verifier(page.locator('.bouton-epreuve .medaille.or').count() == 1, 'le sceau de l’épreuve montre la médaille')
+        verifier(page.locator('.niveau[data-niveau="moyen"]:not(.ferme)').count() == 1 and page.locator('.niveau[data-niveau="difficile"].ferme').count() == 1,
+                 'Moyen ouvert, Difficile encore fermé')
         verifier(not erreurs, f'aucune erreur ({erreurs[:2]})')
         page.close()
 
         print('Une médaille en Moyen ne donne pas le tampon')
         moyen_europe = EUROPE + ['IE', 'DK', 'AT', 'FI', 'IS', 'UA', 'CZ', 'HU', 'RO', 'HR', 'BG', 'LU', 'BY', 'RS', 'MD']
-        page, erreurs = ouvrir(nav, {'connus': moyen_europe, 'niveaux': {'europe': 'moyen'}})
+        page, erreurs = ouvrir(nav, {'connus': moyen_europe, 'niveaux': {'europe': 'moyen'}, 'medailles': {'europe-facile': 'bronze'}})
         panneau(page, 'europe', 'moyen')
         page.click('.bouton-epreuve')
         page.wait_for_timeout(300)
         verifier(page.evaluate('jeu.manche.total') == 29, 'Europe Moyen : 29 pays')
         finir(page, 0)
         verifier(page.locator('.fin .medaille.or').count() == 1 and page.locator('.nouveau-tampon').count() == 0, 'l’or en Moyen, sans tampon')
+        page.close()
+
+        print('Le chemin : niveaux un par un, jauge, moment quand l’épreuve s’ouvre, « Plus tard »')
+        page, erreurs = ouvrir(nav, {'connus': EUROPE[:9], 'niveaux': {'europe': 'moyen'}}, q='')
+        etiq = page.inner_text('[data-zone="europe"]')
+        verifier('9 pays sur 11' in etiq, f'l’étiquette de l’Europe montre le prochain tampon ({etiq!r})')
+        verifier(page.locator('[data-zone="europe"] .jauge i.ok').count() == 9, 'neuf ronds remplis sur l’étiquette')
+        page.click('[data-zone="europe"]')
+        verifier(page.locator('.page-chemin').count() == 1 and 'Encore 2 pays' in page.inner_text('.page-chemin .bulle'), 'le chemin : Nina dit ce qui manque')
+        verifier(page.locator('.page-chemin .niveau[data-niveau="moyen"].ferme').count() == 1, 'Moyen fermé sans le tampon Facile, même choisi avant')
+        page.click('.page-chemin .niveau[data-niveau="moyen"]', force=True)
+        verifier('médaille Facile' in page.inner_text('.niveau-ferme'), 'toucher Moyen dit comment l’ouvrir')
+        verifier(page.locator('.page-chemin .sceau.ferme').count() == 1, 'le sceau de l’épreuve est fermé')
+        page.screenshot(path=str(N.CAPTURES / 'chemin-continent.png'))
+        page.click('.page-chemin [data-action="jouer"]')
+        page.wait_for_timeout(300)
+        # répondre juste jusqu'à ouvrir l'épreuve
+        while not page.evaluate('jeu.manche.finie'):
+            N.repondre(page, page.evaluate('jeu.manche.question'))
+            page.wait_for_timeout(750)
+        page.wait_for_selector('.fin')
+        page.wait_for_timeout(400)
+        verifier(page.locator('.fin .jauge i.neuf').count() >= 2 and '+' in page.inner_text('.fin-jauge'), 'fin de manche : les ronds gagnés s’allument, « +n »')
+        page.screenshot(path=str(N.CAPTURES / 'chemin-fin-manche.png'))
+        page.wait_for_selector('.cine.prete.texte', timeout=5000)
+        verifier(True, 'puis le moment « l’épreuve est prête »')
+        page.click('.cine [data-action="plustard"]')
+        page.wait_for_timeout(300)
+        verifier(page.locator('.cine').count() == 0 and page.evaluate("jeu.ecran") == 'partie', '« Plus tard » laisse la fin de manche')
+        page.reload(); page.wait_for_function('window.jeu && window.jeu.pret'); page.wait_for_timeout(800)
+        verifier(page.locator('.cine').count() == 0, 'le moment ne revient pas au lancement suivant')
+        verifier('Épreuve prête' in page.inner_text('[data-zone="europe"]'), 'l’étiquette dit « Épreuve prête ! »')
+        page.click('[data-zone="europe"]')
+        verifier(page.locator('.page-chemin .sceau.pret').count() == 1 and page.locator('.page-chemin [data-action="epreuve"].or').count() == 1,
+                 'le chemin : sceau prêt, « Passer l’épreuve » en gros bouton doré')
+        page.screenshot(path=str(N.CAPTURES / 'chemin-continent-pret.png'))
+        verifier(not erreurs, f'aucune erreur ({erreurs[:2]})')
         page.close()
 
         print('Téléphone en paysage')

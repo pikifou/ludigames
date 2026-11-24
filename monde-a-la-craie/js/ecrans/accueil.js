@@ -10,7 +10,7 @@ import { son } from '../sons.js';
 import { interrupteursSon } from '../reglage-son.js';
 import { NIVEAUX_LECTURE, niveauLecture, choisirLecture, lectureParLudiworld, lire } from '../lecture.js';
 import { pageCredits } from './credits.js';
-import { carnet, pageCarnet, tampon, trajet, medaille } from '../voyage.js';
+import { carnet, pageCarnet, tampon, trajet, medaille, jauge } from '../voyage.js';
 
 // Où écrire le nom de chaque continent sur la carte du monde [longitude, latitude], et sa craie.
 const ETIQUETTES = {
@@ -53,7 +53,13 @@ export function accueil(app) {
       b.dataset.zone = z.id;
       b.style.setProperty('--r', e.r + 'deg');
       const gagne = etat.voyage.etapes.includes(z.id);
-      b.innerHTML = `${z[app.langue]}<small>${t('connus', { p: Math.round(pct[z.id] * 100) })}</small>${gagne ? tampon(app.monde, z, true, app.langue, 'sur-etiquette' + (neufs.has(z.id) ? ' neuf' : '')) : ''}`;
+      // Le prochain but du continent (ADR-008) : les ronds du prochain tampon, ou « L'épreuve est prête ! ».
+      const but = app.but(z.id);
+      let sous;
+      if (!but) sous = `<small>${t('toutesMedailles')}</small>`;
+      else if (but.ouverte) { sous = `<small class="prete">${t('epreuvePrete')}</small><img class="nina-etiq" src="img/histoire/nina.webp" alt="">`; b.classList.add('pret'); }
+      else sous = `${jauge(but.faits, but.besoin, { classe: 'petite' })}<small>${but.niveau === 'facile' ? t('paysSur', { n: but.faits, total: but.besoin }) : t('butNiveau', { niveau: t(but.niveau), n: but.faits, total: but.besoin })}</small>`;
+      b.innerHTML = `${z[app.langue]}${sous}${gagne ? tampon(app.monde, z, true, app.langue, 'sur-etiquette' + (neufs.has(z.id) ? ' neuf' : '')) : ''}`;
       etiquettes.appendChild(b);
     }
   }
@@ -96,6 +102,7 @@ export function accueil(app) {
   window.addEventListener('resize', surRedim);
 
   function choisir(id) {
+    if (id !== 'monde') return chemin(id);
     if (id === 'monde' && !mondeOuvert) {
       ouvrir(`<p class="grand craie lisible">${t('monde')}</p><p class="lisible">${t('mondeFerme')}</p>
         <div class="boutons"><button class="bouton-craie" data-action="fermer">${t('retour')}</button></div>`);
@@ -116,24 +123,48 @@ export function accueil(app) {
       <p class="niveau-ferme lisible" hidden>${t('niveauFerme')}</p>
       <div class="boutons">
         <button class="bouton-craie plein" data-action="jouer" data-cible="${id}">${t('jouer')}</button>
-        ${boutonEpreuve(id, choisi)}
         <button class="bouton-craie" data-action="decouvrir" data-cible="${id}">${t('decouvrir')}</button>
       </div>
-      <p class="epreuve-fermee lisible" hidden></p>
       <button class="lien-craie" data-action="fermer">${t('retour')}</button>`);
   }
 
-  // L'épreuve du continent au niveau choisi (pas sur le monde entier) : fermée tant qu'on n'en connaît pas les trois quarts.
-  function boutonEpreuve(id, n) {
-    const e = app.epreuve(id, n);
-    if (!e) return '';
-    return `<button class="bouton-craie bouton-epreuve${e.ouverte ? '' : ' ferme'}" data-action="epreuve" data-cible="${id}"${e.ouverte ? '' : ` aria-disabled="true" data-manque="${e.manque}"`}>
-      ${e.ouverte ? (e.medaille ? medaille(e.medaille, 'mini') : '') : ICONES.cadenas}<span>${t('epreuve')}</span></button>`;
-  }
-  function majEpreuve(id, n) {
-    const b = voile.querySelector('.bouton-epreuve');
-    if (b) b.outerHTML = boutonEpreuve(id, n);
-    voile.querySelector('.epreuve-fermee').hidden = true;
+  // Le chemin d'un continent (ADR-008) : Nina dit le but, la jauge du niveau choisi mène au sceau de l'épreuve,
+  // les niveaux s'ouvrent un par un, un seul gros bouton (celui qui fait avancer), Découvrir en petit lien.
+  function chemin(id, niveauVu) {
+    const z = ZONES.find(x => x.id === id), nom = z[app.langue];
+    const n = niveauVu || app.niveau(id), e = app.epreuve(id, n);
+    let msg;
+    if (e.medaille) { const b = app.but(id); msg = b ? t('ninaNouveau', { niveau: t(b.niveau), n: b.besoin }) : t('ninaToutes', { z: nom }); }
+    else if (e.ouverte) msg = n === 'facile' ? t('ninaPreteTampon', { z: nom }) : t('ninaPrete', { niveau: t(n) });
+    else if (n === 'facile' && e.faits === 0) msg = t('ninaArrive', { z: nom, n: e.besoin });
+    else msg = t(e.manque > 1 ? 'ninaEncore' : 'ninaEncoreUn', { m: e.manque });
+    const sceau = e.medaille
+      ? `<button class="sceau gagne bouton-epreuve" data-action="epreuve" data-cible="${id}">${medaille(e.medaille, 'petite')}<span class="craie">${t('sceauEpreuve')}</span></button>`
+      : e.ouverte
+        ? `<button class="sceau pret bouton-epreuve" data-action="epreuve" data-cible="${id}"><span class="craie">${t('sceauEpreuve')}</span><small>${t('sceauPret')}</small></button>`
+        : `<button class="sceau ferme bouton-epreuve" data-action="epreuve" data-cible="${id}" aria-disabled="true" data-manque="${e.manque}">${ICONES.cadenas}<span class="craie">${t('sceauEpreuve')}</span><small>${t('sceauFerme', { n: e.manque })}</small></button>`;
+    const niveaux = NIVEAUX.map((lv, i) => {
+      const ev = app.epreuve(id, lv), ouvert = ev.niveauOuvert;
+      return `<button class="niveau${ouvert ? '' : ' ferme'}" data-niveau="${lv}" aria-pressed="${lv === n}"${ouvert ? '' : ` aria-disabled="true" data-apres="${NIVEAUX[i - 1]}"`}>
+        <span class="traits" aria-hidden="true">${ouvert ? '|'.repeat(i + 1) : ICONES.cadenas}</span><span class="craie">${t(lv)}${ev.medaille ? medaille(ev.medaille, 'mini') : ''}</span>
+        <small>${ouvert ? t('paysSur', { n: ev.faits, total: ev.besoin }) : t('niveauFermeApres', { niveau: t(NIVEAUX[i - 1]) })}</small></button>`;
+    }).join('');
+    const boutons = e.ouverte && !e.medaille
+      ? `<button class="bouton-craie plein or" data-action="epreuve" data-cible="${id}">${t('passerEpreuve')}</button>
+         <button class="bouton-craie" data-action="jouer" data-cible="${id}">${t('sEntrainer')}</button>`
+      : `<button class="bouton-craie plein" data-action="jouer" data-cible="${id}">${t('sEntrainer')}</button>
+         ${e.medaille ? `<button class="bouton-craie" data-action="epreuve" data-cible="${id}">${t('refaireEpreuve')}</button>` : ''}`;
+    ouvrir(`<p class="grand craie lisible">${nom}</p>
+      <div class="nina-dit"><img class="nina-tete" src="img/histoire/nina.webp" alt=""><p class="bulle lisible">${msg}</p></div>
+      <div class="chemin-niveau">
+        <div class="jauge-bloc">${jauge(e.faits, e.besoin)}<small class="lisible">${t('connusSur', { n: e.faits, total: e.besoin })}</small></div>
+        <span class="fleche" aria-hidden="true">→</span>${sceau}</div>
+      <p class="epreuve-fermee lisible" hidden></p>
+      <div class="boutons">${boutons}</div>
+      <div class="niveaux" role="group" aria-label="${t('niveau')}">${niveaux}</div>
+      <p class="niveau-ferme lisible" hidden></p>
+      <div class="liens"><button class="lien-craie" data-action="decouvrir" data-cible="${id}">${ICONES.loupe}${t('explorerCarte')}</button>
+        <button class="lien-craie" data-action="fermer">${t('retour')}</button></div>`, 'page-chemin');
   }
 
   function reglages() {
@@ -152,12 +183,19 @@ export function accueil(app) {
 
   function choisirNiveau(b) {
     const ferme = b.getAttribute('aria-disabled') === 'true';
-    voile.querySelector('.niveau-ferme').hidden = !ferme;
+    const msgFerme = voile.querySelector('.niveau-ferme');
+    msgFerme.hidden = !ferme;
+    if (ferme && b.dataset.apres) msgFerme.textContent = t('niveauFermeApres', { niveau: t(b.dataset.apres) });
     if (ferme) return;
+    // Sur un continent : le chemin du niveau touché.
+    if (voile.querySelector('.page-chemin')) {
+      const id = voile.querySelector('[data-action="jouer"]').dataset.cible;
+      etat.niveaux[id] = b.dataset.niveau; app.sauver();
+      return chemin(id, b.dataset.niveau);
+    }
     for (const x of voile.querySelectorAll('.niveau')) x.setAttribute('aria-pressed', x === b);
     const id = voile.querySelector('[data-action="jouer"]').dataset.cible;
     etat.niveaux[id] = b.dataset.niveau; app.sauver();
-    majEpreuve(id, b.dataset.niveau);
   }
 
   function ouvrir(html, classe = '') { voile.innerHTML = `<div class="note-tableau ${classe}">${html}</div>`; voile.hidden = false; }
@@ -178,6 +216,7 @@ export function accueil(app) {
     else if (b.dataset.action === 'epreuve') {
       if (b.getAttribute('aria-disabled') === 'true') {
         const m = +b.dataset.manque, p = voile.querySelector('.epreuve-fermee');
+        if (!p) return;
         p.textContent = t(m > 1 ? 'epreuveFermee' : 'epreuveFermeeUn', { n: m });
         p.hidden = false;
         return;
@@ -204,6 +243,8 @@ export function accueil(app) {
   if (!app.histoireAuto) { /* tests */ }
   else if (rattrapage.finiMaintenant) { etat.voyage.intro = true; app.sauver(); app.histoire('fin'); }
   else if (!etat.voyage.intro) { etat.voyage.intro = true; app.sauver(); app.histoire('intro'); }
+  // Une épreuve ouverte dont on n'a jamais vu le moment (par exemple ouverte avant la mise à jour) : il passe maintenant.
+  else if (!document.querySelector('.cine')) { const a = app.annonceAFaire(); if (a) app.annoncer(a.zone, a.niveau); }
 
   return () => { window.removeEventListener('resize', surRedim); carte.detruire(); };
 }

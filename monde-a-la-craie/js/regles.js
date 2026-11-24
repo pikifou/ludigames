@@ -89,6 +89,26 @@ export function medaillePour(erreurs) { return erreurs === 0 ? 'or' : erreurs <=
 export function meilleure(a, b) { return MEDAILLES.indexOf(a) >= MEDAILLES.indexOf(b) ? a : b; }
 export const cleEpreuve = (zone, niveau) => zone + '-' + niveau;
 
+// ---------- le chemin d'un continent (ADR-008) ----------
+// Les niveaux d'un continent s'ouvrent un par un : Facile tout de suite, Moyen avec la médaille de l'épreuve Facile
+// (le tampon de Nina), Difficile avec la médaille de l'épreuve Moyen.
+// Un tampon gagné avant les épreuves (etapes, sans médaille) vaut le niveau Facile réussi.
+const ORDRE_NIVEAUX = ['facile', 'moyen', 'difficile'];
+function reussi(zone, niveau, medailles, etapes) {
+  return MEDAILLES.includes(medailles[cleEpreuve(zone, niveau)]) || (niveau === 'facile' && etapes.includes(zone));
+}
+export function niveauOuvertContinent(zone, niveau, medailles, etapes = []) {
+  const i = ORDRE_NIVEAUX.indexOf(niveau);
+  if (i <= 0) return i === 0;
+  return reussi(zone, ORDRE_NIVEAUX[i - 1], medailles, etapes);
+}
+// Le niveau qui reste à réussir (le premier sans médaille ni tampon), ou null quand les trois sont réussis.
+export function prochainNiveau(zone, medailles, etapes = []) {
+  return ORDRE_NIVEAUX.find(n => !reussi(zone, n, medailles, etapes)) || null;
+}
+// Le niveau qui s'ouvre avec la médaille de celui-ci (null après Difficile).
+export function niveauSuivant(niveau) { return ORDRE_NIVEAUX[ORDRE_NIVEAUX.indexOf(niveau) + 1] || null; }
+
 // Une épreuve : chaque pays une fois, dans un ordre mélangé. Une erreur montre le bon pays, compte, et l'épreuve continue
 // (le pays raté ne revient pas). Même façon de jouer qu'une manche : question, toucher(), reprendre(), finie.
 export class Epreuve {

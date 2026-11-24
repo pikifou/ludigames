@@ -163,6 +163,9 @@ try:
         page.evaluate("Object.defineProperty(document, 'hidden', {value: false, configurable: true}); document.dispatchEvent(new Event('visibilitychange'))")
         verifier(entendue(page, 'manche'), 'jeu revenu : elle reprend')
         page.wait_for_timeout(1100)
+        # la manche a ouvert l'épreuve d'Europe : le moment « l'épreuve est prête » (ADR-008), « Plus tard »
+        if page.locator('.cine.prete').count():
+            page.click('.cine [data-action="plustard"]')
         page.click('[data-action="changer"]')
         verifier(entendue(page, 'voyage'), 'retour à l\'accueil : la musique du voyage')
         page.click('[data-zone="afrique"]')

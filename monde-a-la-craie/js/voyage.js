@@ -50,6 +50,18 @@ export function medaille(type, classe = '') {
     <circle class="disque" cx="20" cy="28" r="15"/><circle class="bord-int" cx="20" cy="28" r="11.5"/>${etoiles}</svg></span>`;
 }
 
+// La jauge du prochain tampon (ADR-008) : un rond de craie par pays à connaître pour ouvrir l'épreuve, rempli quand il est
+// connu. neufs : les derniers ronds remplis à l'instant (ils s'allument). Au-delà de 14 pays, une barre de craie.
+export function jauge(faits, besoin, { neufs = 0, classe = '' } = {}) {
+  const label = t('paysSur', { n: faits, total: besoin });
+  if (besoin > 14) {
+    const pct = besoin ? Math.round(Math.min(faits, besoin) / besoin * 100) : 0;
+    return `<span class="jauge barre ${classe}" role="img" aria-label="${label}"><span style="width:${pct}%"></span></span>`;
+  }
+  const ronds = Array.from({ length: besoin }, (_, i) => `<i class="${i < faits - neufs ? 'ok' : i < faits ? 'ok neuf' : ''}"${i >= faits - neufs && i < faits ? ` style="--i:${i - (faits - neufs)}"` : ''}></i>`).join('');
+  return `<span class="jauge ${classe}" role="img" aria-label="${label}">${ronds}</span>`;
+}
+
 // La bande du carnet sur l'accueil : Nina, les six tampons, et où on en est.
 export function carnet(app) {
   const v = app.etat.voyage, n = v.etapes.length;

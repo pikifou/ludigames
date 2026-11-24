@@ -3,6 +3,7 @@ const svg = d => `<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke
 
 export const ICONES = {
   pause: svg('<path d="M8 5.5v13M16 5.5v13"/>'),
+  loupe: svg('<circle cx="10.5" cy="10.5" r="6"/><path d="M15 15l5 5"/>'),
   vue: svg('<path d="M4 9V4.5h4.5M15.5 4.5H20V9M20 15v4.5h-4.5M8.5 19.5H4V15"/>'),
   voix: svg('<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11"/>'),
   retour: svg('<path d="M10 6l-6 6 6 6M4.5 12H20"/>'),

@@ -8,6 +8,7 @@
   --color-ardoise: #2b3f37; --color-ardoise-2: #354d43; --color-ardoise-ombre: #1d2b26;
   --color-craie: #f3f1e8; --color-craie-douce: rgba(243, 241, 232, .55);
   --color-cadre: #a8763f; --color-cadre-ombre: #6e4520;
+  --or: #f2c94c; --craie-corail: #ffb3a0;
   --craie-jaune: #ffe27a; --craie-bleue: #8fd3ff; --craie-rose: #ff9fc0; --craie-orange: #ffb36b;
   --craie-rouge: #ff8a7a;
   --font-craie: 'Baloo 2', 'Comic Sans MS', cursive;
@@ -256,7 +257,7 @@ html.sans-voix .lisible { cursor: auto; }
 .savoir-titre small { font-family: var(--font-craie); font-weight: 700; font-size: .85em; color: #9a5b14; }
 .savoir-titre .craie { font-size: 1.35em; color: var(--color-ardoise-ombre); filter: none; }
 .savoir .photo { flex: none; align-self: center; display: grid; justify-items: center; gap: 3px; width: fit-content; min-width: 96px; padding: 6px 6px 3px; background: #fff; box-shadow: 0 2px 6px rgba(0, 0, 0, .25); transform: rotate(1.2deg); }
-.savoir .photo[hidden] { display: none; }
+.savoir .photo[hidden], .savoir .drapeau[hidden] { display: none; }
 .savoir .photo img { display: block; width: var(--photo-larg); height: auto; aspect-ratio: var(--ratio); object-fit: contain; }   /* l'image entière : la tour Eiffel garde son sommet */
 .savoir .credit { width: 0; min-width: 100%; font-family: var(--font-texte); font-size: 10px; line-height: 1.2; color: #6d6a62; text-align: center; }
 .savoir .fait { display: grid; }
@@ -400,3 +401,80 @@ html.sans-voix .lisible { cursor: auto; }
 /* ---------- tests et mouvement réduit ---------- */
 .vite *, .vite *::after { animation-duration: 0s !important; animation-delay: 0s !important; transition: none !important; }
 @media (prefers-reduced-motion: reduce) { *, *::after { animation-duration: .01s !important; transition: none !important; } }
+
+/* ---------- le chemin de Nina (ADR-008) ---------- */
+/* La jauge du prochain tampon : un rond de craie par pays à connaître, rempli quand il est connu ; au-delà de 14, une barre. */
+.jauge { display: inline-flex; flex-wrap: wrap; justify-content: center; gap: 4px; vertical-align: middle; }
+.jauge i { width: 15px; height: 15px; border-radius: 50%; border: 2px dashed var(--color-craie-douce); }
+.jauge i.ok { background: var(--craie-jaune); border: 2px solid var(--craie-jaune); }
+.jauge i.neuf { background: var(--craie-corail); border-color: var(--craie-corail); box-shadow: 0 0 8px var(--craie-corail); }
+.jauge.barre { display: block; width: min(100%, 220px); height: 12px; border-radius: 7px; border: 2px dashed var(--color-craie-douce); overflow: hidden; }
+.jauge.barre span { display: block; height: 100%; background: var(--craie-jaune); }
+.jauge.petite { gap: 2px; margin: .15em 0 .05em; }
+.jauge.petite i { width: 8px; height: 8px; border-width: 1.5px; border-color: rgba(29, 43, 38, .55); }
+.jauge.petite i.ok { background: var(--color-ardoise-ombre); border-color: var(--color-ardoise-ombre); }
+.jauge.petite.barre { width: 100%; height: 8px; border-color: rgba(29, 43, 38, .55); }
+.jauge.petite.barre span { background: var(--color-ardoise-ombre); }
+@media (prefers-reduced-motion: no-preference) {
+  .jauge i.neuf { animation: rond-neuf .5s cubic-bezier(.3, 1.6, .5, 1) both; animation-delay: calc(.35s + var(--i, 0) * .18s); }
+  @keyframes rond-neuf { from { transform: scale(0); } }
+  .zone-nom.pret { animation: etiquette-prete 2.2s ease-in-out infinite; }
+  @keyframes etiquette-prete { 50% { transform: translate(-50%, -50%) rotate(var(--r, -3deg)) scale(1.07); } }
+  .etiquettes.liste .zone-nom.pret { animation: none; }
+  .sceau.pret, .bouton-craie.or { animation: sceau-pret 2.2s ease-in-out infinite; }
+  @keyframes sceau-pret { 50% { box-shadow: 0 0 22px rgba(242, 201, 76, .7); } }
+}
+.zone-nom small.prete { opacity: 1; }
+.zone-nom .jauge { display: flex; width: max-content; max-width: 100%; margin-left: auto; margin-right: auto; }
+.zone-nom .nina-etiq { position: absolute; left: -1.7em; top: 50%; width: 1.9em; height: 1.9em; transform: translateY(-50%); border-radius: 50%; border: 2px solid #fff; background: #fff; box-shadow: 0 2px 5px rgba(0, 0, 0, .35); }
+.etiquettes.liste .zone-nom .nina-etiq { display: none; }
+.bouton-craie.or, .bouton-craie.plein.or { background: var(--or); border-color: var(--or); color: var(--color-ardoise-ombre); }
+
+/* Le chemin d'un continent : Nina dit le but, la jauge mène au sceau de l'épreuve, puis les niveaux. */
+.page-chemin { display: grid; justify-items: center; gap: .55em; }
+.nina-dit { display: flex; align-items: flex-start; gap: 10px; max-width: 30em; text-align: left; }
+.nina-tete { flex: none; width: 46px; height: 46px; border-radius: 50%; border: 2px solid #fff; background: #fff; }
+.bulle { margin: 0; background: #f3eddc; color: var(--color-ardoise-ombre); font: 500 clamp(14px, 1.8vw, 16px)/1.35 var(--font-texte); padding: .55em .8em; border-radius: 14px 14px 14px 3px; box-shadow: 0 3px 8px rgba(0, 0, 0, .3); }
+.chemin-niveau { display: flex; align-items: center; justify-content: center; gap: 12px; flex-wrap: wrap; }
+.jauge-bloc { display: grid; justify-items: center; gap: 4px; max-width: 240px; }
+.jauge-bloc small { font-size: 13px; opacity: .85; }
+.fleche { font: 800 24px var(--font-craie); opacity: .6; }
+.sceau { width: 86px; height: 86px; border-radius: 50%; display: grid; place-content: center; justify-items: center; gap: 0; cursor: pointer; text-align: center; line-height: 1.05;
+  border: 3px dashed var(--color-craie-douce); background: none; color: var(--color-craie-douce); font: 800 15px var(--font-craie); }
+.sceau small { font: 600 12px var(--font-texte); }
+.sceau svg { width: 18px; height: 18px; }
+.sceau.pret { border: 3px solid var(--or); background: rgba(242, 201, 76, .18); color: var(--or); }
+.sceau.gagne { border: 3px solid var(--craie-jaune); color: var(--color-craie); }
+.page-chemin .niveaux { margin: .2em 0 0; }
+.page-chemin .niveau .medaille.mini { margin: 0 0 0 4px; }
+.page-chemin .liens { display: flex; gap: 18px; justify-content: center; align-items: center; }
+.page-chemin .liens svg { width: 16px; height: 16px; vertical-align: -3px; margin-right: 4px; }
+@media (max-height: 440px) {
+  .page-chemin { gap: .3em; }
+  .page-chemin .grand { font-size: 26px; }
+  .nina-tete { width: 34px; height: 34px; }
+  .bulle { font-size: 13px; padding: .4em .6em; }
+  .sceau { width: 66px; height: 66px; font-size: 13px; }
+  .jauge i { width: 12px; height: 12px; }
+  .page-chemin .niveau { min-height: 40px; padding: .2em .3em .3em; }
+}
+
+/* Fin de manche : la jauge qui avance. */
+.fin-jauge { display: flex; align-items: center; justify-content: center; gap: 8px; }
+.fin-jauge .gain { color: var(--craie-corail); font-size: 20px; }
+
+/* L'épreuve : un cadre doré, Nina qui encourage au départ (sa bulle s'efface), les pays restants. */
+#hud.mode-epreuve::before { content: ""; position: absolute; inset: 0; border: 5px solid var(--or); box-shadow: inset 0 0 26px rgba(242, 201, 76, .35); pointer-events: none; z-index: 1; }
+#hud.mode-epreuve .zone-courante { color: var(--or); }
+#hud.mode-epreuve .compteur { color: var(--or); }
+.nina-epreuve { position: absolute; left: 14px; bottom: 44px; display: flex; align-items: flex-end; gap: 8px; z-index: 2; pointer-events: none; }
+.nina-epreuve img { width: 44px; height: 44px; border-radius: 50%; border: 2px solid var(--or); background: #fff; }
+.nina-epreuve .bulle { pointer-events: auto; }
+@media (prefers-reduced-motion: no-preference) { .nina-epreuve .bulle { animation: bulle-part 5s ease-in forwards; } @keyframes bulle-part { 0%, 80% { opacity: 1; } 100% { opacity: 0; visibility: hidden; } } }
+.cine.prete .cine-titre { color: var(--or); }
+.cine .lien-craie[data-action="plustard"] { margin-top: .4em; }
+@media (max-height: 440px) {
+  .fin-epreuve > p { margin-top: .1em; margin-bottom: .1em; }
+  .fin-epreuve .nouveau-tampon .tampon { width: 40px; height: 40px; }
+  .fin-epreuve .nouveau-tampon .craie { font-size: 18px; }
+}

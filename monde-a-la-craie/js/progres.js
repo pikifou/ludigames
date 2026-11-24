@@ -16,7 +16,8 @@ function etatVide() {
   // medailles : la meilleure médaille de chaque épreuve, { 'europe-facile': 'or', … }. Rien ne s'y enlève.
   return { connus: new Set(), meilleurs: {}, niveaux: {}, langue: null, voyage: voyageVide(), medailles: {} };
 }
-const voyageVide = () => ({ etapes: [], intro: false, fini: false });
+// annonces : les épreuves dont le moment « l'épreuve est prête » a été montré ('europe-facile', …), ADR-008.
+const voyageVide = () => ({ etapes: [], intro: false, fini: false, annonces: [] });
 const ZONES_VOYAGE = ['europe', 'afrique', 'asie', 'amerique-nord', 'amerique-sud', 'oceanie'];
 
 // Ajoute un voyage gardé à celui-ci : les étapes s'additionnent, intro et fin ne s'effacent pas.
@@ -25,6 +26,7 @@ function fusionnerVoyage(v, d) {
   if (Array.isArray(d.etapes)) for (const z of d.etapes) if (ZONES_VOYAGE.includes(z) && !v.etapes.includes(z)) v.etapes.push(z);
   if (d.intro === true) v.intro = true;
   if (d.fini === true) v.fini = true;
+  if (Array.isArray(d.annonces)) for (const k of d.annonces) if (typeof k === 'string' && /^[a-z-]+-(facile|moyen|difficile)$/.test(k) && !v.annonces.includes(k)) v.annonces.push(k);
 }
 
 function stockageParDefaut() {
