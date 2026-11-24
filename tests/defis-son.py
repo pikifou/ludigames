@@ -179,8 +179,10 @@ try:
 
         print('Les bruitages')
         page.goto(BASE + '?lecon=plage-1')
-        page.wait_for_timeout(800)
-        sons(page)
+        page.wait_for_selector('.ouverture', state='detached', timeout=6000)
+        s = sons(page)
+        verifier('pop' in s and 'papier' in s, f"la bouteille s'ouvre : le bouchon saute et le papier se déroule ({s})")
+        page.wait_for_timeout(1500)
         while suivant(page):
             pass
         verifier('pose' in sons(page), 'les phrases de Barnabé : un petit « toc » à chaque Suivant')

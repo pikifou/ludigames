@@ -478,7 +478,14 @@ body.ludiworld .haut { padding-left: 130px; }
 .note .etoiles i:nth-child(3) { animation-delay: .44s; }
 .note .etoiles i:not(.pleine) { animation: manque .5s .7s ease-in-out backwards; }
 @keyframes manque { 0% { transform: scale(.4); opacity: 0; } 40% { transform: scale(1.1) rotate(-10deg); } 70% { transform: rotate(8deg); } }
-.note b { white-space: nowrap; font: 800 1.08rem/1.1 var(--font-display); color: var(--color-encre-douce); }
+.note { flex-wrap: wrap; row-gap: 2px; }
+.note b { font: 800 1.08rem/1.1 var(--font-display); color: var(--color-encre-douce); }
+/* Bulle étroite (téléphone en hauteur) : « 2 étoiles sur 3 » passe sous les étoiles au lieu d'être coupé (ADR-007). */
+@media (max-width: 520px) {
+  .note .etoiles i { width: 34px; height: 34px; }
+  .bulle .refaire { white-space: nowrap; font-size: .95rem; padding: .35em .8em; }
+  .bulle .refaire .etoiles i { width: 18px; height: 18px; }
+}
 .note.n3 b { color: var(--color-primary); }
 /* « Refaire » quand il manque des étoiles : un vrai bouton doré, pas un petit bouton gris. */
 .refaire { display: inline-flex; align-items: center; gap: .35em; font: 800 1.05rem var(--font-display); padding: .35em 1em; border-radius: 999px 999px 999px 999px / 60% 60% 70% 70%;
@@ -667,3 +674,33 @@ body.ludiworld .haut { padding-left: 130px; }
   .titre-image { background-image: url(img/titre-carre.webp); background-position: center 100%; }
 }
 .feuilles { display: none; }
+
+/* ---------- L'ouverture d'une bouteille (ADR-007) ---------- */
+.ouverture { position: absolute; inset: 0; z-index: 85; display: grid; place-items: center; background: rgba(43, 47, 82, .32); animation: fondu .25s; cursor: pointer; transition: opacity .3s; }
+.ouverture.part { opacity: 0; pointer-events: none; }
+.ouv-scene { position: relative; width: min(78vw, 46vh, 340px); aspect-ratio: 1; }
+.ouv-bouteille { position: absolute; left: 27%; top: 13%; width: 46%; aspect-ratio: 218 / 300; filter: drop-shadow(0 12px 10px rgba(30, 20, 10, .35));
+  animation: ouv-arrive .75s cubic-bezier(.3, 1.35, .5, 1) both, ouv-tremble .14s .6s ease-in-out 4 alternate, ouv-efface .3s 1.2s forwards; }
+.ouv-bouteille img { position: absolute; inset: 0; width: 100%; height: 100%; }
+.ouv-bouteille .corps { clip-path: polygon(0 0, 72% 0, 68% 8.5%, 85% 15%, 100% 10%, 100% 100%, 0 100%); }
+.ouv-bouteille .bouchon { clip-path: polygon(74% -1%, 101% 9%, 85% 14.5%, 68% 8%); transform-origin: 84% 8%; animation: ouv-bouchon .7s .9s cubic-bezier(.15, .8, .4, 1) forwards; }
+@keyframes ouv-arrive { from { transform: translateX(80vw) rotate(320deg); } }
+@keyframes ouv-tremble { from { rotate: -5deg; } to { rotate: 5deg; } }
+@keyframes ouv-efface { to { opacity: 0; transform: scale(.7); } }
+@keyframes ouv-bouchon { 30% { opacity: 1; } to { transform: translate(70%, -160%) rotate(300deg); opacity: 0; } }
+.ouv-papier { position: absolute; left: 4%; right: 4%; top: 30%; min-height: 34%; display: grid; place-items: center; padding: 16px 18px; box-sizing: border-box;
+  background: #f8efd9; border-radius: 4px; border-block: 12px solid #e8d6ab; box-shadow: 0 14px 30px rgba(40, 25, 10, .4);
+  font: 800 clamp(1.35rem, 6vw, 1.9rem)/1.15 var(--font-display); color: var(--color-encre); text-align: center;
+  opacity: 0; animation: ouv-papier .55s 1.15s cubic-bezier(.3, 1.3, .5, 1) forwards; }
+@keyframes ouv-papier { from { opacity: 1; transform: scale(.35, .05); } to { opacity: 1; transform: none; } }
+
+/* ---------- Le phare allumé sur la carte, une fois le match gagné (ADR-007) ---------- */
+.phare-nuit { position: absolute; inset: 0; border-radius: inherit; overflow: hidden; pointer-events: none; z-index: 1; }
+.phare-nuit .faisceau { position: absolute; left: 52.8%; top: 4.4%; width: 150%; aspect-ratio: 1; translate: -50% -50%;
+  background: conic-gradient(rgba(255, 205, 70, .9) 0deg, rgba(255, 215, 100, 0) 26deg, transparent 180deg, rgba(255, 205, 70, .9) 180deg, rgba(255, 215, 100, 0) 206deg, transparent 360deg);
+  -webkit-mask: radial-gradient(closest-side, #000 6%, rgba(0, 0, 0, .85) 45%, transparent 100%); mask: radial-gradient(closest-side, #000 6%, rgba(0, 0, 0, .85) 45%, transparent 100%);
+  animation: faisceau 9s linear infinite; }
+.phare-nuit .lanterne { position: absolute; left: 52.8%; top: 4.4%; width: 14%; aspect-ratio: 1; translate: -50% -50%; border-radius: 50%;
+  background: radial-gradient(closest-side, #fffbe6, rgba(255, 210, 80, .95) 35%, rgba(255, 200, 60, .35) 65%, transparent); animation: lanterne 1.8s ease-in-out infinite alternate; }
+@keyframes faisceau { to { rotate: 360deg; } }
+@keyframes lanterne { to { scale: 1.35; opacity: .8; } }

@@ -35,6 +35,26 @@ function toc(a, freq, volume) {
   src.start();
 }
 
+// Un souffle : bruit filtré qui monte puis retombe (le papier qui se déroule).
+function souffle(a, duree, freq, volume) {
+  const n = Math.floor(a.sampleRate * duree), buf = a.createBuffer(1, n, a.sampleRate), d = buf.getChannelData(0);
+  for (let i = 0; i < n; i++) d[i] = (Math.random() * 2 - 1) * Math.sin(Math.PI * i / n) * (0.6 + 0.4 * Math.sin(i / n * 40));
+  const src = a.createBufferSource(); src.buffer = buf;
+  const f = a.createBiquadFilter(); f.type = 'highpass'; f.frequency.value = freq;
+  const g = a.createGain(); g.gain.value = volume;
+  src.connect(f).connect(g).connect(a.destination);
+  src.start();
+}
+
+// Le bouchon qui saute : une note qui monte très vite, et un petit claquement.
+function pop(a) {
+  const o = a.createOscillator(), g = a.createGain(), t = a.currentTime;
+  o.type = 'sine'; o.frequency.setValueAtTime(240, t); o.frequency.exponentialRampToValueAtTime(950, t + 0.07);
+  g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.28, t + 0.006); g.gain.exponentialRampToValueAtTime(0.001, t + 0.13);
+  o.connect(g).connect(a.destination); o.start(t); o.stop(t + 0.16);
+  toc(a, 2400, 0.45);
+}
+
 export function son(nom) {
   if (!bruitages) return;
   globalThis.__sonsJoues?.push(nom); // pour les tests : les sons joués
@@ -51,6 +71,8 @@ export function son(nom) {
     else if (nom === 'medaille') { [784, 988, 1175, 1568].forEach((f, i) => note(a, f, i * 0.09, 0.6, 0.08)); [2093, 2637].forEach((f, i) => note(a, f, 0.45 + i * 0.07, 0.5, 0.04, 'sine')); }
     else if (nom === 'debloque') { note(a, 523, 0, 0.12, 0.08); note(a, 784, 0.08, 0.12, 0.08); note(a, 1047, 0.16, 0.3, 0.08); }
     else if (nom === 'clic') toc(a, 1800, 0.35);
+    else if (nom === 'pop') pop(a);
+    else if (nom === 'papier') souffle(a, 0.35, 2500, 0.35);
     else if (nom === 'pas') toc(a, 420, 0.5);
     else if (nom === 'compte') note(a, 1200 + Math.random() * 200, 0, 0.06, 0.05, 'square');
     else if (nom === 'refus') { note(a, 260, 0, 0.12, 0.08, 'sine'); note(a, 220, 0.1, 0.18, 0.08, 'sine'); }

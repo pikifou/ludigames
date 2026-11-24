@@ -187,7 +187,7 @@ def chemin_complet(nav):
         page.wait_for_selector('.bulle')
         for _ in range(60):
             page.wait_for_timeout(120)
-            if page.locator('.fete').count():
+            if page.locator('.fete').count() or page.locator('.ecran.amis').count():
                 break
             if page.locator('.bulle .actions button', has_text='Indice').count():
                 ex_faits += 1
@@ -199,6 +199,11 @@ def chemin_complet(nav):
                 bouton(page, 'Continuer').click(force=True)
             elif bouton(page, 'Suivant'):
                 bouton(page, 'Suivant').click(force=True)
+        if l['id'] == 'avant-match':
+            # ADR-007 : « Avant le match » mène tout droit au match, sans fête ni médaille du phare.
+            verifier(page.locator('.ecran.amis').count() == 1, 'avant-match : on arrive au match')
+            verifier(not page.evaluate("JSON.parse(localStorage.getItem('defis-de-barnabe.v1')).medailles[7]"), 'avant-match : pas de médaille du phare sans avoir gagné')
+            continue
         verifier(page.locator('.fete').count() == 1, f"{l['id']} : la leçon se termine par une fête")
         if k in (0, 6, 15):
             page.screenshot(path=str(CAPTURES / f'fin-{l["id"]}.png'))

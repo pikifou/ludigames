@@ -224,6 +224,7 @@ function ecranCarte(ouvrir) {
           <span class="badge">${etat.medailles[c.medaille] ? `<img src="img/medaille-${c.medaille}.webp" alt="">` : chapitreFini(c) ? '' : chapitreOuvert(c) && i <= depart ? '' : CADENAS}</span>
           <span class="etiquette"><b>${c.titre}</b><small>${ETOILE} ${c.lecons.reduce((s, l) => s + etoilesDe(l), 0)}/${c.lecons.reduce((s, l) => s + etoilesMax(l), 0)}</small></span>
         </button>`).join('')}
+      ${etat.fin || q.has('phare') ? '<div class="phare-nuit" aria-hidden="true"><i class="faisceau"></i><i class="lanterne"></i></div>' : ''}
       <div class="leo" style="left:${CHAPITRES[depart].pied[0]}%;top:${CHAPITRES[depart].pied[1]}%"><img src="img/enfant.webp" alt="Léo"><i class="ombre"></i></div>
     </div></div>`);
   e.querySelector('[data-act=titre]').onclick = ecranTitre;
@@ -364,6 +365,41 @@ function bulle(e, qui, texte, boutons = [], { joie = false, aide = '', pense = f
     (grand ? e.querySelector('.statut') || e : zone).appendChild(n);
   }
   if (!pense) parler(texte + (aide ? ' ' + aide : ''));
+  garderPlace(e);
+}
+
+// En hauteur, le plateau est sous la bulle : quand la bulle changeait de taille, le plateau bougeait sous le doigt.
+// Dès le premier mot, on réserve la place des deux plus grandes bulles d'un défi (l'indice, et « réussi » avec
+// les étoiles), mesurées sur une copie invisible ; si une bulle est encore plus grande, la place grandit, sans
+// jamais rapetisser avant le prochain écran (ADR-007).
+const bullesLongues = () => [  // une fonction : RAISONS est défini plus bas
+  `<p class="texte">${RAISONS.pat}</p><p class="aide">Indice : joue la pièce qui brille, vers le rond qui clignote.</p><div class="actions"><button class="petit">Indice</button><button class="petit">Recommencer</button></div>`,
+  `<div class="note n2"><span class="etoiles"><i class="pleine"></i><i class="pleine"></i><i></i></span><b>2 étoiles sur 3</b></div><p class="texte">Réussi ! Avec un indice, c'est 2 étoiles au plus. Refais-le tout seul pour en avoir 3 !</p><div class="actions"><button class="refaire">Refaire pour avoir ${etoiles(3)}</button></div>`,
+];
+function garderPlace(e) {
+  const c = e.querySelector('.cote');
+  if (!c) return;
+  c.style.minHeight = '';
+  if (globalThis.matchMedia?.('(orientation: landscape) and (min-aspect-ratio: 5/4)').matches) { delete c.dataset.haut; return; }
+  if (!c.dataset.haut) {
+    let reserve = 0;
+    for (const contenu of bullesLongues()) {
+      const copie = c.cloneNode(true);
+      copie.style.cssText = `position:absolute;visibility:hidden;pointer-events:none;left:0;top:0;width:${c.getBoundingClientRect().width}px`;
+      copie.querySelector('.bulle').innerHTML = contenu;
+      copie.querySelector('.bulle').classList.remove('arrive', 'pense', 'de-leo');
+      c.parentElement.appendChild(copie);
+      reserve = Math.max(reserve, copie.getBoundingClientRect().height);
+      copie.remove();
+    }
+    // Pas au point de rapetisser le plateau : il garde au moins 90 % de la largeur de l'écran.
+    const zone = e.querySelector('.zone-plateau').getBoundingClientRect(), haut0 = c.getBoundingClientRect();
+    const plafond = zone.bottom - haut0.top - 8 - zone.width * 0.9;
+    c.dataset.haut = Math.max(haut0.height, Math.min(reserve, plafond));
+  }
+  const haut = Math.max(c.getBoundingClientRect().height, +c.dataset.haut);
+  c.dataset.haut = haut;
+  c.style.minHeight = haut + 'px';
 }
 
 // L'enfant touche le plateau pendant une explication : « Suivant » arrive tout de suite, se secoue, et Léo le dit.
@@ -591,6 +627,13 @@ function lancerLecon(lecon) {
 
   function finLecon() {
     etat.lecons[lecon.id] = true;
+    // « Avant le match » (des phrases, pas de défi) mène tout droit au match : pas de fête, pas de médaille.
+    // La médaille du phare ne se gagne qu'en battant Barnabé.
+    const apres = LECONS[indexLecon(lecon.id) + 1];
+    if (!exercicesDe(lecon).length && apres?.parties) {
+      etat.lecons[apres.id] = true; sauver();
+      return ecranAmis();
+    }
     const finChapitre = chapitre.lecons[chapitre.lecons.length - 1].id === lecon.id;
     // Les parties d'une leçon : la médaille demande d'en gagner au moins une.
     const parties = exercicesDe(lecon).filter(x => x.type === 'partie');
@@ -603,19 +646,41 @@ function lancerLecon(lecon) {
     const suivanteL = LECONS[indexLecon(lecon.id) + 1];
     const ami = parties[0] ? PERSONNAGES[parties[0].ami || lecon.qui].nom : '';
     feter(e, {
-      titre: sansVictoire ? 'Leçon terminée' : finChapitre ? 'Chapitre réussi !' : 'Leçon réussie !',
+      titre: finChapitre && !sansVictoire ? `${chapitre.lieu}, c'est fini !` : 'Bouteille ouverte !',
       texte: sansVictoire ? `Gagne une partie contre ${ami} pour décrocher la médaille !` : '',
       qui: lecon.qui, n: etoilesDe(lecon), max: etoilesMax(lecon),
       medaille: nouvelleMedaille ? chapitre.medaille : null,
       boutons: [
         ...(sansVictoire && !tempsFini ? [{ texte: 'Rejouer', classe: 'suivant', act: () => lancerLecon(lecon) }] : []),
         { texte: 'Le chemin', classe: finChapitre ? 'suivant' : 'petit', act: () => ecranCarte(finChapitre ? null : chapitre) },
-        ...(suivanteL && !finChapitre && !tempsFini ? [{ texte: 'Leçon suivante', classe: 'suivant', act: () => lancerLecon(suivanteL) }] : []),
+        ...(suivanteL && !finChapitre && !tempsFini ? [{ texte: suivanteL.piece === 'bouteille' ? 'Bouteille suivante' : 'La suite', classe: 'suivant', act: () => lancerLecon(suivanteL) }] : []),
       ],
     });
   }
 
-  suivante();
+  if (lecon.piece === 'bouteille') ouvrirBouteille(e, lecon.titre, suivante); else suivante();
+}
+
+// L'ouverture d'une bouteille (ADR-007) : elle roule jusqu'au milieu, tremble, le bouchon saute (« pop »),
+// puis le papier se déroule avec le nom du défi. Toucher l'écran passe directement au défi.
+function ouvrirBouteille(e, titre, fini) {
+  if (globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return fini();
+  const o = h(`<div class="ouverture" aria-hidden="true"><div class="ouv-scene">
+      <div class="ouv-bouteille"><img class="corps" src="img/bouteille.webp" alt=""><img class="bouchon" src="img/bouteille.webp" alt=""></div>
+      <div class="ouv-papier"><span>${titre}</span></div>
+    </div></div>`);
+  e.appendChild(o);
+  let fait = false;
+  const minuteries = [setTimeout(() => son('pop'), 900), setTimeout(() => son('papier'), 1150), setTimeout(() => finir(), 2400)];
+  function finir() {
+    if (fait) return;
+    fait = true;
+    minuteries.forEach(clearTimeout);
+    o.classList.add('part');
+    setTimeout(() => o.remove(), 320);
+    fini();
+  }
+  o.addEventListener('pointerdown', ev => { ev.preventDefault(); finir(); });
 }
 
 // La fête de fin : Léo et son ami sautent de joie, les étoiles tombent une à une, puis la médaille.
@@ -896,6 +961,7 @@ function lancerPartie(ami) {
 }
 
 // Pour les tests : aller directement à une leçon (?lecon=tour), aux amis (?amis), au chemin (?chemin), à l'histoire (?histoire, ?fin).
+// ?chemin&phare : la carte avec le phare allumé, comme après le match gagné (sans rien sauver).
 if (q.get('lecon')) lancerLecon(LECONS.find(l => l.id === q.get('lecon')));
 else if (q.has('amis')) ecranAmis();
 else if (q.has('chemin')) ecranCarte();

@@ -1,6 +1,6 @@
 // Service worker des Défis de Barnabé : tout le jeu est gardé à l'installation, il se joue hors ligne.
 // VERSION est l'empreinte des fichiers du jeu : node tools/version.js defis-de-barnabe la met à jour.
-const VERSION = 'defis-de-barnabe-c85de74fe9';
+const VERSION = 'defis-de-barnabe-20d656e0ea';
 const PERSOS = ['sage', 'enfant'];
 const LIEUX = ['plage', 'port', 'dunes', 'rochers', 'cabanes', 'jetee', 'phare'];
 const IMAGES = ['titre', 'titre-carre', 'carte', ...LIEUX.flatMap(l => [`fond-portrait-${l}`, `fond-paysage-${l}`]), 'histoire-1', 'histoire-2', 'histoire-fin', 'enfant-marche', 'enfant-pense', 'etoile', 'etoile-vide', 'bouteille',
