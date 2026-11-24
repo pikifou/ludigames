@@ -204,6 +204,9 @@ button { font: inherit; color: inherit; }
 .interrupteur.grise { opacity: .6; cursor: default; }
 /* Voix coupée (réglage du son de Ludiworld) : pas de bouton Écouter. */
 html.sans-voix [data-action="ecouter"], html.sans-voix [data-action="ecouter-fiche"] { display: none; }
+/* Un texte qu'on touche pour l'entendre (js/lecture.js). Voix coupée : il redevient un texte comme un autre. */
+.lisible { cursor: pointer; }
+html.sans-voix .lisible { cursor: auto; }
 .reglages-son { margin-top: 14px; padding-top: 6px; border-top: 2px dashed rgba(255, 255, 255, .25); }
 .interrupteur select { order: 2; font: 700 17px var(--font-craie); color: var(--color-craie); background: var(--color-ardoise-ombre);
   border: 2px solid var(--color-craie-douce); border-radius: 8px 12px 9px 11px; padding: 4px 8px; min-height: 40px; }
@@ -265,12 +268,12 @@ html.sans-voix [data-action="ecouter"], html.sans-voix [data-action="ecouter-fic
 .savoir.avec-photo.bas, .savoir.avec-photo.haut { width: auto; grid-template-columns: auto 1fr; grid-template-areas: "tete tete" "photo fait" "photo astuce"; }
 .savoir.avec-photo .savoir-tete { grid-area: tete; } .savoir.avec-photo .photo { grid-area: photo; } .savoir.avec-photo .fait { grid-area: fait; }
 .savoir.avec-photo .astuce { grid-area: astuce; align-self: end; justify-self: end; }
-/* Écran bas (téléphone en largeur) : l'image à côté du texte, pas d'astuce. */
+/* Écran bas (téléphone en largeur) : l'image à côté du texte, l'astuce dessous en petit (toucher le texte le lit : il faut dire où toucher pour continuer). */
 @media (orientation: landscape) and (max-height: 440px) {
   .savoir { --photo-h: 112px; --photo-l: 150px; gap: 6px; padding: 15px 12px 8px; font-size: 13px; }
-  .savoir.avec-photo { width: calc(var(--photo-larg) + 196px); max-width: 45vw; display: grid; grid-template-columns: auto 1fr; grid-template-areas: "tete tete" "photo fait"; align-items: start; }
+  .savoir.avec-photo { width: calc(var(--photo-larg) + 214px); max-width: 45vw; display: grid; grid-template-columns: auto 1fr; grid-template-areas: "tete tete" "photo fait" "photo astuce"; align-items: start; }
   .savoir .drapeau { width: 42px; height: 31px; }
-  .savoir .astuce { display: none; }
+  .savoir .astuce { font-size: 11px; }
 }
 
 /* ---------- le tour du monde de Nina ---------- */
@@ -334,6 +337,33 @@ html.sans-voix [data-action="ecouter"], html.sans-voix [data-action="ecouter-fic
 .nouveau-tampon { display: flex; align-items: center; justify-content: center; gap: 12px; }
 .nouveau-tampon .tampon { width: 54px; height: 54px; }
 .nouveau-tampon .craie { font-size: clamp(19px, 2.8vw, 24px); color: #ffb3a0; }
+
+/* Les médailles d'épreuve (ADR-006) : une couleur, et une, deux ou trois étoiles (bronze, argent, or) qui les distinguent sans elle. */
+.medaille { --metal: #c98a4e; --metal-ombre: #7c4a1f; --ruban: #a8323a; display: inline-block; width: 34px; height: 41px; flex: none; }
+.medaille.argent { --metal: #d8dee3; --metal-ombre: #59646c; }
+.medaille.or { --metal: #f2c94c; --metal-ombre: #8a5d05; }
+/* En petit, sans ruban : le disque et ses étoiles, plus lisibles. */
+.medaille.petite .ruban, .medaille.mini .ruban { display: none; }
+.medaille.petite svg, .medaille.mini svg { margin-top: -14%; }
+.medaille svg { display: block; width: 100%; height: 100%; overflow: visible; }
+.medaille .ruban { fill: var(--ruban); }
+.medaille .disque { fill: var(--metal); stroke: var(--metal-ombre); stroke-width: 2; }
+.medaille .bord-int { fill: none; stroke: var(--metal-ombre); stroke-width: 1; opacity: .5; }
+.medaille .etoile { fill: var(--metal-ombre); }
+.medaille.vide .disque { fill: none; stroke: var(--color-craie-douce); stroke-width: 1.6; stroke-dasharray: 3 2.6; }
+.medaille.mini { width: 20px; height: 24px; margin-right: 6px; vertical-align: -5px; }
+.medaille.petite { width: 24px; height: 29px; }
+.medaille.grande { width: clamp(64px, 10vmin, 92px); height: auto; aspect-ratio: 40 / 48; margin: 0 auto 4px; }
+.medaille.neuve { animation: tamponner .6s cubic-bezier(.3, 1.6, .5, 1) .15s both; }
+@media (max-height: 440px) { .medaille.grande { width: 44px; margin-bottom: 0; } .fin-epreuve .grand { margin-top: 0; } }
+.carnet-liste .medailles { display: flex; gap: 6px; margin-top: 4px; }
+.case-medaille { display: grid; justify-items: center; gap: 1px; }
+.case-medaille .traits { font: 700 12px var(--font-craie); letter-spacing: .1em; line-height: 1; opacity: .7; }
+.note-tableau .epreuve-ouverte { color: var(--craie-jaune); font-size: clamp(18px, 2.6vw, 24px); }
+.note-tableau .epreuve-fermee { font-size: clamp(14px, 1.9vw, 16px); opacity: .9; }
+.bouton-epreuve { display: inline-flex; align-items: center; }
+.bouton-epreuve.ferme { opacity: .6; }
+.bouton-epreuve.ferme svg { width: 16px; height: 16px; margin-right: 6px; }
 
 /* L'histoire : l'image (ou la petite vidéo) épinglée au tableau, le texte écrit à côté (écran large) ou dessous (en hauteur). */
 .cine { position: fixed; inset: 0; z-index: 50; display: grid; align-content: center; justify-content: center; align-items: center;

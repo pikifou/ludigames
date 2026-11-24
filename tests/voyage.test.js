@@ -3,7 +3,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { SEUIL_ETAPE, besoinEtape, nouvellesEtapes, tourFait, ZONES_IDS } from '../monde-a-la-craie/js/regles.js';
 import { LISTES, niveauDe } from '../monde-a-la-craie/js/niveaux.js';
-import { charger, sauver, versPartage, depuisPartage, enregistrerManche } from '../monde-a-la-craie/js/progres.js';
+import { charger, sauver, versPartage, depuisPartage, enregistrerManche, enregistrerEpreuve } from '../monde-a-la-craie/js/progres.js';
 import { readFileSync } from 'node:fs';
 
 function memoire() { const m = new Map(); return { getItem: k => (m.has(k) ? m.get(k) : null), setItem: (k, v) => m.set(k, String(v)) }; }
@@ -27,25 +27,41 @@ test('chaque continent a des pays Facile, et le seuil d’étape est atteignable
   assert.equal(Object.values(besoin).reduce((a, b) => a + b), 42);
 });
 
-test('une étape se gagne aux trois quarts des pays Facile du continent', () => {
-  const oc = FACILES.oceanie;
-  assert.deepEqual(nouvellesEtapes(FACILES, new Set(oc.slice(0, 2)), []), []);
-  assert.deepEqual(nouvellesEtapes(FACILES, new Set(oc.slice(0, 3)), []), ['oceanie']);
-  assert.equal(besoinEtape(oc, new Set(oc.slice(0, 1))).manque, 2);
+test('une étape se gagne avec une médaille, quelle qu’elle soit, à l’épreuve Facile du continent (ADR-006)', () => {
+  assert.deepEqual(nouvellesEtapes({}, []), []);
+  assert.deepEqual(nouvellesEtapes({ 'oceanie-facile': 'bronze' }, []), ['oceanie']);
+  assert.equal(besoinEtape(FACILES.oceanie, new Set(FACILES.oceanie.slice(0, 1))).manque, 2);
   // déjà tamponnée : pas une deuxième fois
-  assert.deepEqual(nouvellesEtapes(FACILES, new Set(oc), ['oceanie']), []);
+  assert.deepEqual(nouvellesEtapes({ 'oceanie-facile': 'or' }, ['oceanie']), []);
 });
 
-test('des pays connus hors du Facile ne comptent pas pour le tampon', () => {
-  assert.deepEqual(nouvellesEtapes(FACILES, new Set(['FM', 'MH', 'NR', 'TV', 'KI', 'PW']), []), []);
+test('une médaille en Moyen ou en Difficile ne donne pas le tampon', () => {
+  assert.deepEqual(nouvellesEtapes({ 'europe-moyen': 'or', 'europe-difficile': 'or', 'europe-abc': 'or' }, []), []);
 });
 
 test('les six tampons : tour du monde fait', () => {
-  const tout = new Set(Object.values(FACILES).flat());
-  const e = nouvellesEtapes(FACILES, tout, []);
+  const tout = Object.fromEntries(ZONES_IDS.map(z => [z + '-facile', 'bronze']));
+  const e = nouvellesEtapes(tout, []);
   assert.deepEqual(e, ZONES_IDS);
   assert.ok(tourFait(e));
   assert.ok(!tourFait(e.slice(1)));
+});
+
+test('les médailles : la meilleure reste, gardée et additionnée d’un appareil à l’autre', () => {
+  const s = memoire();
+  const etat = charger('Lou', s);
+  assert.deepEqual(etat.medailles, {});
+  const r1 = enregistrerEpreuve(etat, 'europe', 'facile', new Map([['FR', true], ['DE', false]]), 'argent');
+  assert.deepEqual(r1, { medaille: 'argent', avant: null, mieux: true });
+  assert.ok(etat.connus.has('FR') && !etat.connus.has('DE'), 'l’épreuve compte aussi comme un entraînement');
+  const r2 = enregistrerEpreuve(etat, 'europe', 'facile', new Map(), 'bronze');
+  assert.deepEqual(r2, { medaille: 'bronze', avant: 'argent', mieux: false });
+  assert.equal(etat.medailles['europe-facile'], 'argent', 'une médaille ne redescend pas');
+  sauver('Lou', etat, s);
+  assert.deepEqual(charger('Lou', s).medailles, { 'europe-facile': 'argent' });
+  assert.ok(depuisPartage(etat, { connus: [], medailles: { 'europe-facile': 'or', 'asie-moyen': 'bronze', 'x': 'or', 'asie-facile': 'plomb' } }));
+  assert.deepEqual(etat.medailles, { 'europe-facile': 'or', 'asie-moyen': 'bronze' });
+  assert.deepEqual(versPartage(etat).medailles, etat.medailles);
 });
 
 test('le voyage est gardé, et un tampon ne s’enlève pas quand on oublie un pays', () => {

@@ -2,12 +2,13 @@
 import { chargerMonde } from './carte.js';
 import { fiche, prochainSavoir } from './savoirs.js';
 import { charger, sauver, cle, cleRecord, versPartage, depuisPartage } from './progres.js';
-import { dansNiveau, niveauValide, niveauDe } from './niveaux.js';
-import { ZONES_IDS, besoinEtape, nouvellesEtapes, tourFait, pourcentage } from './regles.js';
+import { dansNiveau, niveauValide } from './niveaux.js';
+import { ZONES_IDS, besoinEpreuve, nouvellesEtapes, tourFait, pourcentage, cleEpreuve } from './regles.js';
 import { histoire } from './histoire.js';
 import { langue, choisirLangue } from './textes.js';
 import { musique, pauseMusique } from './sons.js';
 import { brancherSon } from './reglage-son.js';
+import { brancherLecture } from './lecture.js';
 import { t } from './textes.js';
 import { accueil } from './ecrans/accueil.js';
 import { partie } from './ecrans/partie.js';
@@ -40,8 +41,8 @@ if (Ludi) {
     for (let i = 0; i < 20 && !Ludi.player(); i++) await new Promise(r => setTimeout(r, 50));
     joueur = Ludi.player() ? Ludi.player().name : null;
     Ludi.onWrapUp(minutes => { if (minutes === 0) finDuTemps = true; });   // c'est l'heure : pas de nouvelle manche
-    // La pause de Ludiworld : plus de musique ni de voix.
-    Ludi.onPause(() => { pauseMusique(true); globalThis.speechSynthesis?.cancel(); });
+    // La pause de Ludiworld : plus de musique ni de voix, et la manche en cours se met en pause (le chrono s'arrête).
+    Ludi.onPause(() => { pauseMusique(true); globalThis.speechSynthesis?.cancel(); window.jeu?.app?.pauseLudi?.(); });
   }
 }
 const dansLudi = !!(Ludi && Ludi.inLauncher());
@@ -56,17 +57,12 @@ if (Ludi) {
 }
 // Le son : musique, bruitages et voix, réglés par Ludiworld (ou sur cet appareil, ouvert seul). Tout est allumé au départ.
 brancherSon();
+// La lecture à voix haute : on touche un texte pour l'entendre ; le réglage « Lecture » dit ce qui se lit de soi-même.
+brancherLecture();
 choisirLangue(etat.langue || langue);
 
-// Le tour du monde : les pays Facile de chaque continent (un tampon aux trois quarts), et tous les pays interrogés (« complet »).
-const FACILES = Object.fromEntries(ZONES_IDS.map(z => [z, []]));
-const TOUS = [];
-for (const f of monde) {
-  const p = f.properties;
-  if (!p.quiz) continue;
-  TOUS.push(p.code);
-  if (niveauDe(p.code) === 'facile' && FACILES[p.zone]) FACILES[p.zone].push(p.code);
-}
+// Tous les pays interrogés (« complet » : la part du monde connue).
+const TOUS = monde.filter(f => f.properties.quiz).map(f => f.properties.code);
 // Ce que le jeu dit à Ludiworld de sa progression : fini quand le tour du monde est fait, complet = la part du monde connue (tous niveaux).
 function direEtat() {
   if (!Ludi) return;
@@ -88,18 +84,25 @@ const app = {
     if (nom === 'question') Ludi.skill('geographie.pays', proprietes.get(d.code).fr, d.premierCoup);
     if (nom === 'fin') {
       Ludi.progress('zone-' + d.zone, Math.round(d.pourcentage * 100));
-      Ludi.score('chrono-' + cleRecord(d.zone, d.niveau), Math.round(d.secondes * 10) / 10, { better: 'lower' });
-      Ludi.checkpoint('fin-de-manche');
+      if (!d.epreuve) Ludi.score('chrono-' + cleRecord(d.zone, d.niveau), Math.round(d.secondes * 10) / 10, { better: 'lower' });
+      Ludi.checkpoint(d.epreuve ? 'fin-d-epreuve' : 'fin-de-manche');
     }
   },
   encoreUneManche() { return !finDuTemps; },
+  pauseLudi: null,   // l'écran en cours met sa partie en pause quand Ludiworld le demande (la manche)
 
   // ---------- le tour du monde de Nina ----------
   partConnue() { return pourcentage(TOUS, etat.connus); },
-  besoinEtape(zone) { return besoinEtape(FACILES[zone], etat.connus); },
+  // L'épreuve d'un continent à un niveau : ouverte ou non, combien de pays connaître encore, la meilleure médaille.
+  epreuve(zone, niveau) {
+    if (!ZONES_IDS.includes(zone)) return null;   // pas d'épreuve sur le monde entier
+    const b = besoinEpreuve(app.paysDeZone(zone, niveau).map(p => p.code), etat.connus);
+    return { ouverte: b.manque === 0, manque: b.manque, medaille: etat.medailles[cleEpreuve(zone, niveau)] || null };
+  },
+  besoinEtape(zone) { return app.epreuve(zone, 'facile'); },
   // Ajoute au carnet les tampons gagnés. Rend les nouveaux tampons, et vrai si le tour du monde vient d'être fait.
   majVoyage() {
-    const v = etat.voyage, nouvelles = nouvellesEtapes(FACILES, etat.connus, v.etapes);
+    const v = etat.voyage, nouvelles = nouvellesEtapes(etat.medailles, v.etapes);
     v.etapes.push(...nouvelles);
     const finiMaintenant = !v.fini && tourFait(v.etapes);
     if (finiMaintenant) v.fini = true;
@@ -110,7 +113,7 @@ const app = {
   // ?sanshistoire : les tests des autres écrans, sans l'intro ni la fin qui viennent toutes seules.
   histoireAuto: !params.has('sanshistoire'),
   tamponsNeufs: [],   // gagnés pendant une manche : l'accueil les tamponne en arrivant
-  histoire(nom) { return histoire(nom, { sansVideo: params.has('vite') || params.has('sansvideo') }); },
+  histoire(nom, zone) { return histoire(nom, { sansVideo: params.has('vite') || params.has('sansvideo'), zone, langue }); },
 
   nom(code) { const p = proprietes.get(code); return p ? p[langue] : ''; },
   // Avec le pays de rattachement pour un territoire : « Groenland (Danemark) ».
@@ -134,14 +137,14 @@ const app = {
     return svg;
   },
 
-  aller(nom, zone) {
+  aller(nom, zone, mode) {
     quitter();
     const hud = app.hud.cloneNode(false);   // sans les écouteurs de l'écran d'avant
     app.hud.replaceWith(hud);
     app.hud = hud;
     window.jeu.ecran = nom;
     musique(MUSIQUES[nom]);
-    quitter = ECRANS[nom](app, zone) || (() => {});
+    quitter = ECRANS[nom](app, zone, mode) || (() => {});
   },
 };
 

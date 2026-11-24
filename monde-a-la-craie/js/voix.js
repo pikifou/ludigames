@@ -14,8 +14,10 @@ export function dire(texte, langue) {
   globalThis.__ditsJoues?.push(texte); // pour les tests : ce que la voix a eu à lire
   const v = voixPour(langue);
   if (!synth || !v) return;
-  synth.cancel();
-  const u = new SpeechSynthesisUtterance(texte);
-  u.voice = v; u.lang = v.lang; u.rate = 0.9;
-  synth.speak(u);
+  try {
+    synth.cancel();
+    const u = new SpeechSynthesisUtterance(texte);
+    u.voice = v; u.lang = v.lang; u.rate = 0.9;
+    synth.speak(u);
+  } catch { /* la voix de l'appareil refuse : le jeu continue sans */ }
 }

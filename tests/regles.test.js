@@ -1,7 +1,7 @@
 // Règles des manches : node --test tests/regles.test.js
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { TAILLE_MANCHE, REVISIONS, choisirManche, Manche, pourcentage, mondeDebloque } from '../monde-a-la-craie/js/regles.js';
+import { TAILLE_MANCHE, REVISIONS, choisirManche, Manche, Epreuve, medaillePour, meilleure, besoinEpreuve, pourcentage, mondeDebloque } from '../monde-a-la-craie/js/regles.js';
 
 const zone = Array.from({ length: 20 }, (_, i) => ({ code: 'P' + (i + 1), rang: i + 1 }));
 const rang = c => +c.slice(1);
@@ -80,12 +80,41 @@ test('Manche : raté deux fois, il est montré et la manche continue', () => {
   assert.equal(m.faites, 2);
 });
 
-test('Manche : toucher la mer ou un pays déjà trouvé est ignoré', () => {
+test('Manche : toucher la mer est ignoré ; un pays déjà trouvé est une erreur (pas d’élimination, ADR-004)', () => {
   const m = new Manche(codes);
   m.toucher('A');
   assert.equal(m.toucher(null).resultat, 'ignore');
-  assert.equal(m.toucher('A').resultat, 'ignore');
   assert.equal(m.question, 'B');
+  assert.deepEqual(m.toucher('A'), { resultat: 'faux', bon: 'B' });
+});
+
+test('Épreuve : chaque pays une fois, une erreur compte et ne revient pas', () => {
+  const e = new Epreuve(['A', 'B', 'C', 'D'], hasard(2));
+  assert.equal(e.total, 4);
+  const vus = [];
+  const q1 = e.question; vus.push(q1);
+  assert.equal(e.toucher('Z').resultat, 'faux');
+  assert.equal(e.toucher(e.question).resultat, 'ignore', 'attend la fin de l’animation');
+  e.reprendre();
+  while (!e.finie) { vus.push(e.question); e.toucher(e.question); }
+  assert.deepEqual([...vus].sort(), ['A', 'B', 'C', 'D']);
+  assert.equal(e.erreurs, 1);
+  assert.equal(e.trouves, 3);
+  assert.equal(e.resultats.get(q1), false);
+  assert.equal(e.medaille, 'argent');
+});
+
+test('Épreuve : les médailles (or sans erreur, argent 1 ou 2, bronze au-delà) et la meilleure des deux', () => {
+  assert.deepEqual([0, 1, 2, 3, 20].map(medaillePour), ['or', 'argent', 'argent', 'bronze', 'bronze']);
+  assert.equal(meilleure('bronze', 'or'), 'or');
+  assert.equal(meilleure('argent', 'bronze'), 'argent');
+  assert.equal(meilleure(undefined, 'bronze'), 'bronze');
+});
+
+test('Épreuve : ouverte aux trois quarts des pays connus', () => {
+  const c = ['A', 'B', 'C', 'D'];
+  assert.equal(besoinEpreuve(c, new Set(['A', 'B'])).manque, 1);
+  assert.equal(besoinEpreuve(c, new Set(['A', 'B', 'C'])).manque, 0);
 });
 
 test('Manche : finie après 12 pays', () => {

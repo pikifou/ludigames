@@ -71,7 +71,7 @@ test("la progression confiée à Ludiworld : sans les réglages de l'appareil, e
   const a = charger('Léo', memoire());
   a.connus = new Set(['FR', 'DE', 'JP']); a.meilleurs = { europe: 61.5 }; a.niveaux = { europe: 'moyen' }; a.langue = 'en';
   const envoye = JSON.parse(JSON.stringify(versPartage(a)));
-  assert.deepEqual(Object.keys(envoye).sort(), ['connus', 'meilleurs', 'niveaux', 'voyage']);
+  assert.deepEqual(Object.keys(envoye).sort(), ['connus', 'medailles', 'meilleurs', 'niveaux', 'voyage']);
   const b = charger('Léo', memoire());
   b.langue = 'fr';
   assert.equal(depuisPartage(b, envoye), true);

@@ -43,7 +43,8 @@ export class Manche {
 
   toucher(code) {
     const q = this.question;
-    if (q === null || this.bloque || code == null || this.trouvesSet.has(code)) return { resultat: 'ignore' };
+    // Un pays déjà trouvé se touche comme un autre (ADR-004) : on ne trouve plus le dernier par élimination.
+    if (q === null || this.bloque || code == null) return { resultat: 'ignore' };
     this.file.shift();
     if (code === q) {
       this.trouvesSet.add(q); this.trouves++; this.faites++;
@@ -66,23 +67,64 @@ export function mondeDebloque(pourcentages) {
   return ZONES_IDS.every(z => (pourcentages[z] || 0) >= SEUIL_MONDE);
 }
 
-// ---------- le tour du monde de Nina ----------
-// Une étape (un tampon dans le carnet) par continent : on la gagne quand on connaît les trois quarts des pays du niveau Facile
-// de ce continent (Europe 11 sur 14, Afrique et Asie 9 sur 12, les deux Amériques 5 sur 6, Océanie 3 sur 4).
-// Les six tampons : le tour du monde est fait (42 pays sur les 54 du Facile, environ 78 %). Un tampon gagné ne s'enlève jamais.
-export const SEUIL_ETAPE = 0.75;
+// ---------- l'épreuve (ADR-005, ADR-006) ----------
+// Les manches entraînent. L'épreuve d'un continent à un niveau s'ouvre quand les trois quarts de ses pays de ce niveau sont connus
+// (en Facile : Europe 11 sur 14, Afrique et Asie 9 sur 12, les deux Amériques 5 sur 6, Océanie 3 sur 4).
+// On y cherche tous les pays du niveau, chacun une fois. L'or sans erreur, l'argent avec une ou deux, le bronze au-delà :
+// finir donne toujours une médaille, et on peut la refaire pour viser mieux. Une médaille ne redescend jamais.
+export const SEUIL_EPREUVE = 0.75;
+export const SEUIL_ETAPE = SEUIL_EPREUVE;   // ancien nom
+export const MEDAILLES = ['bronze', 'argent', 'or'];   // de la moins bonne à la meilleure
 
-// Combien de pays connus il faut sur un continent, et combien il en manque. facilesDeZone : les codes Facile du continent.
-export function besoinEtape(facilesDeZone, connus) {
-  const besoin = Math.ceil(facilesDeZone.length * SEUIL_ETAPE);
-  const faits = facilesDeZone.filter(c => connus.has(c)).length;
+// Combien de pays connus il faut pour ouvrir l'épreuve, et combien il en manque. codes : les pays du continent au niveau choisi.
+export function besoinEpreuve(codes, connus) {
+  const besoin = Math.ceil(codes.length * SEUIL_EPREUVE);
+  const faits = codes.filter(c => connus.has(c)).length;
   return { besoin, faits, manque: Math.max(0, besoin - faits) };
 }
+export const besoinEtape = besoinEpreuve;   // ancien nom
+
+export function medaillePour(erreurs) { return erreurs === 0 ? 'or' : erreurs <= 2 ? 'argent' : 'bronze'; }
+// La meilleure de deux médailles (undefined : pas de médaille).
+export function meilleure(a, b) { return MEDAILLES.indexOf(a) >= MEDAILLES.indexOf(b) ? a : b; }
+export const cleEpreuve = (zone, niveau) => zone + '-' + niveau;
+
+// Une épreuve : chaque pays une fois, dans un ordre mélangé. Une erreur montre le bon pays, compte, et l'épreuve continue
+// (le pays raté ne revient pas). Même façon de jouer qu'une manche : question, toucher(), reprendre(), finie.
+export class Epreuve {
+  constructor(codes, rand = Math.random) {
+    this.file = melanger(codes, rand);
+    this.total = codes.length;
+    this.erreurs = 0;
+    this.resultats = new Map();   // code -> vrai si trouvé du premier coup
+    this.trouves = 0;
+    this.faites = 0;
+    this.bloque = false;
+  }
+  reprendre() { this.bloque = false; }
+  get question() { return this.file.length ? this.file[0] : null; }
+  get finie() { return this.file.length === 0; }
+  get medaille() { return medaillePour(this.erreurs); }
+
+  toucher(code) {
+    const q = this.question;
+    if (q === null || this.bloque || code == null) return { resultat: 'ignore' };
+    this.file.shift();
+    this.faites++;
+    if (code === q) { this.trouves++; this.resultats.set(q, true); return { resultat: 'juste' }; }
+    this.erreurs++; this.bloque = true; this.resultats.set(q, false);
+    return { resultat: 'faux', bon: q };
+  }
+}
+
+// ---------- le tour du monde de Nina ----------
+// Une étape (un tampon dans le carnet) par continent : on la gagne avec une médaille, quelle qu'elle soit, à l'épreuve Facile
+// de ce continent (ADR-006). Les six tampons : le tour du monde est fait. Un tampon gagné ne s'enlève jamais.
 
 // Les étapes gagnées maintenant, en plus de celles déjà dans le carnet (dans l'ordre des continents).
-// faciles : { zone: [codes Facile] }. etapes : les continents déjà tamponnés, dans l'ordre où ils l'ont été.
-export function nouvellesEtapes(faciles, connus, etapes) {
-  return ZONES_IDS.filter(z => !etapes.includes(z) && faciles[z] && faciles[z].length && besoinEtape(faciles[z], connus).manque === 0);
+// medailles : { 'europe-facile': 'or', … }. etapes : les continents déjà tamponnés, dans l'ordre où ils l'ont été.
+export function nouvellesEtapes(medailles, etapes) {
+  return ZONES_IDS.filter(z => !etapes.includes(z) && MEDAILLES.includes(medailles[cleEpreuve(z, 'facile')]));
 }
 
 export function tourFait(etapes) { return ZONES_IDS.every(z => etapes.includes(z)); }

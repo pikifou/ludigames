@@ -2,6 +2,8 @@
 // Un tampon gagné : encre pleine, penché, avec une coche. Pas encore : un rond en pointillés, le continent pâle.
 import { ZONES, cadrePoints } from './zones.js';
 import { t } from './textes.js';
+import { MEDAILLES } from './regles.js';
+import { NIVEAUX } from './niveaux.js';
 
 const d3 = globalThis.d3;
 const formes = new Map();   // zone -> le tracé de son continent dans un carré de 40 (calculé une fois)
@@ -25,6 +27,29 @@ export function tampon(monde, zone, gagne, langue, classe = '') {
       ${gagne ? '<path class="coche" d="M27 30.5l3.2 3.2 6-7"/>' : ''}</svg></span>`;
 }
 
+// Une médaille d'épreuve : sa couleur, et une, deux ou trois étoiles (bronze, argent, or) pour la distinguer sans les couleurs.
+// type null : la place d'une médaille pas encore gagnée (un rond en pointillés).
+const ETOILES = { 1: [20], 2: [14.5, 25.5], 3: [11, 20, 29] };
+function etoile(cx, cy, r) {
+  const pts = [];
+  for (let i = 0; i < 10; i++) {
+    const a = -Math.PI / 2 + i * Math.PI / 5, rr = i % 2 ? r * 0.45 : r;
+    pts.push((cx + rr * Math.cos(a)).toFixed(1) + ',' + (cy + rr * Math.sin(a)).toFixed(1));
+  }
+  return `<polygon class="etoile" points="${pts.join(' ')}"/>`;
+}
+export function medaille(type, classe = '') {
+  if (!MEDAILLES.includes(type)) {
+    return `<span class="medaille vide ${classe}" role="img" aria-label="${t('pasDeMedaille')}"><svg viewBox="0 0 40 48" aria-hidden="true">
+      <circle class="disque" cx="20" cy="28" r="15"/></svg></span>`;
+  }
+  const n = MEDAILLES.indexOf(type) + 1;
+  const etoiles = ETOILES[n].map((x, i) => etoile(x, n === 3 && i === 1 ? 26.5 : 29, n === 3 ? 4.6 : 5.4)).join('');
+  return `<span class="medaille ${type} ${classe}" role="img" aria-label="${t('medaille_' + type)}"><svg viewBox="0 0 40 48" aria-hidden="true">
+    <path class="ruban" d="M11 2h7l4 13h-7zM29 2h-7l-4 13h7z"/>
+    <circle class="disque" cx="20" cy="28" r="15"/><circle class="bord-int" cx="20" cy="28" r="11.5"/>${etoiles}</svg></span>`;
+}
+
 // La bande du carnet sur l'accueil : Nina, les six tampons, et où on en est.
 export function carnet(app) {
   const v = app.etat.voyage, n = v.etapes.length;
@@ -38,16 +63,20 @@ export function carnet(app) {
     <span class="carnet-corps"><span class="tampons">${tampons}</span><span class="carnet-etat">${etat}</span></span></button>`;
 }
 
-// Le carnet ouvert : chaque continent, son tampon, et ce qu'il reste à faire pour l'avoir.
+// Le carnet ouvert : chaque continent, son tampon, ses trois médailles (Facile, Moyen, Difficile : un, deux, trois traits),
+// et ce qu'il reste à faire pour le tampon : connaître des pays pour ouvrir l'épreuve Facile, puis la passer.
 export function pageCarnet(app) {
   const v = app.etat.voyage;
   const lignes = ZONES.map(z => {
-    const gagne = v.etapes.includes(z.id), { manque } = app.besoinEtape(z.id);
-    return `<li>${tampon(app.monde, z, gagne, app.langue, 'grand')}<span class="craie">${z[app.langue]}</span>
-      <small>${gagne ? t('carnetGagne') : t(manque > 1 ? 'carnetManque' : 'carnetManqueUn', { n: manque })}</small></li>`;
+    const gagne = v.etapes.includes(z.id), e = app.epreuve(z.id, 'facile');
+    const etat = gagne ? t('carnetGagne') : e.ouverte ? t('carnetOuverte') : t(e.manque > 1 ? 'carnetManque' : 'carnetManqueUn', { n: e.manque });
+    const medailles = NIVEAUX.map((n, i) => `<span class="case-medaille">${medaille(app.epreuve(z.id, n).medaille, 'petite')}
+      <span class="traits" aria-label="${t(n)}">${'|'.repeat(i + 1)}</span></span>`).join('');
+    return `<li>${tampon(app.monde, z, gagne, app.langue, 'grand')}<span class="craie lisible">${z[app.langue]}</span>
+      <small class="lisible">${etat}</small><span class="medailles">${medailles}</span></li>`;
   }).join('');
-  return `<p class="grand craie">${t('carnetTitre')}</p>
-    <p class="carnet-consigne">${t(v.fini ? 'carnetFini' : 'carnetConsigne')}</p>
+  return `<p class="grand craie lisible">${t('carnetTitre')}</p>
+    <p class="carnet-consigne lisible">${t(v.fini ? 'carnetFini' : 'carnetConsigne')}</p>
     <ul class="carnet-liste">${lignes}</ul>
     <div class="boutons"><button class="bouton-craie plein" data-action="fermer">${t('retour')}</button></div>
     <button class="lien-craie" data-action="revoir-intro">${t('revoirDepart')}</button>

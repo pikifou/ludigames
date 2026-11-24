@@ -4,8 +4,8 @@ import { creerCarte } from '../carte.js';
 import { zoneParId } from '../zones.js';
 import { t } from '../textes.js';
 import { son } from '../sons.js';
-import { dire, voixDisponible } from '../voix.js';
-import { voixActive } from '../reglage-son.js';
+import { voixDisponible } from '../voix.js';
+import { lire, lireAuto } from '../lecture.js';
 import { ICONES } from '../icones.js';
 import { CAPITALE } from '../savoirs.js';
 
@@ -14,14 +14,14 @@ export function decouvrir(app, zoneId) {
   const zone = zoneParId(zoneId);
   const dansLaZone = f => zoneId === 'monde' || f.properties.zone === zoneId;
   const avecFiche = app.monde.some(f => dansLaZone(f) && app.fiche(f.properties.code));
-  // La voix lit le nom touché quand le réglage « Voix » est allumé (le bouton Écouter se cache sinon : html.sans-voix).
-  const voixOk = voixDisponible(app.langue), avecVoix = () => voixActive() && voixOk;
+  // On touche un texte pour l'entendre (js/lecture.js) ; le bouton Écouter lit la fiche (il se cache voix coupée : html.sans-voix).
+  const voixOk = voixDisponible(app.langue);
   hud.innerHTML = `
-    <header class="haut haut-decouvrir"><div class="nom-ligne"><h2 id="nom" class="nom craie consigne" aria-live="polite">${t('toucheUnPays')}</h2></div></header>
+    <header class="haut haut-decouvrir"><div class="nom-ligne"><h2 id="nom" class="nom craie consigne lisible" aria-live="polite">${t('toucheUnPays')}</h2></div></header>
     <div class="coin-bas droite"><button class="bouton-rond" data-action="vue" aria-label="${t('vueEntiere')}" title="${t('vueEntiere')}">${ICONES.vue}</button></div>
     <div class="coin-bas gauche"><button class="bouton-rond" data-action="retour" aria-label="${t('retour')}" title="${t('retour')}">${ICONES.retour}</button>
       <span class="zone-courante craie">${zone[app.langue]}</span></div>
-    ${avecFiche ? `<aside class="fiche-pays" aria-live="polite"><p class="fiche-vide">${t('ficheConsigne')}</p></aside>` : ''}`;
+    ${avecFiche ? `<aside class="fiche-pays" aria-live="polite"><p class="fiche-vide lisible">${t('ficheConsigne')}</p></aside>` : ''}`;
   const panneau = hud.querySelector('.fiche-pays');
   const nom = hud.querySelector('#nom');
   // La place du nom le plus long (avec son rattachement) est réservée : il ne recouvre jamais la carte.
@@ -60,16 +60,16 @@ export function decouvrir(app, zoneId) {
     nom.textContent = app.nomComplet(code);
     nom.classList.remove('ecrit'); void nom.offsetWidth; nom.classList.add('ecrit');
     son('craie');
-    if (avecVoix()) dire(app.nom(code), app.langue);
     if (panneau) remplirFiche(code);
+    lireAuto(texteFiche(code));
   });
 
   function remplirFiche(code) {
     const f = app.fiche(code);
-    if (!f) { panneau.innerHTML = `<p class="fiche-vide">${t('pasDeSavoir')}</p>`; return; }
-    panneau.innerHTML = `<div class="fiche-tete"><p class="capitale craie">${f.capitale ? `<span aria-hidden="true">⭐</span> ${CAPITALE[app.langue]}${f.capitale}` : ''}</p>
+    if (!f) { panneau.innerHTML = `<p class="fiche-vide lisible">${t('pasDeSavoir')}</p>`; return; }
+    panneau.innerHTML = `<div class="fiche-tete"><p class="capitale craie lisible">${f.capitale ? `<span aria-hidden="true">⭐</span> ${CAPITALE[app.langue]}${f.capitale}` : ''}</p>
         ${voixOk ? `<button class="bouton-rond petit" data-action="ecouter-fiche" aria-label="${t('ecouterFiche')}" title="${t('ecouterFiche')}">${ICONES.voix}</button>` : ''}</div>
-      <ul>${f.faits.map(x => `<li class="fait"><span class="emoji" aria-hidden="true">${x.e}</span><span>${x.texte}</span></li>`).join('')}</ul>`;
+      <ul>${f.faits.map(x => `<li class="fait lisible"><span class="emoji" aria-hidden="true">${x.e}</span><span>${x.texte}</span></li>`).join('')}</ul>`;
     panneau.classList.remove('pose'); void panneau.offsetWidth; panneau.classList.add('pose');
     panneau.dataset.code = code;
   }
@@ -79,11 +79,14 @@ export function decouvrir(app, zoneId) {
     if (!b) return;
     if (b.dataset.action === 'vue') carte.vueEntiere();
     else if (b.dataset.action === 'retour') app.aller('accueil');
-    else if (b.dataset.action === 'ecouter-fiche') {
-      const code = panneau.dataset.code, f = app.fiche(code);
-      if (f) dire([app.nom(code), ...(f.capitale ? [CAPITALE[app.langue] + f.capitale] : []), ...f.faits.map(x => x.texte)].join('. '), app.langue);
-    }
+    else if (b.dataset.action === 'ecouter-fiche') lire(texteFiche(panneau.dataset.code));
   });
+
+  // Le pays touché et ce qu'on en sait, d'une traite.
+  function texteFiche(code) {
+    const f = app.fiche(code);
+    return [app.nom(code), ...(f?.capitale ? [CAPITALE[app.langue] + f.capitale] : []), ...(f ? f.faits.map(x => x.texte) : [])].join('. ');
+  }
 
   return () => carte.detruire();
 }

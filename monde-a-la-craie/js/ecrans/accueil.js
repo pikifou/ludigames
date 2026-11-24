@@ -8,8 +8,9 @@ import { ICONES } from '../icones.js';
 import { voixDisponible } from '../voix.js';
 import { son } from '../sons.js';
 import { interrupteursSon } from '../reglage-son.js';
+import { NIVEAUX_LECTURE, niveauLecture, choisirLecture, lectureParLudiworld, lire } from '../lecture.js';
 import { pageCredits } from './credits.js';
-import { carnet, pageCarnet, tampon, trajet } from '../voyage.js';
+import { carnet, pageCarnet, tampon, trajet, medaille } from '../voyage.js';
 
 // Où écrire le nom de chaque continent sur la carte du monde [longitude, latitude], et sa craie.
 const ETIQUETTES = {
@@ -96,7 +97,7 @@ export function accueil(app) {
 
   function choisir(id) {
     if (id === 'monde' && !mondeOuvert) {
-      ouvrir(`<p class="grand craie">${t('monde')}</p><p>${t('mondeFerme')}</p>
+      ouvrir(`<p class="grand craie lisible">${t('monde')}</p><p class="lisible">${t('mondeFerme')}</p>
         <div class="boutons"><button class="bouton-craie" data-action="fermer">${t('retour')}</button></div>`);
       return;
     }
@@ -110,14 +111,29 @@ export function accueil(app) {
         <span class="traits" aria-hidden="true">${ouvert ? '|'.repeat(i + 1) : ICONES.cadenas}</span><span class="craie">${t(n)}</span>
         <small>${t('niveauPays', { n: app.paysDeZone(id, n).length, p: Math.round(connu(id, n) * 100) })}</small></button>`;
     }).join('');
-    ouvrir(`<p class="grand craie">${nom}</p>
+    ouvrir(`<p class="grand craie lisible">${nom}</p>
       <div class="niveaux" role="group" aria-label="${t('niveau')}">${niveaux}</div>
-      <p class="niveau-ferme" hidden>${t('niveauFerme')}</p>
+      <p class="niveau-ferme lisible" hidden>${t('niveauFerme')}</p>
       <div class="boutons">
         <button class="bouton-craie plein" data-action="jouer" data-cible="${id}">${t('jouer')}</button>
+        ${boutonEpreuve(id, choisi)}
         <button class="bouton-craie" data-action="decouvrir" data-cible="${id}">${t('decouvrir')}</button>
       </div>
+      <p class="epreuve-fermee lisible" hidden></p>
       <button class="lien-craie" data-action="fermer">${t('retour')}</button>`);
+  }
+
+  // L'épreuve du continent au niveau choisi (pas sur le monde entier) : fermée tant qu'on n'en connaît pas les trois quarts.
+  function boutonEpreuve(id, n) {
+    const e = app.epreuve(id, n);
+    if (!e) return '';
+    return `<button class="bouton-craie bouton-epreuve${e.ouverte ? '' : ' ferme'}" data-action="epreuve" data-cible="${id}"${e.ouverte ? '' : ` aria-disabled="true" data-manque="${e.manque}"`}>
+      ${e.ouverte ? (e.medaille ? medaille(e.medaille, 'mini') : '') : ICONES.cadenas}<span>${t('epreuve')}</span></button>`;
+  }
+  function majEpreuve(id, n) {
+    const b = voile.querySelector('.bouton-epreuve');
+    if (b) b.outerHTML = boutonEpreuve(id, n);
+    voile.querySelector('.epreuve-fermee').hidden = true;
   }
 
   function reglages() {
@@ -126,6 +142,8 @@ export function accueil(app) {
       ${interrupteursSon(voixOk)}
       <label class="interrupteur"><span>${t('langue')}</span>
         <select data-reglage="langue"><option value="fr" ${app.langue === 'fr' ? 'selected' : ''}>Français</option><option value="en" ${app.langue === 'en' ? 'selected' : ''}>English</option></select></label>
+      ${lectureParLudiworld() ? '' : `<label class="interrupteur"><span>${t('lecture')}</span>
+        <select data-reglage="lecture">${NIVEAUX_LECTURE.map(n => `<option value="${n}" ${niveauLecture() === n ? 'selected' : ''}>${t('lecture_' + n)}</option>`).join('')}</select></label>`}
       <div class="reglages-appli"></div>
       <div class="boutons"><button class="bouton-craie" data-action="fermer">${t('retour')}</button></div>
       <button class="lien-craie" data-action="credits">${t('credits')}</button>`);
@@ -139,6 +157,7 @@ export function accueil(app) {
     for (const x of voile.querySelectorAll('.niveau')) x.setAttribute('aria-pressed', x === b);
     const id = voile.querySelector('[data-action="jouer"]').dataset.cible;
     etat.niveaux[id] = b.dataset.niveau; app.sauver();
+    majEpreuve(id, b.dataset.niveau);
   }
 
   function ouvrir(html, classe = '') { voile.innerHTML = `<div class="note-tableau ${classe}">${html}</div>`; voile.hidden = false; }
@@ -156,6 +175,17 @@ export function accueil(app) {
       app.aller('partie', b.dataset.cible);
     }
     else if (b.dataset.action === 'decouvrir') app.aller('decouvrir', b.dataset.cible);
+    else if (b.dataset.action === 'epreuve') {
+      if (b.getAttribute('aria-disabled') === 'true') {
+        const m = +b.dataset.manque, p = voile.querySelector('.epreuve-fermee');
+        p.textContent = t(m > 1 ? 'epreuveFermee' : 'epreuveFermeeUn', { n: m });
+        p.hidden = false;
+        return;
+      }
+      const n = voile.querySelector('.niveau[aria-pressed="true"]');
+      if (n) { etat.niveaux[b.dataset.cible] = n.dataset.niveau; app.sauver(); }
+      app.aller('partie', b.dataset.cible, 'epreuve');
+    }
     else if (b.dataset.action === 'reglages') reglages();
     else if (b.dataset.action === 'credits') ouvrir(pageCredits(app), 'page-credits');
     else if (b.dataset.action === 'carnet') ouvrir(pageCarnet(app), 'page-carnet');
@@ -167,6 +197,7 @@ export function accueil(app) {
     const r = e.target.dataset.reglage;
     if (!r) return;
     if (r === 'langue') { etat.langue = e.target.value; choisirLangue(etat.langue); app.sauver(); app.aller('accueil'); }
+    if (r === 'lecture') { choisirLecture(e.target.value); lire(t('lecture_' + e.target.value)); }
   });
 
   // L'histoire : le départ au tout premier lancement, le retour quand les six tampons viennent d'être réunis.

@@ -75,7 +75,7 @@ def repondre(page, code):
     toucher(page, code)
     page.wait_for_timeout(900)
     if page.locator('.savoir:not([hidden])').count():
-        page.click('.savoir')
+        page.click('.savoir .astuce')
 
 
 def interrupteur(page, nom, oui):
@@ -151,7 +151,7 @@ try:
         verifier(page.evaluate('window.__ditsJoues') == [], 'voix coupée : rien n\'est lu')
         page.wait_for_timeout(2600)
         if page.locator('.savoir:not([hidden])').count():
-            page.click('.savoir')
+            page.click('.savoir .astuce')
         while not page.evaluate('jeu.manche.finie'):
             repondre(page, page.evaluate('jeu.manche.question'))
         page.wait_for_timeout(500)
@@ -176,8 +176,9 @@ try:
         page.wait_for_selector('.cine')
         verifier(entendue(page, 'voyage'), 'l\'histoire du départ : la musique du voyage')
         page.close()
+        # le tampon vient de la médaille de l'épreuve Facile (ADR-006), ici venue d'un autre appareil
         tout_facile = ("localStorage.setItem('monde-a-la-craie.v1', JSON.stringify({ connus: %s, meilleurs: {}, niveaux: {},"
-                       " voyage: { etapes: [], intro: true, fini: false } }));")
+                       " medailles: { 'europe-facile': 'bronze' }, voyage: { etapes: [], intro: true, fini: false } }));")
         page, erreurs = ouvrir(nav)
         faciles = page.evaluate("jeu.app.paysDeZone('europe', 'facile').map(p => p.code)")
         page.close()

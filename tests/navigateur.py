@@ -257,7 +257,7 @@ def continuer(page):
     """Après une erreur sur un pays qui a ses savoirs, le jeu attend qu'on touche la note « Le savais-tu ? »."""
     page.wait_for_timeout(900)
     if page.locator('.savoir:not([hidden])').count():
-        page.click('.savoir')
+        page.click('.savoir .astuce')
 
 
 def repondre(page, code):
@@ -383,7 +383,7 @@ def jouer_dans_cadre(page, cadre):
         page.wait_for_timeout(60)
     page.wait_for_timeout(900)   # la note « Le savais-tu ? » du dernier pays
     if cadre.locator('.savoir:not([hidden])').count():
-        cadre.click('.savoir')
+        cadre.click('.savoir .astuce')
 
 
 def test_appli(nav):
@@ -502,7 +502,7 @@ def test_corrections(nav):
     c1 = page.inner_text('#chrono'); page.wait_for_timeout(1000); c2 = page.inner_text('#chrono')
     verifier(c1 == c2, f'bonne réponse : le chrono attend pendant la note ({c1} → {c2})')
     verifier('trouve' in (page.get_attribute(f'path[data-code="{q}"]', 'class') or ''), 'bonne réponse : le pays reste colorié')
-    page.click('.savoir')
+    page.click('.savoir .astuce')
     page.wait_for_timeout(300)
     suivant = page.evaluate('c => jeu.app.nom(c)', page.evaluate('jeu.manche.question'))
     verifier(page.locator('.savoir:not([hidden])').count() == 0 and page.inner_text('#nom').strip() == suivant,
@@ -655,14 +655,14 @@ def test_savoirs(nav):
         verifier(not (b['x'] <= x <= b['x'] + b['width'] and b['y'] <= y <= b['y'] + b['height']), f'{nom} : la note ne cache pas le pays entouré')
         page.screenshot(path=str(CAPTURES / f'savoirs-erreur-{nom}.png'))
         chrono = page.inner_text('#chrono')
-        page.click('.savoir')
+        page.click('.savoir .astuce')
         verifier(page.locator('.savoir').is_visible(), f'{nom} : un toucher trop rapide ne fait pas passer la note')
         page.wait_for_timeout(1800)
         verifier(page.locator('.savoir').is_visible() and page.inner_text('#nom').strip() == nomPays, f'{nom} : la manche attend qu’on ait lu')
         verifier(page.inner_text('#chrono') == chrono, f'{nom} : le chrono s’arrête pendant la lecture ({chrono} / {page.inner_text("#chrono")})')
-        page.click('.savoir')
+        page.click('.savoir .astuce')
         page.wait_for_timeout(200)
-        verifier(page.locator('.savoir').is_hidden() and page.inner_text('#nom').strip() != nomPays, f'{nom} : toucher la note fait continuer')
+        verifier(page.locator('.savoir').is_hidden() and page.inner_text('#nom').strip() != nomPays, f'{nom} : toucher « Touche la carte pour continuer » fait continuer')
         page.wait_for_timeout(1200)
         verifier(page.inner_text('#chrono') != chrono, f'{nom} : le chrono repart')
         verifier(not erreurs, f'{nom} : aucune erreur ({erreurs[:2]})')
@@ -986,8 +986,8 @@ def test_histoire(nav):
         verifier(not erreurs, f'{taille} : aucune erreur {erreurs[:2]}')
         page.close()
 
-        # une progression d'avant le voyage qui a déjà tout : les tampons arrivent, la fin se joue, « Fini » reste
-        page, erreurs = ouvrir_histoire(nav, w, h, {'connus': faciles, 'voyage': {'etapes': cinq, 'intro': True}})
+        # cinq tampons et la médaille de l'épreuve Facile d'Océanie (venue d'un autre appareil) : le tampon arrive, la fin se joue, « Fini » reste
+        page, erreurs = ouvrir_histoire(nav, w, h, {'connus': faciles, 'medailles': {'oceanie-facile': 'bronze'}, 'voyage': {'etapes': cinq, 'intro': True}})
         verifier(page.evaluate('jeu.histoire') == 'fin', f'{taille} : le retour de Nina quand les six tampons sont là')
         page.wait_for_selector('.cine.texte')
         page.screenshot(path=str(CAPTURES / f'histoire-fin-{w}x{h}.png'))
@@ -1002,19 +1002,23 @@ def test_histoire(nav):
         verifier(not erreurs, f'{taille} : aucune erreur {erreurs[:2]}')
         page.close()
 
-    # une vraie manche donne le dernier tampon : il s'annonce, puis Nina rentre
+    # l'épreuve Facile d'Océanie donne le dernier tampon : il s'annonce, Nina arrive en Océanie, puis elle rentre
     oceanie = ['AU', 'NZ', 'PG', 'FJ']
-    page, erreurs = ouvrir_histoire(nav, 1280, 800, {'connus': [c for c in faciles if c not in oceanie], 'niveaux': {'oceanie': 'facile'}, 'voyage': {'etapes': cinq, 'intro': True}})
+    page, erreurs = ouvrir_histoire(nav, 1280, 800, {'connus': [c for c in faciles if c not in oceanie] + oceanie[:3], 'niveaux': {'oceanie': 'facile'}, 'voyage': {'etapes': cinq, 'intro': True}})
     verifier(page.locator('.carnet .tampon.gagne').count() == 5 and page.locator('.marque-fini').count() == 0, 'cinq tampons, pas encore fini')
-    page.evaluate("jeu.app.aller('partie', 'oceanie')")
+    page.evaluate("jeu.app.aller('partie', 'oceanie', 'epreuve')")
     while page.evaluate('jeu.manche && !jeu.manche.finie'):
         toucher(page, page.evaluate('jeu.manche.question'))
-        if page.locator('.savoir:not([hidden])').count():
-            page.wait_for_timeout(850)
-            page.click('.savoir')
+        page.wait_for_timeout(750)   # un deuxième toucher sur le même pays, tout de suite, n'est pas une erreur
     page.wait_for_selector('.nouveau-tampon')
-    verifier('Océanie' in page.locator('.nouveau-tampon').inner_text(), 'fin de manche : « Nouveau tampon : Océanie ! »')
+    verifier('Océanie' in page.locator('.nouveau-tampon').inner_text(), 'fin d’épreuve : « Nouveau tampon : Océanie ! »')
+    verifier(page.locator('.fin .medaille.or').count() == 1, 'sans erreur : la médaille d’or')
     page.screenshot(path=str(CAPTURES / 'histoire-dernier-tampon.png'))
+    page.wait_for_function("jeu.histoire === 'etape'", timeout=5000)
+    page.wait_for_selector('.cine.texte')
+    verifier('Océanie' in page.inner_text('.cine-texte'), 'Nina arrive en Océanie')
+    page.screenshot(path=str(CAPTURES / 'histoire-etape-oceanie.png'))
+    page.click('.cine [data-action="go"]')
     page.wait_for_function("jeu.histoire === 'fin'", timeout=5000)
     verifier(True, 'puis le retour de Nina se joue')
     page.click('.cine [data-action="go"]')

@@ -8,7 +8,7 @@ export function pageCredits(app) {
   const pays = creditsImages(app.savoirs, app.nom, app.langue);
   const total = pays.reduce((n, p) => n + p.images.length, 0);
   const ligne = i => `<li class="credit-image"><span class="emoji" aria-hidden="true">${i.e}</span>
-      <div><p class="quoi">${i.texte}</p>
+      <div><p class="quoi lisible">${i.texte}</p>
       <p class="qui">${auteurImage(i)} · ${lien(lienLicence(i.licence), licenceImage(i))} · ${app.dansLudi ? t('creditFichier', { f: i.fichier }) : lien(i.source, t('voirImage'))}</p></div></li>`;
   return `<header class="credits-tete"><h2 class="grand craie">${t('credits')}</h2>
       <button class="bouton-craie" data-action="reglages">${t('retour')}</button></header>
